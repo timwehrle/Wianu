@@ -3,7 +3,20 @@ import WebKit
 
 struct BrowserView: View {
     @Bindable var model: AppModel
-    @State private var page = WebPage()
+    @State private var router: BrowserNavigationRouter
+    @State private var page: WebPage
+
+    init(model: AppModel) {
+        self.model = model
+
+        let router = BrowserNavigationRouter()
+        _router = State(initialValue: router)
+        _page = State(
+            initialValue: WebPage(
+                navigationDecider: BrowserNavigationDecider(router: router)
+            )
+        )
+    }
 
     var body: some View {
         Group {
@@ -17,9 +30,13 @@ struct BrowserView: View {
                 )
             }
         }
+        .task(id: router.request?.id) {
+            guard let url = router.request?.url else { return }
+            await load(url)
+        }
         .toolbar {
             ToolbarItem(placement: .principal) {
-                if model.selectedSite != nil {
+                if model.destinationURL != nil {
                     PageTitleToolbarView(
                         title: displayedTitle,
                         isSaved: currentPageIsSaved,
@@ -52,8 +69,7 @@ struct BrowserView: View {
     }
 
     private var canSaveCurrentPage: Bool {
-        model.selectedSite != nil
-            && page.url != nil
+        page.url != nil
             && !page.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
@@ -78,6 +94,18 @@ struct BrowserView: View {
             } catch {
                 assertionFailure("Reload failed: \(error)")
             }
+        }
+    }
+
+    private func load(_ url: URL) async {
+        do {
+            for try await _ in page.load(URLRequest(url: url)) {
+                try Task.checkCancellation()
+            }
+        } catch is CancellationError {
+            return
+        } catch {
+            assertionFailure("Navigation failed: \(error)")
         }
     }
 }

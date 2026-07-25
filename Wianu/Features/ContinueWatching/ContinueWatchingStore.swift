@@ -48,7 +48,7 @@ final class ContinueWatchingStore {
 
     @discardableResult
     func save(
-        siteID: SavedSite.ID,
+        siteID: SavedSite.ID?,
         title: String,
         url: URL
     ) -> ContinueWatchingItem {
@@ -92,6 +92,18 @@ final class ContinueWatchingStore {
         }
 
         items[index].lastOpenedAt = .now
+        persist()
+    }
+
+    func rename(id: ContinueWatchingItem.ID, to title: String) {
+        let trimmedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard
+            !trimmedTitle.isEmpty,
+            let index = items.firstIndex(where: { $0.id == id })
+        else { return }
+
+        items[index].title = trimmedTitle
         persist()
     }
 

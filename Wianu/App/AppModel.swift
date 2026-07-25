@@ -6,6 +6,7 @@ import Observation
 final class AppModel {
     let siteStore: SiteStore
     let continueWatchingStore: ContinueWatchingStore
+    let letterboxdWatchlistStore: LetterboxdWatchlistStore
 
     private(set) var selection: SidebarSelection?
 
@@ -17,6 +18,7 @@ final class AppModel {
     init() {
         siteStore = SiteStore()
         continueWatchingStore = ContinueWatchingStore()
+        letterboxdWatchlistStore = LetterboxdWatchlistStore()
         userDefaults = .standard
         restoreSelection()
     }
@@ -24,10 +26,12 @@ final class AppModel {
     init(
         siteStore: SiteStore,
         continueWatchingStore: ContinueWatchingStore,
+        letterboxdWatchlistStore: LetterboxdWatchlistStore,
         userDefaults: UserDefaults
     ) {
         self.siteStore = siteStore
         self.continueWatchingStore = continueWatchingStore
+        self.letterboxdWatchlistStore = letterboxdWatchlistStore
         self.userDefaults = userDefaults
         restoreSelection()
     }
@@ -48,6 +52,8 @@ final class AppModel {
             siteStore.sites.first { $0.id == siteID }?.url
         case .continueWatching(let itemID):
             continueWatchingStore.item(id: itemID)?.url
+        case .letterboxdWatchlistItem(let itemID):
+            letterboxdWatchlistStore.item(id: itemID)?.letterboxdURL
         case nil:
             nil
         }
@@ -83,21 +89,58 @@ final class AppModel {
 
     func removeContinueWatchingItem(_ item: ContinueWatchingItem) {
         if selection == .continueWatching(item.id) {
-            selection = .site(item.siteID)
+            if let siteID = item.siteID {
+                selection = .site(siteID)
+            } else {
+                selection = nil
+            }
         }
 
         continueWatchingStore.remove(id: item.id)
     }
 
-    func toggleContinueWatching(title: String, url: URL) {
-        guard let site = selectedSite else { return }
+    func replaceLetterboxdWatchlist(
+        with items: [LetterboxdWatchlistItem]
+    ) {
+        let selectedItemID: LetterboxdWatchlistItem.ID?
+        if case .letterboxdWatchlistItem(let itemID) = selection {
+            selectedItemID = itemID
+        } else {
+            selectedItemID = nil
+        }
 
+        letterboxdWatchlistStore.replace(with: items)
+
+        if let selectedItemID,
+            letterboxdWatchlistStore.item(id: selectedItemID) == nil
+        {
+            selection = nil
+        }
+    }
+
+    func toggleContinueWatching(title: String, url: URL) {
         if let item = continueWatchingStore.item(matching: url) {
             removeContinueWatchingItem(item)
         } else {
+            let trimmedTitle = title.trimmingCharacters(
+                in: .whitespacesAndNewlines
+            )
+            let savedTitle: String
+
+            if let site = selectedSite {
+                savedTitle = PageTitleCleaner.clean(
+                    trimmedTitle,
+                    siteName: site.name
+                )
+            } else {
+                savedTitle = trimmedTitle.isEmpty
+                    ? url.host() ?? "Untitled Page"
+                    : trimmedTitle
+            }
+
             continueWatchingStore.save(
-                siteID: site.id,
-                title: PageTitleCleaner.clean(title, siteName: site.name),
+                siteID: selectedSite?.id,
+                title: savedTitle,
                 url: url
             )
         }
@@ -109,6 +152,8 @@ final class AppModel {
             siteID
         case .continueWatching(let itemID):
             continueWatchingStore.item(id: itemID)?.siteID
+        case .letterboxdWatchlistItem:
+            nil
         case nil:
             nil
         }
