@@ -1,10 +1,3 @@
-//
-//  ContinueWatchingItem.swift
-//  Wianu
-//
-//  Created by Tim on 25.07.26.
-//
-
 import Foundation
 
 struct ContinueWatchingItem: Identifiable, Codable, Hashable, Sendable {

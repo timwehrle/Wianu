@@ -1,10 +1,3 @@
-//
-//  SiteStore.swift
-//  Wianu
-//
-//  Created by Tim on 24.07.26.
-//
-
 import Foundation
 import Observation
 

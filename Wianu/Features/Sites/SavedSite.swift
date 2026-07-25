@@ -1,10 +1,3 @@
-//
-//  SavedSite.swift
-//  Wianu
-//
-//  Created by Tim on 24.07.26.
-//
-
 import Foundation
 
 struct SavedSite: Identifiable, Codable, Hashable, Sendable {

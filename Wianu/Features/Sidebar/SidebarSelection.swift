@@ -1,10 +1,3 @@
-//
-//  SidebarSelection.swift
-//  Wianu
-//
-//  Created by Tim on 25.07.26.
-//
-
 import Foundation
 
 enum SidebarSelection: Hashable {
