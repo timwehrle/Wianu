@@ -26,7 +26,9 @@ struct BrowserView: View {
                 ContentUnavailableView(
                     "No Site Selected",
                     systemImage: "globe",
-                    description: Text("Select a site or a Continue Watching item.")
+                    description: Text(
+                        "Select a site or a Continue Watching item."
+                    )
                 )
             }
         }
@@ -34,13 +36,18 @@ struct BrowserView: View {
             guard let url = router.request?.url else { return }
             await load(url)
         }
+        .onChange(of: page.url) { _, url in
+            model.activateSite(matching: url)
+        }
         .toolbar {
             ToolbarItem(placement: .principal) {
                 if model.destinationURL != nil {
                     PageTitleToolbarView(
                         title: displayedTitle,
+                        canGoHome: homeURL != nil,
                         isSaved: currentPageIsSaved,
                         canSave: canSaveCurrentPage,
+                        goHome: goHome,
                         toggleSaved: toggleContinueWatching
                     )
                 }
@@ -70,12 +77,40 @@ struct BrowserView: View {
 
     private var canSaveCurrentPage: Bool {
         page.url != nil
-            && !page.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            && !page.title.trimmingCharacters(in: .whitespacesAndNewlines)
+                .isEmpty
     }
 
     private var currentPageIsSaved: Bool {
         guard let url = page.url else { return false }
         return model.continueWatchingStore.contains(url: url)
+    }
+
+    private var homeURL: URL? {
+        if let siteURL = model.selectedSite?.url {
+            return siteURL
+        }
+
+        guard
+            let currentURL = page.url,
+            var components = URLComponents(
+                url: currentURL,
+                resolvingAgainstBaseURL: false
+            )
+        else { return nil }
+
+        components.path = "/"
+        components.query = nil
+        components.fragment = nil
+        return components.url
+    }
+
+    private func goHome() {
+        guard let homeURL else { return }
+
+        Task {
+            await load(homeURL)
+        }
     }
 
     private func toggleContinueWatching() {

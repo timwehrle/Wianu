@@ -9,6 +9,7 @@ final class AppModel {
     let letterboxdWatchlistStore: LetterboxdWatchlistStore
 
     private(set) var selection: SidebarSelection?
+    private(set) var destinationURL: URL?
 
     @ObservationIgnored
     private let userDefaults: UserDefaults
@@ -46,7 +47,7 @@ final class AppModel {
         return continueWatchingStore.item(id: itemID)
     }
 
-    var destinationURL: URL? {
+    func destination(for selection: SidebarSelection?) -> URL? {
         switch selection {
         case .site(let siteID):
             siteStore.sites.first { $0.id == siteID }?.url
@@ -61,6 +62,7 @@ final class AppModel {
 
     func select(_ newSelection: SidebarSelection?) {
         selection = newSelection
+        destinationURL = destination(for: newSelection)
 
         if case .continueWatching(let itemID) = newSelection {
             continueWatchingStore.markOpened(id: itemID)
@@ -77,12 +79,15 @@ final class AppModel {
     func deleteSite(_ site: SavedSite) {
         if selectedSiteID == site.id {
             selection = nil
+            destinationURL = nil
         }
 
         continueWatchingStore.removeItems(forSiteID: site.id)
         siteStore.deleteSite(id: site.id)
 
-        if userDefaults.string(forKey: Self.lastSelectedSiteKey) == site.id.uuidString {
+        if userDefaults.string(forKey: Self.lastSelectedSiteKey)
+            == site.id.uuidString
+        {
             userDefaults.removeObject(forKey: Self.lastSelectedSiteKey)
         }
     }
@@ -90,9 +95,9 @@ final class AppModel {
     func removeContinueWatchingItem(_ item: ContinueWatchingItem) {
         if selection == .continueWatching(item.id) {
             if let siteID = item.siteID {
-                selection = .site(siteID)
+                select(.site(siteID))
             } else {
-                selection = nil
+                select(nil)
             }
         }
 
@@ -115,7 +120,25 @@ final class AppModel {
             letterboxdWatchlistStore.item(id: selectedItemID) == nil
         {
             selection = nil
+            destinationURL = nil
         }
+    }
+
+    func activateSite(matching url: URL?) {
+        guard
+            let url,
+            let host = normalizedHost(for: url),
+            let site = siteStore.sites.first(where: {
+                normalizedHost(for: $0.url) == host
+            }),
+            selection != .site(site.id)
+        else { return }
+
+        selection = .site(site.id)
+        userDefaults.set(
+            site.id.uuidString,
+            forKey: Self.lastSelectedSiteKey
+        )
     }
 
     func toggleContinueWatching(title: String, url: URL) {
@@ -133,7 +156,8 @@ final class AppModel {
                     siteName: site.name
                 )
             } else {
-                savedTitle = trimmedTitle.isEmpty
+                savedTitle =
+                    trimmedTitle.isEmpty
                     ? url.host() ?? "Untitled Page"
                     : trimmedTitle
             }
@@ -160,7 +184,8 @@ final class AppModel {
     }
 
     private func restoreSelection() {
-        let savedID = userDefaults
+        let savedID =
+            userDefaults
             .string(forKey: Self.lastSelectedSiteKey)
             .flatMap(UUID.init(uuidString:))
 
@@ -169,5 +194,17 @@ final class AppModel {
         } else if let firstSite = siteStore.sites.first {
             selection = .site(firstSite.id)
         }
+
+        destinationURL = destination(for: selection)
+    }
+
+    private func normalizedHost(for url: URL?) -> String? {
+        guard var host = url?.host()?.lowercased() else { return nil }
+
+        if host.hasPrefix("www.") {
+            host.removeFirst(4)
+        }
+
+        return host
     }
 }

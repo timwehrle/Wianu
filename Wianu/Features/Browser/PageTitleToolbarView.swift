@@ -2,12 +2,24 @@ import SwiftUI
 
 struct PageTitleToolbarView: View {
     let title: String
+    let canGoHome: Bool
     let isSaved: Bool
     let canSave: Bool
+    let goHome: () -> Void
     let toggleSaved: () -> Void
 
     var body: some View {
         HStack(spacing: 12) {
+            Button(action: goHome) {
+                Image(systemName: "house")
+                    .imageScale(.large)
+            }
+            .buttonStyle(.plain)
+            .disabled(!canGoHome)
+            .help("Go to Site Home")
+
+            Divider().frame(height: 14)
+
             Text(title)
                 .font(.headline)
                 .lineLimit(1)
@@ -22,10 +34,10 @@ struct PageTitleToolbarView: View {
                         ? "bookmark.fill"
                         : "bookmark"
                 )
-                .imageScale(.medium)
+                .imageScale(.large)
             }
             .buttonStyle(.plain)
-            .foregroundStyle(isSaved ? .primary : .secondary)
+            .foregroundStyle(.primary)
             .disabled(!canSave)
             .help(
                 isSaved
