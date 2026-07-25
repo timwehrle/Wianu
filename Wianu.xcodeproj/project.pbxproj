@@ -6,17 +6,70 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		D1B972403015325D00B64B10 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = D1B9723F3015325D00B64B10 /* README.md */; };
+		D1B9726A3015341900B64B10 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D1B972673015341900B64B10 /* Assets.xcassets */; };
+		D1B9726B3015341900B64B10 /* WianuIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = D1B972683015341900B64B10 /* WianuIcon.icon */; };
+		D1B9726C3015341900B64B10 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B972413015341900B64B10 /* AppModel.swift */; };
+		D1B9726D3015341900B64B10 /* LetterboxdWatchlistItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B972503015341900B64B10 /* LetterboxdWatchlistItem.swift */; };
+		D1B9726E3015341900B64B10 /* BrowserPaneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B972463015341900B64B10 /* BrowserPaneView.swift */; };
+		D1B9726F3015341900B64B10 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B972423015341900B64B10 /* ContentView.swift */; };
+		D1B972703015341900B64B10 /* SiteEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B972593015341900B64B10 /* SiteEditorView.swift */; };
+		D1B972713015341900B64B10 /* WianuApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B972433015341900B64B10 /* WianuApp.swift */; };
+		D1B972723015341900B64B10 /* JSONFileStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B9725E3015341900B64B10 /* JSONFileStore.swift */; };
+		D1B972733015341900B64B10 /* SidebarSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B972543015341900B64B10 /* SidebarSelection.swift */; };
+		D1B972743015341900B64B10 /* PageTitleToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B972483015341900B64B10 /* PageTitleToolbarView.swift */; };
+		D1B972753015341900B64B10 /* PageTitleCleaner.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B972613015341900B64B10 /* PageTitleCleaner.swift */; };
+		D1B972763015341900B64B10 /* URLNormalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B972623015341900B64B10 /* URLNormalizer.swift */; };
+		D1B972773015341900B64B10 /* LetterboxdWatchlistRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B972513015341900B64B10 /* LetterboxdWatchlistRow.swift */; };
+		D1B972783015341900B64B10 /* SiteStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B9725B3015341900B64B10 /* SiteStore.swift */; };
+		D1B972793015341900B64B10 /* RenameContinueWatchingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B9724D3015341900B64B10 /* RenameContinueWatchingView.swift */; };
+		D1B9727A3015341900B64B10 /* LetterboxdWatchlistImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B9724F3015341900B64B10 /* LetterboxdWatchlistImporter.swift */; };
+		D1B9727B3015341900B64B10 /* ContinueWatchingStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B9724C3015341900B64B10 /* ContinueWatchingStore.swift */; };
+		D1B9727C3015341900B64B10 /* FaviconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B972643015341900B64B10 /* FaviconView.swift */; };
+		D1B9727D3015341900B64B10 /* BrowserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B972473015341900B64B10 /* BrowserView.swift */; };
+		D1B9727E3015341900B64B10 /* SiteDraft.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B972583015341900B64B10 /* SiteDraft.swift */; };
+		D1B9727F3015341900B64B10 /* SiteRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B9725A3015341900B64B10 /* SiteRow.swift */; };
+		D1B972803015341900B64B10 /* ContinueWatchingItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B9724A3015341900B64B10 /* ContinueWatchingItem.swift */; };
+		D1B972813015341900B64B10 /* BrowserNavigationDecider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B972453015341900B64B10 /* BrowserNavigationDecider.swift */; };
+		D1B972823015341900B64B10 /* ContinueWatchingRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B9724B3015341900B64B10 /* ContinueWatchingRow.swift */; };
+		D1B972833015341900B64B10 /* LetterboxdWatchlistStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B972523015341900B64B10 /* LetterboxdWatchlistStore.swift */; };
+		D1B972843015341900B64B10 /* SidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B972553015341900B64B10 /* SidebarView.swift */; };
+		D1B972853015341900B64B10 /* SavedSite.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B972573015341900B64B10 /* SavedSite.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		D14338A33013E5B800BA847C /* Wianu.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Wianu.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D1B9723F3015325D00B64B10 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		D1B972413015341900B64B10 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		D1B972423015341900B64B10 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		D1B972433015341900B64B10 /* WianuApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WianuApp.swift; sourceTree = "<group>"; };
+		D1B972453015341900B64B10 /* BrowserNavigationDecider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserNavigationDecider.swift; sourceTree = "<group>"; };
+		D1B972463015341900B64B10 /* BrowserPaneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserPaneView.swift; sourceTree = "<group>"; };
+		D1B972473015341900B64B10 /* BrowserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserView.swift; sourceTree = "<group>"; };
+		D1B972483015341900B64B10 /* PageTitleToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageTitleToolbarView.swift; sourceTree = "<group>"; };
+		D1B9724A3015341900B64B10 /* ContinueWatchingItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContinueWatchingItem.swift; sourceTree = "<group>"; };
+		D1B9724B3015341900B64B10 /* ContinueWatchingRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContinueWatchingRow.swift; sourceTree = "<group>"; };
+		D1B9724C3015341900B64B10 /* ContinueWatchingStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContinueWatchingStore.swift; sourceTree = "<group>"; };
+		D1B9724D3015341900B64B10 /* RenameContinueWatchingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenameContinueWatchingView.swift; sourceTree = "<group>"; };
+		D1B9724F3015341900B64B10 /* LetterboxdWatchlistImporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterboxdWatchlistImporter.swift; sourceTree = "<group>"; };
+		D1B972503015341900B64B10 /* LetterboxdWatchlistItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterboxdWatchlistItem.swift; sourceTree = "<group>"; };
+		D1B972513015341900B64B10 /* LetterboxdWatchlistRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterboxdWatchlistRow.swift; sourceTree = "<group>"; };
+		D1B972523015341900B64B10 /* LetterboxdWatchlistStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterboxdWatchlistStore.swift; sourceTree = "<group>"; };
+		D1B972543015341900B64B10 /* SidebarSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarSelection.swift; sourceTree = "<group>"; };
+		D1B972553015341900B64B10 /* SidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarView.swift; sourceTree = "<group>"; };
+		D1B972573015341900B64B10 /* SavedSite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedSite.swift; sourceTree = "<group>"; };
+		D1B972583015341900B64B10 /* SiteDraft.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SiteDraft.swift; sourceTree = "<group>"; };
+		D1B972593015341900B64B10 /* SiteEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SiteEditorView.swift; sourceTree = "<group>"; };
+		D1B9725A3015341900B64B10 /* SiteRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SiteRow.swift; sourceTree = "<group>"; };
+		D1B9725B3015341900B64B10 /* SiteStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SiteStore.swift; sourceTree = "<group>"; };
+		D1B9725E3015341900B64B10 /* JSONFileStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONFileStore.swift; sourceTree = "<group>"; };
+		D1B972613015341900B64B10 /* PageTitleCleaner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageTitleCleaner.swift; sourceTree = "<group>"; };
+		D1B972623015341900B64B10 /* URLNormalizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLNormalizer.swift; sourceTree = "<group>"; };
+		D1B972643015341900B64B10 /* FaviconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaviconView.swift; sourceTree = "<group>"; };
+		D1B972673015341900B64B10 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D1B972683015341900B64B10 /* WianuIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = WianuIcon.icon; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		D14338A53013E5B800BA847C /* Wianu */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Wianu;
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		D14338A03013E5B800BA847C /* Frameworks */ = {
@@ -32,8 +85,9 @@
 		D143389A3013E5B800BA847C = {
 			isa = PBXGroup;
 			children = (
-				D14338A53013E5B800BA847C /* Wianu */,
+				D1B972693015341900B64B10 /* Wianu */,
 				D14338A43013E5B800BA847C /* Products */,
+				D1B9723F3015325D00B64B10 /* README.md */,
 			);
 			sourceTree = "<group>";
 		};
@@ -43,6 +97,137 @@
 				D14338A33013E5B800BA847C /* Wianu.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		D1B972443015341900B64B10 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				D1B972413015341900B64B10 /* AppModel.swift */,
+				D1B972423015341900B64B10 /* ContentView.swift */,
+				D1B972433015341900B64B10 /* WianuApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		D1B972493015341900B64B10 /* Browser */ = {
+			isa = PBXGroup;
+			children = (
+				D1B972453015341900B64B10 /* BrowserNavigationDecider.swift */,
+				D1B972463015341900B64B10 /* BrowserPaneView.swift */,
+				D1B972473015341900B64B10 /* BrowserView.swift */,
+				D1B972483015341900B64B10 /* PageTitleToolbarView.swift */,
+			);
+			path = Browser;
+			sourceTree = "<group>";
+		};
+		D1B9724E3015341900B64B10 /* ContinueWatching */ = {
+			isa = PBXGroup;
+			children = (
+				D1B9724A3015341900B64B10 /* ContinueWatchingItem.swift */,
+				D1B9724B3015341900B64B10 /* ContinueWatchingRow.swift */,
+				D1B9724C3015341900B64B10 /* ContinueWatchingStore.swift */,
+				D1B9724D3015341900B64B10 /* RenameContinueWatchingView.swift */,
+			);
+			path = ContinueWatching;
+			sourceTree = "<group>";
+		};
+		D1B972533015341900B64B10 /* LetterboxdWatchlist */ = {
+			isa = PBXGroup;
+			children = (
+				D1B9724F3015341900B64B10 /* LetterboxdWatchlistImporter.swift */,
+				D1B972503015341900B64B10 /* LetterboxdWatchlistItem.swift */,
+				D1B972513015341900B64B10 /* LetterboxdWatchlistRow.swift */,
+				D1B972523015341900B64B10 /* LetterboxdWatchlistStore.swift */,
+			);
+			path = LetterboxdWatchlist;
+			sourceTree = "<group>";
+		};
+		D1B972563015341900B64B10 /* Sidebar */ = {
+			isa = PBXGroup;
+			children = (
+				D1B972543015341900B64B10 /* SidebarSelection.swift */,
+				D1B972553015341900B64B10 /* SidebarView.swift */,
+			);
+			path = Sidebar;
+			sourceTree = "<group>";
+		};
+		D1B9725C3015341900B64B10 /* Sites */ = {
+			isa = PBXGroup;
+			children = (
+				D1B972573015341900B64B10 /* SavedSite.swift */,
+				D1B972583015341900B64B10 /* SiteDraft.swift */,
+				D1B972593015341900B64B10 /* SiteEditorView.swift */,
+				D1B9725A3015341900B64B10 /* SiteRow.swift */,
+				D1B9725B3015341900B64B10 /* SiteStore.swift */,
+			);
+			path = Sites;
+			sourceTree = "<group>";
+		};
+		D1B9725D3015341900B64B10 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				D1B972493015341900B64B10 /* Browser */,
+				D1B9724E3015341900B64B10 /* ContinueWatching */,
+				D1B972533015341900B64B10 /* LetterboxdWatchlist */,
+				D1B972563015341900B64B10 /* Sidebar */,
+				D1B9725C3015341900B64B10 /* Sites */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		D1B9725F3015341900B64B10 /* Persistence */ = {
+			isa = PBXGroup;
+			children = (
+				D1B9725E3015341900B64B10 /* JSONFileStore.swift */,
+			);
+			path = Persistence;
+			sourceTree = "<group>";
+		};
+		D1B972603015341900B64B10 /* Infrastructure */ = {
+			isa = PBXGroup;
+			children = (
+				D1B9725F3015341900B64B10 /* Persistence */,
+			);
+			path = Infrastructure;
+			sourceTree = "<group>";
+		};
+		D1B972633015341900B64B10 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				D1B972613015341900B64B10 /* PageTitleCleaner.swift */,
+				D1B972623015341900B64B10 /* URLNormalizer.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		D1B972653015341900B64B10 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				D1B972643015341900B64B10 /* FaviconView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		D1B972663015341900B64B10 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				D1B972633015341900B64B10 /* Utilities */,
+				D1B972653015341900B64B10 /* Views */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		D1B972693015341900B64B10 /* Wianu */ = {
+			isa = PBXGroup;
+			children = (
+				D1B972443015341900B64B10 /* App */,
+				D1B9725D3015341900B64B10 /* Features */,
+				D1B972603015341900B64B10 /* Infrastructure */,
+				D1B972663015341900B64B10 /* Shared */,
+				D1B972673015341900B64B10 /* Assets.xcassets */,
+				D1B972683015341900B64B10 /* WianuIcon.icon */,
+			);
+			path = Wianu;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -59,9 +244,6 @@
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				D14338A53013E5B800BA847C /* Wianu */,
 			);
 			name = Wianu;
 			packageProductDependencies = (
@@ -109,6 +291,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D1B9726A3015341900B64B10 /* Assets.xcassets in Resources */,
+				D1B9726B3015341900B64B10 /* WianuIcon.icon in Resources */,
+				D1B972403015325D00B64B10 /* README.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -119,6 +304,32 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D1B9726C3015341900B64B10 /* AppModel.swift in Sources */,
+				D1B9726D3015341900B64B10 /* LetterboxdWatchlistItem.swift in Sources */,
+				D1B9726E3015341900B64B10 /* BrowserPaneView.swift in Sources */,
+				D1B9726F3015341900B64B10 /* ContentView.swift in Sources */,
+				D1B972703015341900B64B10 /* SiteEditorView.swift in Sources */,
+				D1B972713015341900B64B10 /* WianuApp.swift in Sources */,
+				D1B972723015341900B64B10 /* JSONFileStore.swift in Sources */,
+				D1B972733015341900B64B10 /* SidebarSelection.swift in Sources */,
+				D1B972743015341900B64B10 /* PageTitleToolbarView.swift in Sources */,
+				D1B972753015341900B64B10 /* PageTitleCleaner.swift in Sources */,
+				D1B972763015341900B64B10 /* URLNormalizer.swift in Sources */,
+				D1B972773015341900B64B10 /* LetterboxdWatchlistRow.swift in Sources */,
+				D1B972783015341900B64B10 /* SiteStore.swift in Sources */,
+				D1B972793015341900B64B10 /* RenameContinueWatchingView.swift in Sources */,
+				D1B9727A3015341900B64B10 /* LetterboxdWatchlistImporter.swift in Sources */,
+				D1B9727B3015341900B64B10 /* ContinueWatchingStore.swift in Sources */,
+				D1B9727C3015341900B64B10 /* FaviconView.swift in Sources */,
+				D1B9727D3015341900B64B10 /* BrowserView.swift in Sources */,
+				D1B9727E3015341900B64B10 /* SiteDraft.swift in Sources */,
+				D1B9727F3015341900B64B10 /* SiteRow.swift in Sources */,
+				D1B972803015341900B64B10 /* ContinueWatchingItem.swift in Sources */,
+				D1B972813015341900B64B10 /* BrowserNavigationDecider.swift in Sources */,
+				D1B972823015341900B64B10 /* ContinueWatchingRow.swift in Sources */,
+				D1B972833015341900B64B10 /* LetterboxdWatchlistStore.swift in Sources */,
+				D1B972843015341900B64B10 /* SidebarView.swift in Sources */,
+				D1B972853015341900B64B10 /* SavedSite.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
