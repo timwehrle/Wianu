@@ -17,6 +17,9 @@ struct SidebarView: View {
 
     var body: some View {
         List(selection: selectionBinding) {
+            Label("Search", systemImage: "magnifyingglass")
+                .tag(SidebarSelection.search)
+
             Section("Sites", isExpanded: $sitesExpanded) {
                 ForEach(model.siteStore.sites) { site in
                     SiteRow(site: site)

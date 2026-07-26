@@ -22,7 +22,13 @@ final class SiteStore {
 
     func addSite(_ draft: SiteDraft) {
         guard let values = draft.validatedValues else { return }
-        sites.append(SavedSite(name: values.name, urlString: values.url.absoluteString))
+        sites.append(
+            SavedSite(
+                name: values.name,
+                urlString: values.url.absoluteString,
+                searchURLTemplate: values.searchURLTemplate
+            )
+        )
         persist()
     }
 
@@ -34,6 +40,7 @@ final class SiteStore {
 
         sites[index].name = values.name
         sites[index].urlString = values.url.absoluteString
+        sites[index].searchURLTemplate = values.searchURLTemplate
         persist()
     }
 

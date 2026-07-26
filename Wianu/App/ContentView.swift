@@ -7,7 +7,11 @@ struct ContentView: View {
         NavigationSplitView {
             SidebarView(model: model)
         } detail: {
-            BrowserView(model: model)
+            if model.selection == .search {
+                StreamingSearchView(model: model)
+            } else {
+                BrowserView(model: model)
+            }
         }
         .navigationTitle("Wianu")
     }

@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D10EF48E3015F2800070703E /* WianuIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = D10EF48D3015F2800070703E /* WianuIcon.icon */; };
 		D1B972403015325D00B64B10 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = D1B9723F3015325D00B64B10 /* README.md */; };
 		D1B9726A3015341900B64B10 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D1B972673015341900B64B10 /* Assets.xcassets */; };
-		D1B9726B3015341900B64B10 /* WianuIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = D1B972683015341900B64B10 /* WianuIcon.icon */; };
 		D1B9726C3015341900B64B10 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B972413015341900B64B10 /* AppModel.swift */; };
 		D1B9726D3015341900B64B10 /* LetterboxdWatchlistItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B972503015341900B64B10 /* LetterboxdWatchlistItem.swift */; };
 		D1B9726E3015341900B64B10 /* BrowserPaneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B972463015341900B64B10 /* BrowserPaneView.swift */; };
@@ -36,9 +36,12 @@
 		D1B972833015341900B64B10 /* LetterboxdWatchlistStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B972523015341900B64B10 /* LetterboxdWatchlistStore.swift */; };
 		D1B972843015341900B64B10 /* SidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B972553015341900B64B10 /* SidebarView.swift */; };
 		D1B972853015341900B64B10 /* SavedSite.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B972573015341900B64B10 /* SavedSite.swift */; };
+		D1B973023015341900B64B10 /* StreamingSearchURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B973003015341900B64B10 /* StreamingSearchURL.swift */; };
+		D1B973033015341900B64B10 /* StreamingSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B973013015341900B64B10 /* StreamingSearchView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D10EF48D3015F2800070703E /* WianuIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = WianuIcon.icon; sourceTree = "<group>"; };
 		D14338A33013E5B800BA847C /* Wianu.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Wianu.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1B9723F3015325D00B64B10 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		D1B972413015341900B64B10 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
@@ -68,7 +71,8 @@
 		D1B972623015341900B64B10 /* URLNormalizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLNormalizer.swift; sourceTree = "<group>"; };
 		D1B972643015341900B64B10 /* FaviconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaviconView.swift; sourceTree = "<group>"; };
 		D1B972673015341900B64B10 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		D1B972683015341900B64B10 /* WianuIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = WianuIcon.icon; sourceTree = "<group>"; };
+		D1B973003015341900B64B10 /* StreamingSearchURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingSearchURL.swift; sourceTree = "<group>"; };
+		D1B973013015341900B64B10 /* StreamingSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingSearchView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -159,6 +163,8 @@
 				D1B972593015341900B64B10 /* SiteEditorView.swift */,
 				D1B9725A3015341900B64B10 /* SiteRow.swift */,
 				D1B9725B3015341900B64B10 /* SiteStore.swift */,
+				D1B973003015341900B64B10 /* StreamingSearchURL.swift */,
+				D1B973013015341900B64B10 /* StreamingSearchView.swift */,
 			);
 			path = Sites;
 			sourceTree = "<group>";
@@ -225,7 +231,7 @@
 				D1B972603015341900B64B10 /* Infrastructure */,
 				D1B972663015341900B64B10 /* Shared */,
 				D1B972673015341900B64B10 /* Assets.xcassets */,
-				D1B972683015341900B64B10 /* WianuIcon.icon */,
+				D10EF48D3015F2800070703E /* WianuIcon.icon */,
 			);
 			path = Wianu;
 			sourceTree = "<group>";
@@ -291,8 +297,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D10EF48E3015F2800070703E /* WianuIcon.icon in Resources */,
 				D1B9726A3015341900B64B10 /* Assets.xcassets in Resources */,
-				D1B9726B3015341900B64B10 /* WianuIcon.icon in Resources */,
 				D1B972403015325D00B64B10 /* README.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -330,6 +336,8 @@
 				D1B972833015341900B64B10 /* LetterboxdWatchlistStore.swift in Sources */,
 				D1B972843015341900B64B10 /* SidebarView.swift in Sources */,
 				D1B972853015341900B64B10 /* SavedSite.swift in Sources */,
+				D1B973023015341900B64B10 /* StreamingSearchURL.swift in Sources */,
+				D1B973033015341900B64B10 /* StreamingSearchView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -459,6 +467,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = WianuIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -476,6 +485,7 @@
 				ENABLE_RESOURCE_ACCESS_USB = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -499,6 +509,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = WianuIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -516,6 +527,7 @@
 				ENABLE_RESOURCE_ACCESS_USB = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

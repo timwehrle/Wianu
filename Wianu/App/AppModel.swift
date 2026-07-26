@@ -10,6 +10,7 @@ final class AppModel {
 
     private(set) var selection: SidebarSelection?
     private(set) var destinationURL: URL?
+    var searchQuery = ""
 
     @ObservationIgnored
     private let userDefaults: UserDefaults
@@ -49,6 +50,8 @@ final class AppModel {
 
     func destination(for selection: SidebarSelection?) -> URL? {
         switch selection {
+        case .search:
+            nil
         case .site(let siteID):
             siteStore.sites.first { $0.id == siteID }?.url
         case .continueWatching(let itemID):
@@ -58,6 +61,13 @@ final class AppModel {
         case nil:
             nil
         }
+    }
+
+    func search(_ query: String, in site: SavedSite) {
+        guard let searchURL = site.searchURL(for: query) else { return }
+
+        select(.site(site.id))
+        destinationURL = searchURL
     }
 
     func select(_ newSelection: SidebarSelection?) {
@@ -172,6 +182,8 @@ final class AppModel {
 
     private var selectedSiteID: SavedSite.ID? {
         switch selection {
+        case .search:
+            nil
         case .site(let siteID):
             siteID
         case .continueWatching(let itemID):

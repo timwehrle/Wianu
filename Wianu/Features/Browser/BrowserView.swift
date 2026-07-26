@@ -40,17 +40,34 @@ struct BrowserView: View {
             model.activateSite(matching: url)
         }
         .toolbar {
+            ToolbarItem(placement: .navigation) {
+                Button(action: goHome) {
+                    Image(systemName: "house")
+                }
+                .disabled(homeURL == nil)
+                .help("Go to Site Home")
+            }
+
             ToolbarItem(placement: .principal) {
                 if model.destinationURL != nil {
-                    PageTitleToolbarView(
-                        title: displayedTitle,
-                        canGoHome: homeURL != nil,
-                        isSaved: currentPageIsSaved,
-                        canSave: canSaveCurrentPage,
-                        goHome: goHome,
-                        toggleSaved: toggleContinueWatching
+                    PageTitleToolbarView(title: displayedTitle)
+                }
+            }
+
+            ToolbarItem(placement: .primaryAction) {
+                Button(action: toggleContinueWatching) {
+                    Image(
+                        systemName: currentPageIsSaved
+                            ? "play.rectangle.fill"
+                            : "play.rectangle"
                     )
                 }
+                .disabled(!canSaveCurrentPage)
+                .help(
+                    currentPageIsSaved
+                        ? "Remove from Continue Watching"
+                        : "Save to Continue Watching"
+                )
             }
 
             ToolbarItem(placement: .primaryAction) {
@@ -59,6 +76,7 @@ struct BrowserView: View {
                 }
                 .help("Reload")
                 .disabled(page.url == nil)
+                .keyboardShortcut("r", modifiers: .command)
             }
         }
     }

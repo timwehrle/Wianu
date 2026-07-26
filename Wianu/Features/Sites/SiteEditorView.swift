@@ -60,17 +60,44 @@ struct SiteEditorView: View {
                             .autocorrectionDisabled()
                     }
 
-                    if !draft.address.isEmpty, draft.validatedValues == nil {
+                    if !draft.address.isEmpty, !draft.siteURLIsValid {
                         Text("Enter a valid HTTP or HTTPS website address.")
                             .font(.caption)
                             .foregroundStyle(.red)
+                    }
+
+                    field("Search URL (Optional)") {
+                        TextField(
+                            "https://example.com/search?q={query}",
+                            text: $draft.searchURLTemplate
+                        )
+                        .autocorrectionDisabled()
+                    }
+
+                    Text(
+                        "Use {query} where the movie or show title belongs. "
+                            + "Leave this empty to hide the site from Search."
+                    )
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+
+                    if !draft.searchURLTemplateIsValid {
+                        Text(
+                            "Enter a valid HTTP or HTTPS URL containing "
+                                + "exactly one {query} placeholder."
+                        )
+                        .font(.caption)
+                        .foregroundStyle(.red)
                     }
                 }
 
                 Spacer()
             }
             .padding(20)
-            .frame(minWidth: 460, minHeight: 240, alignment: .topLeading)
+            .frame(minWidth: 520, minHeight: 360, alignment: .topLeading)
+            .onChange(of: draft.address) {
+                applySuggestedSearchTemplate()
+            }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel", action: dismiss.callAsFunction)
@@ -106,5 +133,16 @@ struct SiteEditorView: View {
         }
 
         dismiss()
+    }
+
+    private func applySuggestedSearchTemplate() {
+        guard
+            draft.searchURLTemplate.trimmingCharacters(
+                in: .whitespacesAndNewlines
+            ).isEmpty,
+            let suggestion = draft.suggestedSearchURLTemplate
+        else { return }
+
+        draft.searchURLTemplate = suggestion
     }
 }
