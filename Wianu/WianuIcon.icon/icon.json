@@ -76,6 +76,7 @@
           "glass" : true,
           "image-name" : "square.svg",
           "name" : "square",
+          "opacity" : 1,
           "position" : {
             "scale" : 1,
             "translation-in-points" : [

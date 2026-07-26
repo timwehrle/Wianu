@@ -38,6 +38,7 @@
 		D1B972853015341900B64B10 /* SavedSite.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B972573015341900B64B10 /* SavedSite.swift */; };
 		D1B973023015341900B64B10 /* StreamingSearchURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B973003015341900B64B10 /* StreamingSearchURL.swift */; };
 		D1B973033015341900B64B10 /* StreamingSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B973013015341900B64B10 /* StreamingSearchView.swift */; };
+		D1FE001A301638DA00DA12EE /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = D1FE0019301638DA00DA12EE /* LICENSE */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -73,6 +74,7 @@
 		D1B972673015341900B64B10 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D1B973003015341900B64B10 /* StreamingSearchURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingSearchURL.swift; sourceTree = "<group>"; };
 		D1B973013015341900B64B10 /* StreamingSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingSearchView.swift; sourceTree = "<group>"; };
+		D1FE0019301638DA00DA12EE /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,6 +94,7 @@
 				D1B972693015341900B64B10 /* Wianu */,
 				D14338A43013E5B800BA847C /* Products */,
 				D1B9723F3015325D00B64B10 /* README.md */,
+				D1FE0019301638DA00DA12EE /* LICENSE */,
 			);
 			sourceTree = "<group>";
 		};
@@ -299,6 +302,7 @@
 			files = (
 				D10EF48E3015F2800070703E /* WianuIcon.icon in Resources */,
 				D1B9726A3015341900B64B10 /* Assets.xcassets in Resources */,
+				D1FE001A301638DA00DA12EE /* LICENSE in Resources */,
 				D1B972403015325D00B64B10 /* README.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

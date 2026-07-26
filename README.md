@@ -1,3 +1,3 @@
 # Wianu
 
-Wianu is a new way of streaming movies and shows.
+All your streaming. One home.
