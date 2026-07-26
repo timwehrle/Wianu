@@ -39,6 +39,7 @@
 		D1B973023015341900B64B10 /* StreamingSearchURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B973003015341900B64B10 /* StreamingSearchURL.swift */; };
 		D1B973033015341900B64B10 /* StreamingSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B973013015341900B64B10 /* StreamingSearchView.swift */; };
 		D1FE001A301638DA00DA12EE /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = D1FE0019301638DA00DA12EE /* LICENSE */; };
+		D1FE001D30163BD700DA12EE /* WianuIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = D1FE001B30163BD700DA12EE /* WianuIcon.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -75,6 +76,7 @@
 		D1B973003015341900B64B10 /* StreamingSearchURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingSearchURL.swift; sourceTree = "<group>"; };
 		D1B973013015341900B64B10 /* StreamingSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingSearchView.swift; sourceTree = "<group>"; };
 		D1FE0019301638DA00DA12EE /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		D1FE001B30163BD700DA12EE /* WianuIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = WianuIcon.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,6 +96,7 @@
 				D1B972693015341900B64B10 /* Wianu */,
 				D14338A43013E5B800BA847C /* Products */,
 				D1B9723F3015325D00B64B10 /* README.md */,
+				D1FE001C30163BD700DA12EE /* assets */,
 				D1FE0019301638DA00DA12EE /* LICENSE */,
 			);
 			sourceTree = "<group>";
@@ -239,6 +242,14 @@
 			path = Wianu;
 			sourceTree = "<group>";
 		};
+		D1FE001C30163BD700DA12EE /* assets */ = {
+			isa = PBXGroup;
+			children = (
+				D1FE001B30163BD700DA12EE /* WianuIcon.png */,
+			);
+			path = assets;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -300,6 +311,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D1FE001D30163BD700DA12EE /* WianuIcon.png in Resources */,
 				D10EF48E3015F2800070703E /* WianuIcon.icon in Resources */,
 				D1B9726A3015341900B64B10 /* Assets.xcassets in Resources */,
 				D1FE001A301638DA00DA12EE /* LICENSE in Resources */,
