@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		D10EF48E3015F2800070703E /* WianuIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = D10EF48D3015F2800070703E /* WianuIcon.icon */; };
+		D11E823430177C800092ECC8 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = D11E823330177C800092ECC8 /* Sparkle */; };
+		D11E823A30178A6D0092ECC8 /* Wianu.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = D11E823930178A6D0092ECC8 /* Wianu.entitlements */; };
 		D1B972403015325D00B64B10 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = D1B9723F3015325D00B64B10 /* README.md */; };
 		D1B9726A3015341900B64B10 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D1B972673015341900B64B10 /* Assets.xcassets */; };
 		D1B9726C3015341900B64B10 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B972413015341900B64B10 /* AppModel.swift */; };
@@ -44,6 +46,8 @@
 
 /* Begin PBXFileReference section */
 		D10EF48D3015F2800070703E /* WianuIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = WianuIcon.icon; sourceTree = "<group>"; };
+		D11E8238301787330092ECC8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		D11E823930178A6D0092ECC8 /* Wianu.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Wianu.entitlements; sourceTree = "<group>"; };
 		D14338A33013E5B800BA847C /* Wianu.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Wianu.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1B9723F3015325D00B64B10 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		D1B972413015341900B64B10 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
@@ -79,11 +83,20 @@
 		D1FE001B30163BD700DA12EE /* WianuIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = WianuIcon.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		D11E823530177C9C0092ECC8 /* Updates */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Updates;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		D14338A03013E5B800BA847C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D11E823430177C800092ECC8 /* Sparkle in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -198,6 +211,7 @@
 		D1B972603015341900B64B10 /* Infrastructure */ = {
 			isa = PBXGroup;
 			children = (
+				D11E823530177C9C0092ECC8 /* Updates */,
 				D1B9725F3015341900B64B10 /* Persistence */,
 			);
 			path = Infrastructure;
@@ -232,12 +246,14 @@
 		D1B972693015341900B64B10 /* Wianu */ = {
 			isa = PBXGroup;
 			children = (
+				D11E8238301787330092ECC8 /* Info.plist */,
 				D1B972443015341900B64B10 /* App */,
 				D1B9725D3015341900B64B10 /* Features */,
 				D1B972603015341900B64B10 /* Infrastructure */,
 				D1B972663015341900B64B10 /* Shared */,
 				D1B972673015341900B64B10 /* Assets.xcassets */,
 				D10EF48D3015F2800070703E /* WianuIcon.icon */,
+				D11E823930178A6D0092ECC8 /* Wianu.entitlements */,
 			);
 			path = Wianu;
 			sourceTree = "<group>";
@@ -265,8 +281,12 @@
 			);
 			dependencies = (
 			);
+			fileSystemSynchronizedGroups = (
+				D11E823530177C9C0092ECC8 /* Updates */,
+			);
 			name = Wianu;
 			packageProductDependencies = (
+				D11E823330177C800092ECC8 /* Sparkle */,
 			);
 			productName = Wianu;
 			productReference = D14338A33013E5B800BA847C /* Wianu.app */;
@@ -296,6 +316,9 @@
 			);
 			mainGroup = D143389A3013E5B800BA847C;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				D11E823230177C800092ECC8 /* XCRemoteSwiftPackageReference "Sparkle" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = D14338A43013E5B800BA847C /* Products */;
 			projectDirPath = "";
@@ -311,6 +334,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D11E823A30178A6D0092ECC8 /* Wianu.entitlements in Resources */,
 				D1FE001D30163BD700DA12EE /* WianuIcon.png in Resources */,
 				D10EF48E3015F2800070703E /* WianuIcon.icon in Resources */,
 				D1B9726A3015341900B64B10 /* Assets.xcassets in Resources */,
@@ -484,7 +508,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = WianuIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				"CODE_SIGN_ENTITLEMENTS[sdk=*]" = Wianu/Wianu.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -503,13 +528,16 @@
 				ENABLE_RESOURCE_ACCESS_USB = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Wianu/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = timwehrle.Wianu;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -528,7 +556,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = WianuIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				"CODE_SIGN_ENTITLEMENTS[sdk=*]" = Wianu/Wianu.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -547,13 +576,16 @@
 				ENABLE_RESOURCE_ACCESS_USB = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Wianu/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = timwehrle.Wianu;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -588,6 +620,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		D11E823230177C800092ECC8 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.9.4;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		D11E823330177C800092ECC8 /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D11E823230177C800092ECC8 /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = D143389B3013E5B800BA847C /* Project object */;
 }
