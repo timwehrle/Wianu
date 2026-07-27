@@ -1,0 +1,367 @@
+name: Release Wianu
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  APP_NAME: Wianu
+  SCHEME: Wianu
+  PROJECT_PATH: Wianu.xcodeproj
+  ARCHIVE_PATH: ${{ github.workspace }}/build/Wianu.xcarchive
+  EXPORT_PATH: ${{ github.workspace }}/build/export
+  APPCAST_PATH: ${{ github.workspace }}/build/appcast
+  SPARKLE_VERSION: "2.9.3"
+
+jobs:
+  release:
+    runs-on: macos-26
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Determine release version
+        id: version
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          TAG="${GITHUB_REF_NAME}"
+
+          if [[ ! "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+([.-][A-Za-z0-9.-]+)?$ ]]; then
+            echo "Invalid release tag: $TAG"
+            exit 1
+          fi
+
+          VERSION="${TAG#v}"
+          ZIP_NAME="${APP_NAME}-${VERSION}.zip"
+
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "zip_name=$ZIP_NAME" >> "$GITHUB_OUTPUT"
+
+      - name: Install signing certificate
+        shell: bash
+        env:
+          CERTIFICATE_BASE64: ${{ secrets.DEVELOPER_ID_CERT_BASE64 }}
+          CERTIFICATE_PASSWORD: ${{ secrets.DEVELOPER_ID_CERT_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+        run: |
+          set -euo pipefail
+
+          CERTIFICATE_PATH="$RUNNER_TEMP/developer_id.p12"
+          KEYCHAIN_PATH="$RUNNER_TEMP/wianu-signing.keychain-db"
+
+          echo -n "$CERTIFICATE_BASE64" | base64 --decode > "$CERTIFICATE_PATH"
+
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+
+          security import "$CERTIFICATE_PATH" -P "$CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
+
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+
+          security list-keychains -d user -s "$KEYCHAIN_PATH"
+
+          security find-identity -v -p codesigning "$KEYCHAIN_PATH"
+
+      - name: Resolve Swift packages
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          xcodebuild -resolvePackageDependencies -project "$PROJECT_PATH" -scheme "$SCHEME"
+
+      - name: Archive application
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p "$(dirname "$ARCHIVE_PATH")"
+
+          xcodebuild \
+            archive \
+            -project "$PROJECT_PATH" \
+            -scheme "$SCHEME" \
+            -configuration Release \
+            -destination "generic/platform=macOS" \
+            -archivePath "$ARCHIVE_PATH" \
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY="Developer ID Application" \
+            OTHER_CODE_SIGN_FLAGS="--timestamp" \
+            ENABLE_HARDENED_RUNTIME=YES
+
+      - name: Export archive
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          rm -rf "$EXPORT_PATH"
+          mkdir -p "$EXPORT_PATH"
+
+          xcodebuild \
+            -exportArchive \
+            -archivePath "$ARCHIVE_PATH" \
+            -exportPath "$EXPORT_PATH" \
+            -exportOptionsPlist scripts/ExportOptions.plist
+
+          test -d "$EXPORT_PATH/$APP_NAME.app"
+
+      - name: Verify version and signature
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          APP_PATH="$EXPORT_PATH/$APP_NAME.app"
+          PLIST="$APP_PATH/Contents/Info.plist"
+
+          ACTUAL_VERSION=$(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" "$PLIST")
+
+          BUILD_NUMBER=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$PLIST")
+
+          echo "Version: $ACTUAL_VERSION"
+          echo "Build: $BUILD_NUMBER"
+
+          if [[ "$ACTUAL_VERSION" != "$EXPECTED_VERSION" ]]; then
+            echo "Tag version $EXPECTED_VERSION does not match app version $ACTUAL_VERSION"
+            exit 1
+          fi
+
+          codesign \
+            --verify \
+            --deep \
+            --strict \
+            --verbose=2 \
+            "$APP_PATH"
+
+          codesign \
+            -d \
+            --entitlements :- \
+            "$APP_PATH"
+
+      - name: Prepare notarization credentials
+        shell: bash
+        env:
+          API_KEY_BASE64: ${{ secrets.APPLE_API_KEY_BASE64 }}
+          API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+        run: |
+          set -euo pipefail
+
+          API_KEY_PATH="$RUNNER_TEMP/AuthKey_${API_KEY_ID}.p8"
+          echo -n "$API_KEY_BASE64" | base64 --decode > "$API_KEY_PATH"
+          chmod 600 "$API_KEY_PATH"
+
+      - name: Create notarization ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          ditto \
+            -c \
+            -k \
+            --sequesterRsrc \
+            --keepParent \
+            "$EXPORT_PATH/$APP_NAME.app" \
+            "$RUNNER_TEMP/notarization.zip"
+
+      - name: Submit for notarization
+        shell: bash
+        env:
+          API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+          API_ISSUER_ID: ${{ secrets.APPLE_API_ISSUER_ID }}
+        run: |
+          set -euo pipefail
+
+          xcrun notarytool submit \
+            "$RUNNER_TEMP/notarization.zip" \
+            --key "$RUNNER_TEMP/AuthKey_${API_KEY_ID}.p8" \
+            --key-id "$API_KEY_ID" \
+            --issuer "$API_ISSUER_ID" \
+            --wait
+
+      - name: Staple notarization ticket
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          APP_PATH="$EXPORT_PATH/$APP_NAME.app"
+
+          xcrun stapler staple "$APP_PATH"
+          xcrun stapler validate "$APP_PATH"
+
+          spctl \
+            --assess \
+            --type execute \
+            --verbose=4 \
+            "$APP_PATH"
+
+      - name: Create final Sparkle archive
+        shell: bash
+        env:
+          ZIP_NAME: ${{ steps.version.outputs.zip_name }}
+        run: |
+          set -euo pipefail
+
+          mkdir -p "$APPCAST_PATH"
+
+          ditto \
+            -c \
+            -k \
+            --sequesterRsrc \
+            --keepParent \
+            "$EXPORT_PATH/$APP_NAME.app" \
+            "$APPCAST_PATH/$ZIP_NAME"
+
+          unzip -t "$APPCAST_PATH/$ZIP_NAME"
+
+      - name: Download Sparkle publishing tools
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          SPARKLE_ARCHIVE="$RUNNER_TEMP/Sparkle.tar.xz"
+          SPARKLE_DIRECTORY="$RUNNER_TEMP/Sparkle"
+
+          curl \
+            --fail \
+            --location \
+            --retry 3 \
+            "https://github.com/sparkle-project/Sparkle/releases/download/${SPARKLE_VERSION}/Sparkle-${SPARKLE_VERSION}.tar.xz" \
+            --output "$SPARKLE_ARCHIVE"
+
+          mkdir -p "$SPARKLE_DIRECTORY"
+          tar -xf "$SPARKLE_ARCHIVE" -C "$SPARKLE_DIRECTORY"
+
+          test -x "$SPARKLE_DIRECTORY/bin/generate_appcast"
+
+          echo "SPARKLE_BIN=$SPARKLE_DIRECTORY/bin" >> "$GITHUB_ENV"
+
+      - name: Create GitHub release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+          ZIP_NAME: ${{ steps.version.outputs.zip_name }}
+        run: |
+          set -euo pipefail
+
+          gh release create "$TAG" \
+            "$APPCAST_PATH/$ZIP_NAME" \
+            --title "$APP_NAME $TAG" \
+            --generate-notes \
+            --verify-tag
+
+      - name: Generate Sparkle appcast
+        shell: bash
+        env:
+          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          set -euo pipefail
+
+          DOWNLOAD_PREFIX="https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}/"
+
+          printf '%s' "$SPARKLE_PRIVATE_KEY" |
+            "$SPARKLE_BIN/generate_appcast" \
+              --ed-key-file - \
+              --download-url-prefix "$DOWNLOAD_PREFIX" \
+              "$APPCAST_PATH"
+
+          test -f "$APPCAST_PATH/appcast.xml"
+
+          plutil -lint "$APPCAST_PATH/appcast.xml" || true
+          cat "$APPCAST_PATH/appcast.xml"
+
+      - name: Configure deployment SSH
+        shell: bash
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+        run: |
+          set -euo pipefail
+
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/wianu-deploy
+          chmod 600 ~/.ssh/wianu-deploy
+
+          ssh-keyscan \
+            -H "$DEPLOY_HOST" \
+            >> ~/.ssh/known_hosts
+
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Deploy appcast
+        shell: bash
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          set -euo pipefail
+
+          rsync \
+            --archive \
+            --verbose \
+            --compress \
+            --chmod=F644 \
+            -e "ssh -i ~/.ssh/wianu-deploy" \
+            "$APPCAST_PATH/appcast.xml" \
+            "${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}/appcast.xml"
+
+      - name: Verify deployed feed
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          curl \
+            --fail \
+            --location \
+            --retry 5 \
+            --retry-delay 3 \
+            "https://timwehrle.de/labs/wianu/appcast.xml" \
+            --output "$RUNNER_TEMP/deployed-appcast.xml"
+
+          grep -F \
+            "https://github.com/${GITHUB_REPOSITORY}/releases/download/${{ steps.version.outputs.tag }}/${{ steps.version.outputs.zip_name }}" \
+            "$RUNNER_TEMP/deployed-appcast.xml"
+
+      - name: Upload appcast to GitHub release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          set -euo pipefail
+
+          gh release upload "$TAG" \
+            "$APPCAST_PATH/appcast.xml" \
+            --clobber
+
+      - name: Clean signing material
+        if: always()
+        shell: bash
+        run: |
+          security delete-keychain \
+            "$RUNNER_TEMP/wianu-signing.keychain-db" \
+            2>/dev/null || true
+
+          rm -f \
+            "$RUNNER_TEMP/developer-id.p12" \
+            "$RUNNER_TEMP"/AuthKey_*.p8 \
+            ~/.ssh/wianu-deploy
