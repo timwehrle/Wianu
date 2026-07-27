@@ -75,7 +75,9 @@ jobs:
 
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
 
-          security list-keychains -d user -s "$KEYCHAIN_PATH" login.keychain
+          EXISTING_KEYCHAINS=$(security list-keychains -d user | sed 's/[" ]//g')
+
+          security list-keychains -d user -s "$KEYCHAIN_PATH" $EXISTING_KEYCHAINS
 
           security find-identity -v -p codesigning "$KEYCHAIN_PATH"
 
