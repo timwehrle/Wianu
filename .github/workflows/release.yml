@@ -254,21 +254,6 @@ jobs:
 
           echo "SPARKLE_BIN=$SPARKLE_DIRECTORY/bin" >> "$GITHUB_ENV"
 
-      - name: Create GitHub release
-        shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
-          TAG: ${{ steps.version.outputs.tag }}
-          ZIP_NAME: ${{ steps.version.outputs.zip_name }}
-        run: |
-          set -euo pipefail
-
-          gh release create "$TAG" \
-            "$APPCAST_PATH/$ZIP_NAME" \
-            --title "$APP_NAME $TAG" \
-            --generate-notes \
-            --verify-tag
-
       - name: Generate Sparkle appcast
         shell: bash
         env:
@@ -287,8 +272,32 @@ jobs:
 
           test -f "$APPCAST_PATH/appcast.xml"
 
+          if ! grep -Fq \
+            'sparkle:edSignature=' \
+            "$APPCAST_PATH/appcast.xml"
+          then
+            echo "Sparkle did not sign the update archive."
+            echo "Verify that SPARKLE_PRIVATE_KEY matches SUPublicEDKey."
+            exit 1
+          fi
+
           plutil -lint "$APPCAST_PATH/appcast.xml" || true
           cat "$APPCAST_PATH/appcast.xml"
+
+      - name: Create GitHub release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+          ZIP_NAME: ${{ steps.version.outputs.zip_name }}
+        run: |
+          set -euo pipefail
+
+          gh release create "$TAG" \
+            "$APPCAST_PATH/$ZIP_NAME" \
+            --title "$APP_NAME $TAG" \
+            --generate-notes \
+            --verify-tag
 
       - name: Configure deployment SSH
         shell: bash
@@ -345,6 +354,10 @@ jobs:
 
           grep -F \
             "https://github.com/${GITHUB_REPOSITORY}/releases/download/${{ steps.version.outputs.tag }}/${{ steps.version.outputs.zip_name }}" \
+            "$RUNNER_TEMP/deployed-appcast.xml"
+
+          grep -F \
+            'sparkle:edSignature=' \
             "$RUNNER_TEMP/deployed-appcast.xml"
 
       - name: Upload appcast to GitHub release
