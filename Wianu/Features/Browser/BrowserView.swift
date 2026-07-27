@@ -26,7 +26,7 @@ struct BrowserView: View {
                 BrowserPaneView(
                     destinationURL: destinationURL,
                     page: page,
-                    onNavigationFinished: establishHistoryRootIfNeeded
+                    onNavigationFinished: establishHistoryRoot
                 )
             } else {
                 ContentUnavailableView(
@@ -169,6 +169,7 @@ struct BrowserView: View {
 
     private var backItem: WebPage.BackForwardList.Item? {
         guard
+            let historyRootID,
             page.backForwardList.currentItem?.id != historyRootID
         else { return nil }
 
@@ -265,13 +266,21 @@ struct BrowserView: View {
             }
         } catch is CancellationError {
             return
+        } catch where isCancelledNavigation(error) {
+            return
         } catch {
             assertionFailure("History navigation failed: \(error)")
         }
     }
 
-    private func establishHistoryRootIfNeeded() {
+    private func establishHistoryRoot() {
         guard historyRootID == nil else { return }
         historyRootID = page.backForwardList.currentItem?.id
+    }
+
+    private func isCancelledNavigation(_ error: Error) -> Bool {
+        let error = error as NSError
+        return error.domain == NSURLErrorDomain
+            && error.code == NSURLErrorCancelled
     }
 }
