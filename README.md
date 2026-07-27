@@ -85,6 +85,12 @@ The importer expects the standard Letterboxd columns, including `Name` and
 Availability and playback depend on the streaming service, your subscription,
 and your region. A provider may also restrict playback in embedded browsers.
 
+## Feature requests
+
+Feature requests are very welcome! I am always happy to hear your ideas for
+Wianu. Please share them using the
+[feature request issue template](.github/ISSUE_TEMPLATE/feature-request.md).
+
 ## Build from source
 
 1. Clone this repository.
