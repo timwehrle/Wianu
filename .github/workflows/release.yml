@@ -323,10 +323,12 @@ jobs:
             --archive \
             --verbose \
             --compress \
-            --chmod=F644 \
             -e "ssh -i ~/.ssh/wianu-deploy" \
             "$APPCAST_PATH/appcast.xml" \
             "${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}/appcast.xml"
+
+          ssh -i ~/.ssh/wianu-deploy "${DEPLOY_USER}@${DEPLOY_HOST}" \
+            "chmod 644 ${DEPLOY_PATH}/appcast.xml"
 
       - name: Verify deployed feed
         shell: bash
