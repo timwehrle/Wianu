@@ -125,6 +125,8 @@ jobs:
 
       - name: Verify version and signature
         shell: bash
+        env:
+          EXPECTED_VERSION: ${{ steps.version.outputs.version }}
         run: |
           set -euo pipefail
 
