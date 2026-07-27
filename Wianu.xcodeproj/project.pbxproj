@@ -106,12 +106,12 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		D11E823D3017921C0092ECC8 /* scripts */ = {
+		D11E823D3017921C0092ECC8 /* Scripts */ = {
 			isa = PBXGroup;
 			children = (
 				D11E823C3017921C0092ECC8 /* ExportOptions.plist */,
 			);
-			path = scripts;
+			path = Scripts;
 			sourceTree = "<group>";
 		};
 		D11E8240301798520092ECC8 /* workflows */ = {
@@ -134,11 +134,11 @@
 			isa = PBXGroup;
 			children = (
 				D11E8241301798520092ECC8 /* .github */,
-				D11E823D3017921C0092ECC8 /* scripts */,
+				D11E823D3017921C0092ECC8 /* Scripts */,
 				D1B972693015341900B64B10 /* Wianu */,
 				D14338A43013E5B800BA847C /* Products */,
 				D1B9723F3015325D00B64B10 /* README.md */,
-				D1FE001C30163BD700DA12EE /* assets */,
+				D1FE001C30163BD700DA12EE /* Assets */,
 				D1FE0019301638DA00DA12EE /* LICENSE */,
 			);
 			sourceTree = "<group>";
@@ -287,12 +287,12 @@
 			path = Wianu;
 			sourceTree = "<group>";
 		};
-		D1FE001C30163BD700DA12EE /* assets */ = {
+		D1FE001C30163BD700DA12EE /* Assets */ = {
 			isa = PBXGroup;
 			children = (
 				D1FE001B30163BD700DA12EE /* WianuIcon.png */,
 			);
-			path = assets;
+			path = Assets;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

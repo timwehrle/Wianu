@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/WianuIcon.png" width="120" alt="Wianu app icon">
+  <img src="Assets/WianuIcon.png" width="120" alt="Wianu app icon">
 </p>
 
 <h1 align="center">Wianu</h1>
@@ -8,7 +8,7 @@
   All your streaming. One home.
 </p>
 
-<img src="assets/showcase.png">
+<img src="Assets/showcase.png">
 
 
 Wianu is a lightweight browser for organizing streaming websites, shows, and

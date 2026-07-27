@@ -119,7 +119,7 @@ jobs:
             -exportArchive \
             -archivePath "$ARCHIVE_PATH" \
             -exportPath "$EXPORT_PATH" \
-            -exportOptionsPlist scripts/ExportOptions.plist
+            -exportOptionsPlist Scripts/ExportOptions.plist
 
           test -d "$EXPORT_PATH/$APP_NAME.app"
 
