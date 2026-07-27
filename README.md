@@ -8,6 +8,10 @@
   All your streaming. One home.
 </p>
 
+<img src="assets/showcase.png">
+
+<br>
+
 Wianu is a lightweight browser for organizing streaming websites, shows, and
 movies in one place. Add the services you use, search across them, keep links
 to shows you are watching, and maintain a watchlist without switching between
@@ -38,7 +42,7 @@ Progress made on another device cannot change the saved link.
 
 ### Example
 
-1. Open the detail page for *How I Met Your Mother*.
+1. Open the detail page for _How I Met Your Mother_.
 2. Select the Continue Watching button in Wianu's toolbar.
 3. Watch on any device signed in to the same streaming account.
 4. Open the show from Wianu and select the provider's Continue or Resume
