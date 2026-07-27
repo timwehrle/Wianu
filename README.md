@@ -5,7 +5,7 @@
 <h1 align="center">Wianu</h1>
 
 <p align="center">
-  All your streaming sites in one Mac app.
+  All your streaming. One home.
 </p>
 
 Wianu is a lightweight browser for organizing streaming websites, shows, and
