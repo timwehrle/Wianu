@@ -1,7 +1,7 @@
 import Foundation
 
 struct LetterboxdWatchlistImportResult {
-    let items: [LetterboxdWatchlistItem]
+    let items: [WatchlistItem]
     let skippedRowCount: Int
 }
 
@@ -58,7 +58,7 @@ enum LetterboxdWatchlistImporter {
         let yearColumn = columns["year"]
         let dateColumn = columns["date"]
         var seenURLs = Set<String>()
-        var items: [LetterboxdWatchlistItem] = []
+        var items: [WatchlistItem] = []
         var skippedRowCount = 0
 
         for row in rows.dropFirst() where row.contains(where: { !$0.isEmpty }) {
@@ -97,7 +97,7 @@ enum LetterboxdWatchlistImporter {
             }
 
             items.append(
-                LetterboxdWatchlistItem(
+                WatchlistItem(
                     title: title,
                     year: year,
                     letterboxdURL: url,

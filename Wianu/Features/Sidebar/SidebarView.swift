@@ -10,10 +10,13 @@ struct SidebarView: View {
     @State private var deletingSite: SavedSite?
     @State private var deletingItem: ContinueWatchingItem?
     @State private var showingWatchlistImporter = false
+    @State private var showingAddWatchlistItem = false
+    @State private var editingWatchlistItem: WatchlistItem?
+    @State private var deletingWatchlistItem: WatchlistItem?
     @State private var importMessage: String?
     @State private var sitesExpanded = true
     @State private var continueWatchingExpanded = true
-    @State private var letterboxdWatchlistExpanded = true
+    @State private var watchlistExpanded = true
 
     var body: some View {
         List(selection: selectionBinding) {
@@ -69,18 +72,42 @@ struct SidebarView: View {
                 }
             }
 
-            Section("Letterboxd Watchlist", isExpanded: $letterboxdWatchlistExpanded) {
-                ForEach(model.letterboxdWatchlistStore.items) { item in
-                    LetterboxdWatchlistRow(item: item)
+            Section("Watchlist", isExpanded: $watchlistExpanded) {
+                ForEach(model.watchlistStore.items) { item in
+                    WatchlistRow(item: item)
                         .tag(
-                            SidebarSelection.letterboxdWatchlistItem(item.id)
+                            SidebarSelection.watchlistItem(item.id)
                         )
+                        .contextMenu {
+                            if item.source == .custom {
+                                Button("Edit") {
+                                    editingWatchlistItem = item
+                                }
+
+                                Divider()
+                            }
+
+                            Button("Remove", role: .destructive) {
+                                deletingWatchlistItem = item
+                            }
+                        }
                 }
+
+                Button {
+                    showingAddWatchlistItem = true
+                } label: {
+                    Label("Add Movie", systemImage: "plus")
+                        .foregroundStyle(.secondary)
+                }
+                .buttonStyle(.plain)
 
                 Button {
                     showingWatchlistImporter = true
                 } label: {
-                    Label("Import Watchlist…", systemImage: "square.and.arrow.down")
+                    Label(
+                        "Import Letterboxd CSV…",
+                        systemImage: "square.and.arrow.down"
+                    )
                         .foregroundStyle(.secondary)
                 }
                 .buttonStyle(.plain)
@@ -97,6 +124,25 @@ struct SidebarView: View {
         .sheet(item: $renamingItem) { item in
             RenameContinueWatchingView(item: item) { title in
                 model.continueWatchingStore.rename(id: item.id, to: title)
+            }
+        }
+        .sheet(isPresented: $showingAddWatchlistItem) {
+            WatchlistItemEditorView { title, year, url in
+                model.watchlistStore.add(
+                    title: title,
+                    year: year,
+                    url: url
+                )
+            }
+        }
+        .sheet(item: $editingWatchlistItem) { item in
+            WatchlistItemEditorView(item: item) { title, year, url in
+                model.watchlistStore.update(
+                    id: item.id,
+                    title: title,
+                    year: year,
+                    url: url
+                )
             }
         }
         .fileImporter(
@@ -146,6 +192,21 @@ struct SidebarView: View {
         } message: { message in
             Text(message)
         }
+        .alert(
+            "Remove from Watchlist?",
+            isPresented: presenting($deletingWatchlistItem),
+            presenting: deletingWatchlistItem
+        ) { item in
+            Button("Remove", role: .destructive) {
+                model.removeWatchlistItem(item)
+                deletingWatchlistItem = nil
+            }
+            Button("Cancel", role: .cancel) {
+                deletingWatchlistItem = nil
+            }
+        } message: { item in
+            Text("“\(item.title)” will be removed.")
+        }
     }
 
     private var selectionBinding: Binding<SidebarSelection?> {
@@ -184,9 +245,9 @@ struct SidebarView: View {
             let result = try LetterboxdWatchlistImporter.importItems(
                 from: Data(contentsOf: url)
             )
-            model.replaceLetterboxdWatchlist(with: result.items)
+            model.replaceImportedWatchlistItems(with: result.items)
 
-            if let error = model.letterboxdWatchlistStore.persistenceError {
+            if let error = model.watchlistStore.persistenceError {
                 importMessage = """
                     Imported \(result.items.count) items for this session, \
                     but they could not be saved: \(error)

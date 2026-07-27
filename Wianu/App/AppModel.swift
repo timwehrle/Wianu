@@ -6,7 +6,7 @@ import Observation
 final class AppModel {
     let siteStore: SiteStore
     let continueWatchingStore: ContinueWatchingStore
-    let letterboxdWatchlistStore: LetterboxdWatchlistStore
+    let watchlistStore: WatchlistStore
 
     private(set) var selection: SidebarSelection?
     private(set) var destinationURL: URL?
@@ -20,7 +20,7 @@ final class AppModel {
     init() {
         siteStore = SiteStore()
         continueWatchingStore = ContinueWatchingStore()
-        letterboxdWatchlistStore = LetterboxdWatchlistStore()
+        watchlistStore = WatchlistStore()
         userDefaults = .standard
         restoreSelection()
     }
@@ -28,12 +28,12 @@ final class AppModel {
     init(
         siteStore: SiteStore,
         continueWatchingStore: ContinueWatchingStore,
-        letterboxdWatchlistStore: LetterboxdWatchlistStore,
+        watchlistStore: WatchlistStore,
         userDefaults: UserDefaults
     ) {
         self.siteStore = siteStore
         self.continueWatchingStore = continueWatchingStore
-        self.letterboxdWatchlistStore = letterboxdWatchlistStore
+        self.watchlistStore = watchlistStore
         self.userDefaults = userDefaults
         restoreSelection()
     }
@@ -56,8 +56,8 @@ final class AppModel {
             siteStore.sites.first { $0.id == siteID }?.url
         case .continueWatching(let itemID):
             continueWatchingStore.item(id: itemID)?.url
-        case .letterboxdWatchlistItem(let itemID):
-            letterboxdWatchlistStore.item(id: itemID)?.letterboxdURL
+        case .watchlistItem(let itemID):
+            watchlistStore.item(id: itemID)?.url
         case nil:
             nil
         }
@@ -114,24 +114,31 @@ final class AppModel {
         continueWatchingStore.remove(id: item.id)
     }
 
-    func replaceLetterboxdWatchlist(
-        with items: [LetterboxdWatchlistItem]
+    func replaceImportedWatchlistItems(
+        with items: [WatchlistItem]
     ) {
-        let selectedItemID: LetterboxdWatchlistItem.ID?
-        if case .letterboxdWatchlistItem(let itemID) = selection {
+        let selectedItemID: WatchlistItem.ID?
+        if case .watchlistItem(let itemID) = selection {
             selectedItemID = itemID
         } else {
             selectedItemID = nil
         }
 
-        letterboxdWatchlistStore.replace(with: items)
+        watchlistStore.replace(with: items)
 
         if let selectedItemID,
-            letterboxdWatchlistStore.item(id: selectedItemID) == nil
+            watchlistStore.item(id: selectedItemID) == nil
         {
             selection = nil
             destinationURL = nil
         }
+    }
+
+    func removeWatchlistItem(_ item: WatchlistItem) {
+        if selection == .watchlistItem(item.id) {
+            select(nil)
+        }
+        watchlistStore.remove(id: item.id)
     }
 
     func activateSite(matching url: URL?) {
@@ -180,6 +187,36 @@ final class AppModel {
         }
     }
 
+    func toggleWatchlist(title: String, url: URL) {
+        if let item = watchlistStore.item(matching: url) {
+            removeWatchlistItem(item)
+            return
+        }
+
+        let trimmedTitle = title.trimmingCharacters(
+            in: .whitespacesAndNewlines
+        )
+        let savedTitle: String
+
+        if let site = selectedSite {
+            savedTitle = PageTitleCleaner.clean(
+                trimmedTitle,
+                siteName: site.name
+            )
+        } else {
+            savedTitle =
+                trimmedTitle.isEmpty
+                ? url.host() ?? "Untitled Movie"
+                : trimmedTitle
+        }
+
+        watchlistStore.add(
+            title: savedTitle,
+            year: nil,
+            url: url
+        )
+    }
+
     private var selectedSiteID: SavedSite.ID? {
         switch selection {
         case .search:
@@ -188,7 +225,7 @@ final class AppModel {
             siteID
         case .continueWatching(let itemID):
             continueWatchingStore.item(id: itemID)?.siteID
-        case .letterboxdWatchlistItem:
+        case .watchlistItem:
             nil
         case nil:
             nil

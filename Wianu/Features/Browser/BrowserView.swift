@@ -5,6 +5,7 @@ struct BrowserView: View {
     @Bindable var model: AppModel
     @State private var router: BrowserNavigationRouter
     @State private var page: WebPage
+    @State private var showsLoadingIndicator = false
 
     init(model: AppModel) {
         self.model = model
@@ -39,6 +40,15 @@ struct BrowserView: View {
         .onChange(of: page.url) { _, url in
             model.activateSite(matching: url)
         }
+        .task(id: page.isLoading) {
+            if page.isLoading {
+                try? await Task.sleep(for: .milliseconds(200))
+                guard !Task.isCancelled, page.isLoading else { return }
+                showsLoadingIndicator = true
+            } else {
+                showsLoadingIndicator = false
+            }
+        }
         .toolbar {
             ToolbarItem(placement: .navigation) {
                 Button(action: goHome) {
@@ -52,6 +62,22 @@ struct BrowserView: View {
                 if model.destinationURL != nil {
                     PageTitleToolbarView(title: displayedTitle)
                 }
+            }
+
+            ToolbarItem(placement: .primaryAction) {
+                Button(action: toggleWatchlist) {
+                    Image(
+                        systemName: currentPageIsOnWatchlist
+                            ? "bookmark.fill"
+                            : "bookmark"
+                    )
+                }
+                .disabled(!canSaveCurrentPage)
+                .help(
+                    currentPageIsOnWatchlist
+                        ? "Remove from Watchlist"
+                        : "Add to Watchlist"
+                )
             }
 
             ToolbarItem(placement: .primaryAction) {
@@ -71,12 +97,21 @@ struct BrowserView: View {
             }
 
             ToolbarItem(placement: .primaryAction) {
-                Button(action: reload) {
-                    Image(systemName: "arrow.clockwise")
+                if showsLoadingIndicator {
+                    Button(action: page.stopLoading) {
+                        ProgressView()
+                            .controlSize(.small)
+                    }
+                    .help("Stop Loading")
+                    .accessibilityLabel("Stop Loading")
+                } else {
+                    Button(action: reload) {
+                        Image(systemName: "arrow.clockwise")
+                    }
+                    .help("Reload")
+                    .disabled(page.url == nil)
+                    .keyboardShortcut("r", modifiers: .command)
                 }
-                .help("Reload")
-                .disabled(page.url == nil)
-                .keyboardShortcut("r", modifiers: .command)
             }
         }
     }
@@ -102,6 +137,11 @@ struct BrowserView: View {
     private var currentPageIsSaved: Bool {
         guard let url = page.url else { return false }
         return model.continueWatchingStore.contains(url: url)
+    }
+
+    private var currentPageIsOnWatchlist: Bool {
+        guard let url = page.url else { return false }
+        return model.watchlistStore.contains(url: url)
     }
 
     private var homeURL: URL? {
@@ -134,6 +174,11 @@ struct BrowserView: View {
     private func toggleContinueWatching() {
         guard let url = page.url else { return }
         model.toggleContinueWatching(title: page.title, url: url)
+    }
+
+    private func toggleWatchlist() {
+        guard let url = page.url else { return }
+        model.toggleWatchlist(title: page.title, url: url)
     }
 
     private func reload() {
