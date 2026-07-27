@@ -10,7 +10,6 @@
 
 <img src="assets/showcase.png">
 
-<br>
 
 Wianu is a lightweight browser for organizing streaming websites, shows, and
 movies in one place. Add the services you use, search across them, keep links
