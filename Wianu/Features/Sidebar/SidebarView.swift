@@ -79,6 +79,18 @@ struct SidebarView: View {
                             SidebarSelection.watchlistItem(item.id)
                         )
                         .contextMenu {
+                            if !searchableSites.isEmpty {
+                                Menu("Search on…") {
+                                    ForEach(searchableSites) { site in
+                                        Button(site.name) {
+                                            model.search(item.title, in: site)
+                                        }
+                                    }
+                                }
+
+                                Divider()
+                            }
+
                             if item.source == .custom {
                                 Button("Edit") {
                                     editingWatchlistItem = item
@@ -214,6 +226,12 @@ struct SidebarView: View {
             get: { model.selection },
             set: model.select
         )
+    }
+
+    private var searchableSites: [SavedSite] {
+        model.siteStore.sites.filter {
+            $0.resolvedSearchURLTemplate != nil
+        }
     }
 
     private func site(for item: ContinueWatchingItem) -> SavedSite? {

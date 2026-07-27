@@ -20,9 +20,11 @@ browser tabs.
 
 - Add and organize streaming websites in a sidebar.
 - Search supported sites from one search screen.
+- Search for watchlist movies on any configured site from their context menu.
 - Save show pages under **Continue Watching**.
 - Add movies to a built-in watchlist.
 - Import a watchlist exported from Letterboxd as CSV.
+- Navigate backward and forward through the current browsing session.
 - Open streaming sites directly inside the app.
 
 ## Continue Watching

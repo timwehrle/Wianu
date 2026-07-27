@@ -6,6 +6,7 @@ struct BrowserView: View {
     @State private var router: BrowserNavigationRouter
     @State private var page: WebPage
     @State private var showsLoadingIndicator = false
+    @State private var historyRootID: WebPage.BackForwardList.Item.ID?
 
     init(model: AppModel) {
         self.model = model
@@ -22,7 +23,11 @@ struct BrowserView: View {
     var body: some View {
         Group {
             if let destinationURL = model.destinationURL {
-                BrowserPaneView(destinationURL: destinationURL, page: page)
+                BrowserPaneView(
+                    destinationURL: destinationURL,
+                    page: page,
+                    onNavigationFinished: establishHistoryRootIfNeeded
+                )
             } else {
                 ContentUnavailableView(
                     "No Site Selected",
@@ -50,6 +55,24 @@ struct BrowserView: View {
             }
         }
         .toolbar {
+            ToolbarItem(placement: .navigation) {
+                Button(action: goBack) {
+                    Image(systemName: "chevron.left")
+                }
+                .disabled(backItem == nil)
+                .help("Go Back")
+                .keyboardShortcut("[", modifiers: .command)
+            }
+
+            ToolbarItem(placement: .navigation) {
+                Button(action: goForward) {
+                    Image(systemName: "chevron.right")
+                }
+                .disabled(forwardItem == nil)
+                .help("Go Forward")
+                .keyboardShortcut("]", modifiers: .command)
+            }
+
             ToolbarItem(placement: .navigation) {
                 Button(action: goHome) {
                     Image(systemName: "house")
@@ -144,6 +167,18 @@ struct BrowserView: View {
         return model.watchlistStore.contains(url: url)
     }
 
+    private var backItem: WebPage.BackForwardList.Item? {
+        guard
+            page.backForwardList.currentItem?.id != historyRootID
+        else { return nil }
+
+        return page.backForwardList.backList.last
+    }
+
+    private var forwardItem: WebPage.BackForwardList.Item? {
+        page.backForwardList.forwardList.first
+    }
+
     private var homeURL: URL? {
         if let siteURL = model.selectedSite?.url {
             return siteURL
@@ -161,6 +196,22 @@ struct BrowserView: View {
         components.query = nil
         components.fragment = nil
         return components.url
+    }
+
+    private func goBack() {
+        guard let backItem else { return }
+
+        Task {
+            await load(backItem)
+        }
+    }
+
+    private func goForward() {
+        guard let forwardItem else { return }
+
+        Task {
+            await load(forwardItem)
+        }
     }
 
     private func goHome() {
@@ -205,5 +256,22 @@ struct BrowserView: View {
         } catch {
             assertionFailure("Navigation failed: \(error)")
         }
+    }
+
+    private func load(_ item: WebPage.BackForwardList.Item) async {
+        do {
+            for try await _ in page.load(item) {
+                try Task.checkCancellation()
+            }
+        } catch is CancellationError {
+            return
+        } catch {
+            assertionFailure("History navigation failed: \(error)")
+        }
+    }
+
+    private func establishHistoryRootIfNeeded() {
+        guard historyRootID == nil else { return }
+        historyRootID = page.backForwardList.currentItem?.id
     }
 }
