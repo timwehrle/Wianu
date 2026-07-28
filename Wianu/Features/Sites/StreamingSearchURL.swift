@@ -25,7 +25,8 @@ enum StreamingSearchURL {
         }
 
         let allowedCharacters = CharacterSet(
-            charactersIn: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~"
+            charactersIn:
+                "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~"
         )
         guard
             let encodedQuery = trimmedQuery.addingPercentEncoding(
@@ -55,7 +56,12 @@ enum StreamingSearchPreset {
         ),
         Preset(
             domain: "primevideo.com",
-            template: "https://www.primevideo.com/search/ref=atv_nb_sr?phrase={query}"
+            template:
+                "https://www.primevideo.com/search/ref=atv_nb_sr?phrase={query}"
+        ),
+        Preset(
+            domain: "amazon.de",
+            template: "https://www.amazon.de/s?i=instant-video&k={query}"
         ),
         Preset(
             domain: "tv.apple.com",
