@@ -11,6 +11,7 @@
 		D11E823430177C800092ECC8 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = D11E823330177C800092ECC8 /* Sparkle */; };
 		D11E823E3017921C0092ECC8 /* ExportOptions.plist in Resources */ = {isa = PBXBuildFile; fileRef = D11E823C3017921C0092ECC8 /* ExportOptions.plist */; };
 		D11E8242301798520092ECC8 /* release.yml in Resources */ = {isa = PBXBuildFile; fileRef = D11E823F301798520092ECC8 /* release.yml */; };
+		D13E65ED3018F6B400E58017 /* UpdateService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D13E65EB3018F6B400E58017 /* UpdateService.swift */; };
 		D1B972403015325D00B64B10 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = D1B9723F3015325D00B64B10 /* README.md */; };
 		D1B9726A3015341900B64B10 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D1B972673015341900B64B10 /* Assets.xcassets */; };
 		D1B9726C3015341900B64B10 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B972413015341900B64B10 /* AppModel.swift */; };
@@ -51,6 +52,7 @@
 		D11E823930178A6D0092ECC8 /* Wianu.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Wianu.entitlements; sourceTree = "<group>"; };
 		D11E823C3017921C0092ECC8 /* ExportOptions.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = ExportOptions.plist; sourceTree = "<group>"; };
 		D11E823F301798520092ECC8 /* release.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = release.yml; sourceTree = "<group>"; };
+		D13E65EB3018F6B400E58017 /* UpdateService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateService.swift; sourceTree = "<group>"; };
 		D14338A33013E5B800BA847C /* Wianu.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Wianu.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1B9723F3015325D00B64B10 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		D1B972413015341900B64B10 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
@@ -86,14 +88,6 @@
 		D1FE001B30163BD700DA12EE /* WianuIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = WianuIcon.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		D11E823530177C9C0092ECC8 /* Updates */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Updates;
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
-
 /* Begin PBXFrameworksBuildPhase section */
 		D14338A03013E5B800BA847C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -128,6 +122,14 @@
 				D11E8240301798520092ECC8 /* workflows */,
 			);
 			path = .github;
+			sourceTree = "<group>";
+		};
+		D13E65EC3018F6B400E58017 /* Updates */ = {
+			isa = PBXGroup;
+			children = (
+				D13E65EB3018F6B400E58017 /* UpdateService.swift */,
+			);
+			path = Updates;
 			sourceTree = "<group>";
 		};
 		D143389A3013E5B800BA847C = {
@@ -240,7 +242,7 @@
 		D1B972603015341900B64B10 /* Infrastructure */ = {
 			isa = PBXGroup;
 			children = (
-				D11E823530177C9C0092ECC8 /* Updates */,
+				D13E65EC3018F6B400E58017 /* Updates */,
 				D1B9725F3015341900B64B10 /* Persistence */,
 			);
 			path = Infrastructure;
@@ -309,9 +311,6 @@
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				D11E823530177C9C0092ECC8 /* Updates */,
 			);
 			name = Wianu;
 			packageProductDependencies = (
@@ -392,6 +391,7 @@
 				D1B972753015341900B64B10 /* PageTitleCleaner.swift in Sources */,
 				D1B972763015341900B64B10 /* URLNormalizer.swift in Sources */,
 				D1B972773015341900B64B10 /* WatchlistRow.swift in Sources */,
+				D13E65ED3018F6B400E58017 /* UpdateService.swift in Sources */,
 				D1B972783015341900B64B10 /* SiteStore.swift in Sources */,
 				D1B972793015341900B64B10 /* RenameContinueWatchingView.swift in Sources */,
 				D1B9727A3015341900B64B10 /* LetterboxdWatchlistImporter.swift in Sources */,
