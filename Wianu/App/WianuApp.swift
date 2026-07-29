@@ -3,10 +3,11 @@ import SwiftUI
 @main
 struct WianuApp: App {
     @StateObject private var updateService = UpdateService()
+    @State private var model = AppModel()
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(model: model)
         }
         .windowToolbarStyle(.unified(showsTitle: true))
         .defaultSize(width: 1200, height: 800)
@@ -22,6 +23,9 @@ struct WianuApp: App {
                 }
                 .disabled(!updateService.canCheckForUpdates)
             }
+        }
+        Settings {
+            SettingsView(model: model)
         }
     }
 }

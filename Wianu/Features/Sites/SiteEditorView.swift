@@ -22,12 +22,17 @@ struct SiteEditorView: View {
 
     @Environment(\.dismiss) private var dismiss
     @Bindable var store: SiteStore
+    let tmdbClient: TMDBClient
 
     let mode: Mode
     @State private var draft: SiteDraft
+    @State private var providers: [TMDBProvider] = []
+    @State private var providerLoadError: String?
+    @State private var providerWasManuallySelected = false
 
-    init(store: SiteStore, mode: Mode) {
+    init(store: SiteStore, tmdbClient: TMDBClient, mode: Mode) {
         self.store = store
+        self.tmdbClient = tmdbClient
         self.mode = mode
 
         switch mode {
@@ -89,6 +94,23 @@ struct SiteEditorView: View {
                         .font(.caption)
                         .foregroundStyle(.red)
                     }
+
+                    field("TMDB Provider (Optional)") {
+                        Picker("TMDB Provider", selection: providerSelection) {
+                            Text("Not associated").tag(nil as Int?)
+                            ForEach(providers) { provider in
+                                Text(provider.name).tag(provider.id as Int?)
+                            }
+                        }
+                        .labelsHidden()
+                    }
+
+                    Text(
+                        providerLoadError
+                            ?? "Associate this site so TMDB availability can open its configured Search URL."
+                    )
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
                 }
 
                 Spacer()
@@ -97,7 +119,9 @@ struct SiteEditorView: View {
             .frame(minWidth: 520, minHeight: 360, alignment: .topLeading)
             .onChange(of: draft.address) {
                 applySuggestedSearchTemplate()
+                applySuggestedProvider()
             }
+            .task { await loadProviders() }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel", action: dismiss.callAsFunction)
@@ -144,5 +168,51 @@ struct SiteEditorView: View {
         else { return }
 
         draft.searchURLTemplate = suggestion
+    }
+
+    private var providerSelection: Binding<Int?> {
+        Binding(
+            get: { draft.tmdbProvider?.id },
+            set: { id in
+                providerWasManuallySelected = true
+                draft.tmdbProvider = providers.first(where: { $0.id == id }).map
+                {
+                    TMDBProviderReference(id: $0.id, name: $0.name)
+                }
+            }
+        )
+    }
+
+    private func applySuggestedProvider() {
+        guard !providerWasManuallySelected else { return }
+        draft.tmdbProvider = draft.suggestedTMDBProvider
+    }
+
+    private func loadProviders() async {
+        guard tmdbClient.isConfigured else {
+            providerLoadError =
+                "Configure TMDB to load its catalog. Known sites are associated automatically."
+            applySuggestedProvider()
+            return
+        }
+        do {
+            providers = try await tmdbClient.providers()
+            if let current = draft.tmdbProvider,
+                !providers.contains(where: { $0.id == current.id })
+            {
+                providers.insert(
+                    TMDBProvider(
+                        id: current.id,
+                        name: current.name,
+                        logoPath: nil
+                    ),
+                    at: 0
+                )
+            }
+            applySuggestedProvider()
+        } catch {
+            providerLoadError = error.localizedDescription
+            applySuggestedProvider()
+        }
     }
 }

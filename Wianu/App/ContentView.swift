@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var model = AppModel()
+    @Bindable var model: AppModel
 
     var body: some View {
         NavigationSplitView {
@@ -14,5 +14,16 @@ struct ContentView: View {
             }
         }
         .navigationTitle("Wianu")
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button {
+                    model.showSearch()
+                } label: {
+                    Label("Search", systemImage: "magnifyingglass")
+                }
+                .keyboardShortcut("k", modifiers: .command)
+                .help("Search Movies and TV Shows")
+            }
+        }
     }
 }

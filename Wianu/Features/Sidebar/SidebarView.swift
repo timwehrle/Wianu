@@ -79,17 +79,11 @@ struct SidebarView: View {
                             SidebarSelection.watchlistItem(item.id)
                         )
                         .contextMenu {
-                            if !searchableSites.isEmpty {
-                                Menu("Search on…") {
-                                    ForEach(searchableSites) { site in
-                                        Button(site.name) {
-                                            model.search(item.title, in: site)
-                                        }
-                                    }
-                                }
-
-                                Divider()
+                            Button("Find Providers") {
+                                model.showSearch(query: item.title)
                             }
+
+                            Divider()
 
                             if item.source == .custom {
                                 Button("Edit") {
@@ -128,10 +122,18 @@ struct SidebarView: View {
         .listStyle(.sidebar)
         .frame(minWidth: 240)
         .sheet(isPresented: $showingAddSite) {
-            SiteEditorView(store: model.siteStore, mode: .add)
+            SiteEditorView(
+                store: model.siteStore,
+                tmdbClient: model.tmdbClient,
+                mode: .add
+            )
         }
         .sheet(item: $editingSite) { site in
-            SiteEditorView(store: model.siteStore, mode: .edit(site))
+            SiteEditorView(
+                store: model.siteStore,
+                tmdbClient: model.tmdbClient,
+                mode: .edit(site)
+            )
         }
         .sheet(item: $renamingItem) { item in
             RenameContinueWatchingView(item: item) { title in
@@ -224,14 +226,14 @@ struct SidebarView: View {
     private var selectionBinding: Binding<SidebarSelection?> {
         Binding(
             get: { model.selection },
-            set: model.select
+            set: { selection in
+                if selection == .search {
+                    model.showSearch()
+                } else {
+                    model.select(selection)
+                }
+            }
         )
-    }
-
-    private var searchableSites: [SavedSite] {
-        model.siteStore.sites.filter {
-            $0.resolvedSearchURLTemplate != nil
-        }
     }
 
     private func site(for item: ContinueWatchingItem) -> SavedSite? {

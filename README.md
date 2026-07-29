@@ -97,8 +97,10 @@ Wianu. Please share them using the
 
 1. Clone this repository.
 2. Open `Wianu.xcodeproj` in Xcode.
-3. Select the Wianu scheme.
-4. Build and run the app.
+3. Select the Wianu scheme and build.
+
+After launching Wianu, open Settings and add your personal TMDB API Read
+Access Token. Wianu verifies it before storing it in your Mac's Keychain.
 
 Swift Package Manager resolves the project's dependencies, including Sparkle
 for application updates.
@@ -106,8 +108,8 @@ for application updates.
 ## Data
 
 Saved sites, Continue Watching entries, and watchlist items are stored locally
-on your Mac. Streaming-service sign-in and playback take place in the embedded
-web view.
+on your Mac. Your TMDB token is stored in macOS Keychain. Streaming-service
+sign-in and playback take place in the embedded web view.
 
 ## License
 

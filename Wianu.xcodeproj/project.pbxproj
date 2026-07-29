@@ -12,6 +12,7 @@
 		D11E823E3017921C0092ECC8 /* ExportOptions.plist in Resources */ = {isa = PBXBuildFile; fileRef = D11E823C3017921C0092ECC8 /* ExportOptions.plist */; };
 		D11E8242301798520092ECC8 /* release.yml in Resources */ = {isa = PBXBuildFile; fileRef = D11E823F301798520092ECC8 /* release.yml */; };
 		D13E65ED3018F6B400E58017 /* UpdateService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D13E65EB3018F6B400E58017 /* UpdateService.swift */; };
+		D13E65F13018FDFC00E58017 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = D13E65F03018FDFC00E58017 /* .gitignore */; };
 		D1B972403015325D00B64B10 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = D1B9723F3015325D00B64B10 /* README.md */; };
 		D1B9726A3015341900B64B10 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D1B972673015341900B64B10 /* Assets.xcassets */; };
 		D1B9726C3015341900B64B10 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B972413015341900B64B10 /* AppModel.swift */; };
@@ -42,9 +43,23 @@
 		D1B972853015341900B64B10 /* SavedSite.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B972573015341900B64B10 /* SavedSite.swift */; };
 		D1B973023015341900B64B10 /* StreamingSearchURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B973003015341900B64B10 /* StreamingSearchURL.swift */; };
 		D1B973033015341900B64B10 /* StreamingSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B973013015341900B64B10 /* StreamingSearchView.swift */; };
+		D1C000023020000000000002 /* TMDB.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C000013020000000000001 /* TMDB.swift */; };
+		D1C100013020000000000101 /* TMDBClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C100023020000000000102 /* TMDBClientTests.swift */; };
+		D1D000013020000000000001 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1D000023020000000000002 /* SettingsView.swift */; };
+		D1D000033020000000000003 /* TMDBCredentialStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1D000043020000000000004 /* TMDBCredentialStore.swift */; };
 		D1FE001A301638DA00DA12EE /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = D1FE0019301638DA00DA12EE /* LICENSE */; };
 		D1FE001D30163BD700DA12EE /* WianuIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = D1FE001B30163BD700DA12EE /* WianuIcon.png */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		D1C100093020000000000109 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D143389B3013E5B800BA847C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D14338A23013E5B800BA847C;
+			remoteInfo = Wianu;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		D10EF48D3015F2800070703E /* WianuIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = WianuIcon.icon; sourceTree = "<group>"; };
@@ -53,6 +68,7 @@
 		D11E823C3017921C0092ECC8 /* ExportOptions.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = ExportOptions.plist; sourceTree = "<group>"; };
 		D11E823F301798520092ECC8 /* release.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = release.yml; sourceTree = "<group>"; };
 		D13E65EB3018F6B400E58017 /* UpdateService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateService.swift; sourceTree = "<group>"; };
+		D13E65F03018FDFC00E58017 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		D14338A33013E5B800BA847C /* Wianu.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Wianu.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1B9723F3015325D00B64B10 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		D1B972413015341900B64B10 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
@@ -84,6 +100,11 @@
 		D1B972673015341900B64B10 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D1B973003015341900B64B10 /* StreamingSearchURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingSearchURL.swift; sourceTree = "<group>"; };
 		D1B973013015341900B64B10 /* StreamingSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingSearchView.swift; sourceTree = "<group>"; };
+		D1C000013020000000000001 /* TMDB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMDB.swift; sourceTree = "<group>"; };
+		D1C100023020000000000102 /* TMDBClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMDBClientTests.swift; sourceTree = "<group>"; };
+		D1C100033020000000000103 /* WianuTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WianuTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D1D000023020000000000002 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		D1D000043020000000000004 /* TMDBCredentialStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMDBCredentialStore.swift; sourceTree = "<group>"; };
 		D1FE0019301638DA00DA12EE /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		D1FE001B30163BD700DA12EE /* WianuIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = WianuIcon.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -135,11 +156,13 @@
 		D143389A3013E5B800BA847C = {
 			isa = PBXGroup;
 			children = (
+				D1C100043020000000000104 /* WianuTests */,
 				D11E8241301798520092ECC8 /* .github */,
 				D11E823D3017921C0092ECC8 /* Scripts */,
 				D1B972693015341900B64B10 /* Wianu */,
 				D14338A43013E5B800BA847C /* Products */,
 				D1B9723F3015325D00B64B10 /* README.md */,
+				D13E65F03018FDFC00E58017 /* .gitignore */,
 				D1FE001C30163BD700DA12EE /* Assets */,
 				D1FE0019301638DA00DA12EE /* LICENSE */,
 			);
@@ -149,6 +172,7 @@
 			isa = PBXGroup;
 			children = (
 				D14338A33013E5B800BA847C /* Wianu.app */,
+				D1C100033020000000000103 /* WianuTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -158,6 +182,7 @@
 			children = (
 				D1B972413015341900B64B10 /* AppModel.swift */,
 				D1B972423015341900B64B10 /* ContentView.swift */,
+				D1D000023020000000000002 /* SettingsView.swift */,
 				D1B972433015341900B64B10 /* WianuApp.swift */,
 			);
 			path = App;
@@ -215,6 +240,7 @@
 				D1B9725B3015341900B64B10 /* SiteStore.swift */,
 				D1B973003015341900B64B10 /* StreamingSearchURL.swift */,
 				D1B973013015341900B64B10 /* StreamingSearchView.swift */,
+				D1C000013020000000000001 /* TMDB.swift */,
 			);
 			path = Sites;
 			sourceTree = "<group>";
@@ -244,8 +270,17 @@
 			children = (
 				D13E65EC3018F6B400E58017 /* Updates */,
 				D1B9725F3015341900B64B10 /* Persistence */,
+				D1D000053020000000000005 /* Security */,
 			);
 			path = Infrastructure;
+			sourceTree = "<group>";
+		};
+		D1D000053020000000000005 /* Security */ = {
+			isa = PBXGroup;
+			children = (
+				D1D000043020000000000004 /* TMDBCredentialStore.swift */,
+			);
+			path = Security;
 			sourceTree = "<group>";
 		};
 		D1B972633015341900B64B10 /* Utilities */ = {
@@ -289,6 +324,14 @@
 			path = Wianu;
 			sourceTree = "<group>";
 		};
+		D1C100043020000000000104 /* WianuTests */ = {
+			isa = PBXGroup;
+			children = (
+				D1C100023020000000000102 /* TMDBClientTests.swift */,
+			);
+			path = WianuTests;
+			sourceTree = "<group>";
+		};
 		D1FE001C30163BD700DA12EE /* Assets */ = {
 			isa = PBXGroup;
 			children = (
@@ -320,6 +363,22 @@
 			productReference = D14338A33013E5B800BA847C /* Wianu.app */;
 			productType = "com.apple.product-type.application";
 		};
+		D1C100053020000000000105 /* WianuTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D1C100063020000000000106 /* Build configuration list for PBXNativeTarget "WianuTests" */;
+			buildPhases = (
+				D1C100073020000000000107 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D1C100083020000000000108 /* PBXTargetDependency */,
+			);
+			name = WianuTests;
+			productName = WianuTests;
+			productReference = D1C100033020000000000103 /* WianuTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -332,6 +391,10 @@
 				TargetAttributes = {
 					D14338A23013E5B800BA847C = {
 						CreatedOnToolsVersion = 26.2;
+					};
+					D1C100053020000000000105 = {
+						CreatedOnToolsVersion = 26.2;
+						TestTargetID = D14338A23013E5B800BA847C;
 					};
 				};
 			};
@@ -353,6 +416,7 @@
 			projectRoot = "";
 			targets = (
 				D14338A23013E5B800BA847C /* Wianu */,
+				D1C100053020000000000105 /* WianuTests */,
 			);
 		};
 /* End PBXProject section */
@@ -362,6 +426,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D13E65F13018FDFC00E58017 /* .gitignore in Resources */,
 				D1FE001D30163BD700DA12EE /* WianuIcon.png in Resources */,
 				D11E823E3017921C0092ECC8 /* ExportOptions.plist in Resources */,
 				D10EF48E3015F2800070703E /* WianuIcon.icon in Resources */,
@@ -383,6 +448,7 @@
 				D1B9726D3015341900B64B10 /* WatchlistItem.swift in Sources */,
 				D1B9726E3015341900B64B10 /* BrowserPaneView.swift in Sources */,
 				D1B9726F3015341900B64B10 /* ContentView.swift in Sources */,
+				D1D000013020000000000001 /* SettingsView.swift in Sources */,
 				D1B972703015341900B64B10 /* SiteEditorView.swift in Sources */,
 				D1B972713015341900B64B10 /* WianuApp.swift in Sources */,
 				D1B972723015341900B64B10 /* JSONFileStore.swift in Sources */,
@@ -408,10 +474,28 @@
 				D1B972853015341900B64B10 /* SavedSite.swift in Sources */,
 				D1B973023015341900B64B10 /* StreamingSearchURL.swift in Sources */,
 				D1B973033015341900B64B10 /* StreamingSearchView.swift in Sources */,
+				D1C000023020000000000002 /* TMDB.swift in Sources */,
+				D1D000033020000000000003 /* TMDBCredentialStore.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D1C100073020000000000107 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D1C100013020000000000101 /* TMDBClientTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D1C100083020000000000108 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D14338A23013E5B800BA847C /* Wianu */;
+			targetProxy = D1C100093020000000000109 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		D14338AC3013E5B800BA847C /* Debug */ = {
@@ -628,6 +712,36 @@
 			};
 			name = Release;
 		};
+		D1C1000A302000000000010A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGNING_ALLOWED = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				PRODUCT_BUNDLE_IDENTIFIER = timwehrle.WianuTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Wianu.app/Contents/MacOS/Wianu";
+			};
+			name = Debug;
+		};
+		D1C1000B302000000000010B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGNING_ALLOWED = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				PRODUCT_BUNDLE_IDENTIFIER = timwehrle.WianuTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Wianu.app/Contents/MacOS/Wianu";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -645,6 +759,15 @@
 			buildConfigurations = (
 				D14338AF3013E5B800BA847C /* Debug */,
 				D14338B03013E5B800BA847C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D1C100063020000000000106 /* Build configuration list for PBXNativeTarget "WianuTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D1C1000A302000000000010A /* Debug */,
+				D1C1000B302000000000010B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
