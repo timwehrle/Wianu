@@ -19,7 +19,7 @@ env:
   ARCHIVE_PATH: ${{ github.workspace }}/build/Wianu.xcarchive
   EXPORT_PATH: ${{ github.workspace }}/build/export
   APPCAST_PATH: ${{ github.workspace }}/build/appcast
-  SPARKLE_VERSION: "2.9.3"
+  SPARKLE_VERSION: "2.9.4"
 
 jobs:
   release:
