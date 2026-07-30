@@ -47,7 +47,7 @@ struct SiteDraft {
 
         guard
             trimmedSearchTemplate.isEmpty
-                || StreamingSearchURL.isValidTemplate(trimmedSearchTemplate)
+            || StreamingSearchURL.isValidTemplate(trimmedSearchTemplate)
         else { return nil }
 
         return (trimmedName, url, trimmedSearchTemplate, tmdbProvider)
@@ -91,8 +91,8 @@ struct SiteDraft {
     }
 }
 
-extension String {
-    fileprivate var hasHTTPPrefix: Bool {
+private extension String {
+    var hasHTTPPrefix: Bool {
         let value = lowercased()
         return value.hasPrefix("http://") || value.hasPrefix("https://")
     }

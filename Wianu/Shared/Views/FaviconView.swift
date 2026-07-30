@@ -14,7 +14,7 @@ struct FaviconView: View {
 
         components?.queryItems = [
             URLQueryItem(name: "domain", value: host),
-            URLQueryItem(name: "sz", value: "64"),
+            URLQueryItem(name: "sz", value: "64")
         ]
 
         return components?.url
@@ -23,7 +23,7 @@ struct FaviconView: View {
     var body: some View {
         AsyncImage(url: faviconURL) { phase in
             switch phase {
-            case .success(let image):
+            case let .success(image):
                 image
                     .resizable()
                     .interpolation(.high)

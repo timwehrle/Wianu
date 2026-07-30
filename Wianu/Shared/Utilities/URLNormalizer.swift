@@ -6,7 +6,7 @@ enum URLNormalizer {
         "utm_medium",
         "utm_campaign",
         "utm_term",
-        "utm_content",
+        "utm_content"
     ]
 
     static func continueWatchingURL(_ url: URL) -> URL {

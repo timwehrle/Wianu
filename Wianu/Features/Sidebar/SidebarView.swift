@@ -114,7 +114,7 @@ struct SidebarView: View {
                         "Import Letterboxd CSV…",
                         systemImage: "square.and.arrow.down"
                     )
-                        .foregroundStyle(.secondary)
+                    .foregroundStyle(.secondary)
                 }
                 .buttonStyle(.plain)
             }
@@ -242,11 +242,11 @@ struct SidebarView: View {
 
     private func importWatchlist(_ result: Result<[URL], Error>) {
         switch result {
-        case .success(let urls):
+        case let .success(urls):
             guard let url = urls.first else { return }
             importWatchlist(from: url)
 
-        case .failure(let error):
+        case let .failure(error):
             if (error as? CocoaError)?.code != .userCancelled {
                 importMessage = error.localizedDescription
             }
@@ -269,14 +269,14 @@ struct SidebarView: View {
 
             if let error = model.watchlistStore.persistenceError {
                 importMessage = """
-                    Imported \(result.items.count) items for this session, \
-                    but they could not be saved: \(error)
-                    """
+                Imported \(result.items.count) items for this session, \
+                but they could not be saved: \(error)
+                """
             } else if result.skippedRowCount > 0 {
                 importMessage = """
-                    Imported \(result.items.count) items. \
-                    Skipped \(result.skippedRowCount) invalid or duplicate rows.
-                    """
+                Imported \(result.items.count) items. \
+                Skipped \(result.skippedRowCount) invalid or duplicate rows.
+                """
             } else {
                 importMessage = "Imported \(result.items.count) watchlist items."
             }
@@ -285,7 +285,7 @@ struct SidebarView: View {
         }
     }
 
-    private func presenting<Item>(_ item: Binding<Item?>) -> Binding<Bool> {
+    private func presenting(_ item: Binding<(some Any)?>) -> Binding<Bool> {
         Binding(
             get: { item.wrappedValue != nil },
             set: { isPresented in

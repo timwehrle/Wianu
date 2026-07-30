@@ -17,12 +17,12 @@ struct TMDBProviderReference: Codable, Hashable, Sendable {
     private static func family(for name: String) -> ProviderFamily? {
         let words =
             name
-            .folding(
-                options: [.caseInsensitive, .diacriticInsensitive],
-                locale: nil
-            )
-            .components(separatedBy: CharacterSet.alphanumerics.inverted)
-            .filter { !$0.isEmpty }
+                .folding(
+                    options: [.caseInsensitive, .diacriticInsensitive],
+                    locale: nil
+                )
+                .components(separatedBy: CharacterSet.alphanumerics.inverted)
+                .filter { !$0.isEmpty }
 
         // TMDB separates Prime subscription tiers from Amazon's rent/buy
         // store. We can open all of them through the same Amazon site.

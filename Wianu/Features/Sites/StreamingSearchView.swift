@@ -4,7 +4,9 @@ struct StreamingSearchView: View {
     @Bindable var model: AppModel
     @FocusState private var searchFieldIsFocused: Bool
 
-    private var search: TMDBSearchModel { model.tmdbSearch }
+    private var search: TMDBSearchModel {
+        model.tmdbSearch
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -77,7 +79,7 @@ struct StreamingSearchView: View {
                 title: "Find where to watch",
                 icon: "film.stack",
                 description:
-                    "Search TMDB for a movie or TV show, then choose a provider available in your country."
+                "Search TMDB for a movie or TV show, then choose a provider available in your country."
             )
         } else if search.results.isEmpty {
             unavailable(
@@ -192,7 +194,7 @@ struct StreamingSearchView: View {
                     title: "Not available in this country",
                     icon: "globe",
                     description:
-                        "TMDB has no provider information for \(media.title) in the selected country."
+                    "TMDB has no provider information for \(media.title) in the selected country."
                 )
             }
         }
@@ -312,10 +314,12 @@ private struct MediaHeader: View {
                 Text(item.title).font(.title2.weight(.semibold))
                 Text(
                     [item.mediaType == .movie ? "Movie" : "TV", item.year]
-                        .compactMap { $0 }.joined(separator: " · ")
+                        .compactMap(\.self).joined(separator: " · ")
                 )
                 .foregroundStyle(.secondary)
-                if !item.overview.isEmpty { Text(item.overview) }
+                if !item.overview.isEmpty {
+                    Text(item.overview)
+                }
             }
         }
     }

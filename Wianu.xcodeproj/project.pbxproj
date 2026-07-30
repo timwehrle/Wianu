@@ -13,6 +13,7 @@
 		D11E8242301798520092ECC8 /* release.yml in Resources */ = {isa = PBXBuildFile; fileRef = D11E823F301798520092ECC8 /* release.yml */; };
 		D13E65ED3018F6B400E58017 /* UpdateService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D13E65EB3018F6B400E58017 /* UpdateService.swift */; };
 		D13E65F13018FDFC00E58017 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = D13E65F03018FDFC00E58017 /* .gitignore */; };
+		D145FFF9301BB60300983295 /* .swiftformat in Resources */ = {isa = PBXBuildFile; fileRef = D145FFF8301BB60300983295 /* .swiftformat */; };
 		D1B972403015325D00B64B10 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = D1B9723F3015325D00B64B10 /* README.md */; };
 		D1B9726A3015341900B64B10 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D1B972673015341900B64B10 /* Assets.xcassets */; };
 		D1B9726C3015341900B64B10 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B972413015341900B64B10 /* AppModel.swift */; };
@@ -70,6 +71,7 @@
 		D13E65EB3018F6B400E58017 /* UpdateService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateService.swift; sourceTree = "<group>"; };
 		D13E65F03018FDFC00E58017 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		D14338A33013E5B800BA847C /* Wianu.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Wianu.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D145FFF8301BB60300983295 /* .swiftformat */ = {isa = PBXFileReference; lastKnownFileType = text; path = .swiftformat; sourceTree = "<group>"; };
 		D1B9723F3015325D00B64B10 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		D1B972413015341900B64B10 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
 		D1B972423015341900B64B10 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -156,6 +158,7 @@
 		D143389A3013E5B800BA847C = {
 			isa = PBXGroup;
 			children = (
+				D145FFF8301BB60300983295 /* .swiftformat */,
 				D1C100043020000000000104 /* WianuTests */,
 				D11E8241301798520092ECC8 /* .github */,
 				D11E823D3017921C0092ECC8 /* Scripts */,
@@ -350,6 +353,7 @@
 				D143389F3013E5B800BA847C /* Sources */,
 				D14338A03013E5B800BA847C /* Frameworks */,
 				D14338A13013E5B800BA847C /* Resources */,
+				D145FFF7301BB5C300983295 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -434,10 +438,31 @@
 				D1B9726A3015341900B64B10 /* Assets.xcassets in Resources */,
 				D1FE001A301638DA00DA12EE /* LICENSE in Resources */,
 				D1B972403015325D00B64B10 /* README.md in Resources */,
+				D145FFF9301BB60300983295 /* .swiftformat in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		D145FFF7301BB5C300983295 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if command -v swiftformat >/dev/null; then\n    swiftformat \"${SRCROOT}\"\nelse\n    echo \"warning: SwiftFormat not installed. Install it with 'brew install swiftformat'.\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		D143389F3013E5B800BA847C /* Sources */ = {

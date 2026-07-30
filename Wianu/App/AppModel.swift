@@ -121,7 +121,7 @@ final class AppModel {
     }
 
     var selectedContinueWatchingItem: ContinueWatchingItem? {
-        guard case .continueWatching(let itemID) = selection else { return nil }
+        guard case let .continueWatching(itemID) = selection else { return nil }
         return continueWatchingStore.item(id: itemID)
     }
 
@@ -129,11 +129,11 @@ final class AppModel {
         switch selection {
         case .search:
             nil
-        case .site(let siteID):
+        case let .site(siteID):
             siteStore.sites.first { $0.id == siteID }?.url
-        case .continueWatching(let itemID):
+        case let .continueWatching(itemID):
             continueWatchingStore.item(id: itemID)?.url
-        case .watchlistItem(let itemID):
+        case let .watchlistItem(itemID):
             watchlistStore.item(id: itemID)?.url
         case nil:
             nil
@@ -176,7 +176,7 @@ final class AppModel {
         selection = newSelection
         destinationURL = destination(for: newSelection)
 
-        if case .continueWatching(let itemID) = newSelection {
+        if case let .continueWatching(itemID) = newSelection {
             continueWatchingStore.markOpened(id: itemID)
         }
 
@@ -219,17 +219,16 @@ final class AppModel {
     func replaceImportedWatchlistItems(
         with items: [WatchlistItem]
     ) {
-        let selectedItemID: WatchlistItem.ID?
-        if case .watchlistItem(let itemID) = selection {
-            selectedItemID = itemID
+        let selectedItemID: WatchlistItem.ID? = if case let .watchlistItem(itemID) = selection {
+            itemID
         } else {
-            selectedItemID = nil
+            nil
         }
 
         watchlistStore.replace(with: items)
 
         if let selectedItemID,
-            watchlistStore.item(id: selectedItemID) == nil
+           watchlistStore.item(id: selectedItemID) == nil
         {
             selection = nil
             destinationURL = nil
@@ -267,16 +266,13 @@ final class AppModel {
             let trimmedTitle = title.trimmingCharacters(
                 in: .whitespacesAndNewlines
             )
-            let savedTitle: String
-
-            if let site = selectedSite {
-                savedTitle = PageTitleCleaner.clean(
+            let savedTitle: String = if let site = selectedSite {
+                PageTitleCleaner.clean(
                     trimmedTitle,
                     siteName: site.name
                 )
             } else {
-                savedTitle =
-                    trimmedTitle.isEmpty
+                trimmedTitle.isEmpty
                     ? url.host() ?? "Untitled Page"
                     : trimmedTitle
             }
@@ -298,16 +294,13 @@ final class AppModel {
         let trimmedTitle = title.trimmingCharacters(
             in: .whitespacesAndNewlines
         )
-        let savedTitle: String
-
-        if let site = selectedSite {
-            savedTitle = PageTitleCleaner.clean(
+        let savedTitle: String = if let site = selectedSite {
+            PageTitleCleaner.clean(
                 trimmedTitle,
                 siteName: site.name
             )
         } else {
-            savedTitle =
-                trimmedTitle.isEmpty
+            trimmedTitle.isEmpty
                 ? url.host() ?? "Untitled Movie"
                 : trimmedTitle
         }
@@ -323,9 +316,9 @@ final class AppModel {
         switch selection {
         case .search:
             nil
-        case .site(let siteID):
+        case let .site(siteID):
             siteID
-        case .continueWatching(let itemID):
+        case let .continueWatching(itemID):
             continueWatchingStore.item(id: itemID)?.siteID
         case .watchlistItem:
             nil
@@ -337,8 +330,8 @@ final class AppModel {
     private func restoreSelection() {
         let savedID =
             userDefaults
-            .string(forKey: Self.lastSelectedSiteKey)
-            .flatMap(UUID.init(uuidString:))
+                .string(forKey: Self.lastSelectedSiteKey)
+                .flatMap(UUID.init(uuidString:))
 
         if let savedID, siteStore.sites.contains(where: { $0.id == savedID }) {
             selection = .site(savedID)

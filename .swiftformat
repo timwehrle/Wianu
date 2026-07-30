@@ -1,0 +1,8 @@
+--indent 4
+--linebreaks lf
+--maxwidth 120
+--commas inline
+--wraparguments before-first
+--wrapcollections before-first
+--stripunusedargs closure-only
+--swift-version 6.2.3

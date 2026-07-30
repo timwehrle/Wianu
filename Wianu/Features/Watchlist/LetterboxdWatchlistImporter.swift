@@ -86,14 +86,13 @@ enum LetterboxdWatchlistImporter {
                 .map { value(at: $0, in: row) }
                 .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
                 .flatMap(Int.init)
-            let addedAt: Date?
-            if let dateColumn {
-                addedAt = parseDate(
+            let addedAt: Date? = if let dateColumn {
+                parseDate(
                     value(at: dateColumn, in: row)
                         .trimmingCharacters(in: .whitespacesAndNewlines)
                 )
             } else {
-                addedAt = nil
+                nil
             }
 
             items.append(
@@ -131,8 +130,8 @@ enum LetterboxdWatchlistImporter {
                 let nextIndex = text.index(after: index)
 
                 if isInsideQuotes,
-                    nextIndex < text.endIndex,
-                    text[nextIndex] == "\""
+                   nextIndex < text.endIndex,
+                   text[nextIndex] == "\""
                 {
                     field.append("\"")
                     index = nextIndex
@@ -142,11 +141,12 @@ enum LetterboxdWatchlistImporter {
             } else if character == ",", !isInsideQuotes {
                 row.append(field)
                 field = ""
-            } else if (
+            } else if
                 character == "\n"
-                    || character == "\r"
-                    || character == "\r\n"
-            ), !isInsideQuotes {
+                || character == "\r"
+                || character == "\r\n",
+                !isInsideQuotes
+            {
                 row.append(field)
                 field = ""
 

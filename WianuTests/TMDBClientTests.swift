@@ -25,25 +25,27 @@ private actor FixtureSession: TMDBSession {
         return (data, response)
     }
 
-    func capturedRequest() -> URLRequest? { request }
+    func capturedRequest() -> URLRequest? {
+        request
+    }
 }
 
 @Suite("TMDB client")
 struct TMDBClientTests {
-    @Test func searchAuthenticatesEncodesAndFiltersPeople() async throws {
+    @Test func `search authenticates encodes and filters people`() async throws {
         let session = FixtureSession("""
-            {"page":1,"total_pages":2,"results":[
-              {"id":1,"media_type":"movie","title":"Dune","overview":"x",
-               "poster_path":"/p.jpg","release_date":"2021-10-22"},
-              {"id":2,"media_type":"tv","name":"Dark","overview":"y",
-               "first_air_date":"2017-12-01"},
-              {"id":3,"media_type":"person","name":"Someone"}
-            ]}
-            """)
-        let client = TMDBClient(
+        {"page":1,"total_pages":2,"results":[
+          {"id":1,"media_type":"movie","title":"Dune","overview":"x",
+           "poster_path":"/p.jpg","release_date":"2021-10-22"},
+          {"id":2,"media_type":"tv","name":"Dark","overview":"y",
+           "first_air_date":"2017-12-01"},
+          {"id":3,"media_type":"person","name":"Someone"}
+        ]}
+        """)
+        let client = try TMDBClient(
             token: "secret",
             session: session,
-            baseURL: URL(string: "https://example.test/3")!,
+            baseURL: #require(URL(string: "https://example.test/3")),
             language: "de-DE"
         )
 
@@ -53,21 +55,21 @@ struct TMDBClientTests {
         #expect(page.totalPages == 2)
         let request = await session.capturedRequest()
         #expect(request?.value(forHTTPHeaderField: "Authorization") == "Bearer secret")
-        let components = URLComponents(url: request!.url!, resolvingAgainstBaseURL: false)
+        let components = try URLComponents(url: #require(request?.url), resolvingAgainstBaseURL: false)
         #expect(components?.queryItems?.contains(URLQueryItem(name: "query", value: "A & B")) == true)
         #expect(components?.queryItems?.contains(URLQueryItem(name: "include_adult", value: "false")) == true)
     }
 
-    @Test func groupsProviderOffersAndHandlesMissingRegion() async throws {
+    @Test func `groups provider offers and handles missing region`() async throws {
         let session = FixtureSession("""
-            {"results":{"DE":{"link":"https://tmdb.test/title",
-              "flatrate":[{"provider_id":8,"provider_name":"Netflix","logo_path":"/n.png"}],
-              "rent":[{"provider_id":2,"provider_name":"Store","logo_path":null}]}}}
-            """)
-        let client = TMDBClient(
+        {"results":{"DE":{"link":"https://tmdb.test/title",
+          "flatrate":[{"provider_id":8,"provider_name":"Netflix","logo_path":"/n.png"}],
+          "rent":[{"provider_id":2,"provider_name":"Store","logo_path":null}]}}}
+        """)
+        let client = try TMDBClient(
             token: "secret",
             session: session,
-            baseURL: URL(string: "https://example.test/3")!
+            baseURL: #require(URL(string: "https://example.test/3"))
         )
         let media = TMDBMediaResult(
             id: 10, mediaType: .movie, title: "Title",
@@ -81,40 +83,40 @@ struct TMDBClientTests {
         #expect(us == nil)
     }
 
-    @Test func mapsCredentialsRateLimitsAndMalformedResponses() async {
-        let unauthorized = TMDBClient(
+    @Test func `maps credentials rate limits and malformed responses`() async throws {
+        let unauthorized = try TMDBClient(
             token: "x",
             session: FixtureSession("{}", status: 401),
-            baseURL: URL(string: "https://example.test/3")!
+            baseURL: #require(URL(string: "https://example.test/3"))
         )
         await #expect(throws: TMDBError.unauthorized) {
             try await unauthorized.search(query: "x")
         }
 
-        let limited = TMDBClient(
+        let limited = try TMDBClient(
             token: "x",
             session: FixtureSession("{}", status: 429, headers: ["Retry-After": "12"]),
-            baseURL: URL(string: "https://example.test/3")!
+            baseURL: #require(URL(string: "https://example.test/3"))
         )
         await #expect(throws: TMDBError.rateLimited(retryAfter: 12)) {
             try await limited.search(query: "x")
         }
 
-        let malformed = TMDBClient(
+        let malformed = try TMDBClient(
             token: "x",
             session: FixtureSession("{"),
-            baseURL: URL(string: "https://example.test/3")!
+            baseURL: #require(URL(string: "https://example.test/3"))
         )
         await #expect(throws: TMDBError.invalidResponse) {
             try await malformed.search(query: "x")
         }
     }
 
-    @Test func legacySitesDecodeAndProviderReferencesRoundTrip() throws {
+    @Test func `legacy sites decode and provider references round trip`() throws {
         let legacy = """
-            [{"id":"C1A4E17B-9B32-443F-BEA8-AC1C70B31A22","name":"Netflix",
-              "urlString":"https://netflix.com","createdAt":0}]
-            """
+        [{"id":"C1A4E17B-9B32-443F-BEA8-AC1C70B31A22","name":"Netflix",
+          "urlString":"https://netflix.com","createdAt":0}]
+        """
         let decoded = try JSONDecoder().decode([SavedSite].self, from: Data(legacy.utf8))
         #expect(decoded.first?.tmdbProvider == nil)
 
@@ -132,7 +134,7 @@ struct TMDBClientTests {
         #expect(site.searchURL(for: "A & B")?.absoluteString.contains("A%20%26%20B") == true)
     }
 
-    @Test func primeVideoProviderTiersMatchTheConfiguredSite() {
+    @Test func `prime video provider tiers match the configured site`() {
         let primeVideo = TMDBProviderReference(
             id: 9,
             name: "Amazon Prime Video"

@@ -50,7 +50,7 @@ struct TMDBMediaResult: Identifiable, Codable, Hashable, Sendable {
         mediaType = try values.decode(TMDBMediaType.self, forKey: .mediaType)
         title =
             try values.decodeIfPresent(String.self, forKey: .movieTitle)
-            ?? values.decode(String.self, forKey: .tvTitle)
+                ?? values.decode(String.self, forKey: .tvTitle)
         overview =
             try values.decodeIfPresent(String.self, forKey: .overview) ?? ""
         posterPath = try values.decodeIfPresent(
@@ -59,7 +59,7 @@ struct TMDBMediaResult: Identifiable, Codable, Hashable, Sendable {
         )
         releaseDate =
             try values.decodeIfPresent(String.self, forKey: .movieDate)
-            ?? values.decodeIfPresent(String.self, forKey: .tvDate)
+                ?? values.decodeIfPresent(String.self, forKey: .tvDate)
     }
 
     func encode(to encoder: Encoder) throws {
@@ -88,12 +88,6 @@ struct TMDBProvider: Identifiable, Codable, Hashable, Sendable {
         case name = "provider_name"
         case logoPath = "logo_path"
     }
-
-    init(id: Int, name: String, logoPath: String?) {
-        self.id = id
-        self.name = name
-        self.logoPath = logoPath
-    }
 }
 
 struct TMDBRegion: Identifiable, Codable, Hashable, Sendable {
@@ -101,8 +95,13 @@ struct TMDBRegion: Identifiable, Codable, Hashable, Sendable {
     let englishName: String
     let nativeName: String
 
-    var id: String { isoCode }
-    var displayName: String { nativeName.isEmpty ? englishName : nativeName }
+    var id: String {
+        isoCode
+    }
+
+    var displayName: String {
+        nativeName.isEmpty ? englishName : nativeName
+    }
 
     private enum CodingKeys: String, CodingKey {
         case isoCode = "iso_3166_1"
@@ -117,7 +116,9 @@ enum TMDBOfferType: String, CaseIterable, Identifiable, Sendable {
     case ads = "Ads"
     case rent = "Rent"
     case buy = "Buy"
-    var id: String { rawValue }
+    var id: String {
+        rawValue
+    }
 }
 
 struct TMDBWatchAvailability: Sendable {
@@ -169,13 +170,13 @@ enum TMDBError: LocalizedError, Equatable {
             "TMDB returned an unreadable response."
         case .unauthorized:
             "The TMDB read access token is invalid."
-        case .rateLimited(let retryAfter):
+        case let .rateLimited(retryAfter):
             if let retryAfter {
                 "TMDB is busy. Try again in \(Int(retryAfter)) seconds."
             } else {
                 "TMDB is busy. Please try again shortly."
             }
-        case .server(_, let message):
+        case let .server(_, message):
             message ?? "TMDB could not complete the request."
         }
     }
@@ -193,7 +194,9 @@ struct TMDBClient: Sendable {
     private let baseURL: URL
     private let language: String
 
-    var isConfigured: Bool { !token.isEmpty && !token.contains("$(") }
+    var isConfigured: Bool {
+        !token.isEmpty && !token.contains("$(")
+    }
 
     init(
         token: String = "",
@@ -214,7 +217,7 @@ struct TMDBClient: Sendable {
                 URLQueryItem(name: "query", value: query),
                 URLQueryItem(name: "page", value: String(page)),
                 URLQueryItem(name: "include_adult", value: "false"),
-                URLQueryItem(name: "language", value: language),
+                URLQueryItem(name: "language", value: language)
             ]
         )
         return TMDBSearchPage(
@@ -241,7 +244,7 @@ struct TMDBClient: Sendable {
                 .free: value.free ?? [],
                 .ads: value.ads ?? [],
                 .rent: value.rent ?? [],
-                .buy: value.buy ?? [],
+                .buy: value.buy ?? []
             ]
         )
     }
@@ -267,7 +270,7 @@ struct TMDBClient: Sendable {
         )
         let combined = movies.results + shows.results
         return Dictionary(grouping: combined, by: \.id)
-            .compactMap { $0.value.first }
+            .compactMap(\.value.first)
             .sorted {
                 $0.name.localizedStandardCompare($1.name) == .orderedAscending
             }
@@ -317,7 +320,7 @@ struct TMDBClient: Sendable {
         guard let http = response as? HTTPURLResponse else {
             throw TMDBError.invalidResponse
         }
-        guard (200..<300).contains(http.statusCode) else {
+        guard (200 ..< 300).contains(http.statusCode) else {
             let message = try? JSONDecoder().decode(
                 ErrorResponse.self,
                 from: data
@@ -424,7 +427,9 @@ final class TMDBSearchModel {
     var selectedRegion: String {
         didSet {
             userDefaults.set(selectedRegion, forKey: Self.regionKey)
-            if selectedMedia != nil { loadAvailability() }
+            if selectedMedia != nil {
+                loadAvailability()
+            }
         }
     }
 
@@ -446,8 +451,13 @@ final class TMDBSearchModel {
         Task { await loadMetadata() }
     }
 
-    var isConfigured: Bool { client.isConfigured }
-    var canLoadMore: Bool { currentPage < totalPages && !isLoadingMore }
+    var isConfigured: Bool {
+        client.isConfigured
+    }
+
+    var canLoadMore: Bool {
+        currentPage < totalPages && !isLoadingMore
+    }
 
     func requestFocus() {
         focusRequest += 1
@@ -472,7 +482,11 @@ final class TMDBSearchModel {
     }
 
     func retry() {
-        if selectedMedia != nil { loadAvailability() } else { queryChanged() }
+        if selectedMedia != nil {
+            loadAvailability()
+        } else {
+            queryChanged()
+        }
     }
 
     func loadMoreIfNeeded(after item: TMDBMediaResult) {
@@ -495,7 +509,11 @@ final class TMDBSearchModel {
     }
 
     private func search(query: String, page: Int) async {
-        if page == 1 { isSearching = true } else { isLoadingMore = true }
+        if page == 1 {
+            isSearching = true
+        } else {
+            isLoadingMore = true
+        }
         errorMessage = nil
         do {
             let response = try await client.search(query: query, page: page)
@@ -538,7 +556,7 @@ final class TMDBSearchModel {
         guard client.isConfigured else { return }
         async let loadedRegions = client.regions()
         async let loadedImages = client.imageConfiguration()
-        regions = (try? await loadedRegions) ?? []
+        regions = await (try? loadedRegions) ?? []
         imageConfiguration = try? await loadedImages
         if !regions.contains(where: { $0.isoCode == selectedRegion }) {
             selectedRegion = "US"

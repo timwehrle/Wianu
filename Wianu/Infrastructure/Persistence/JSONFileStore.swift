@@ -6,7 +6,7 @@ enum JSONFileStoreError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .applicationSupportDirectoryUnavailable:
-            return "The Application Support directory is unavailable."
+            "The Application Support directory is unavailable."
         }
     }
 }
@@ -23,9 +23,9 @@ struct JSONFileStore<Value: Codable> {
             if let baseDirectory {
                 applicationSupportURL = baseDirectory
             } else if let defaultDirectory = FileManager.default.urls(
-                    for: .applicationSupportDirectory,
-                    in: .userDomainMask
-                ).first {
+                for: .applicationSupportDirectory,
+                in: .userDomainMask
+            ).first {
                 applicationSupportURL = defaultDirectory
             } else {
                 throw JSONFileStoreError.applicationSupportDirectoryUnavailable

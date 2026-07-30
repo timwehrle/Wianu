@@ -37,7 +37,7 @@ struct SiteEditorView: View {
         switch mode {
         case .add:
             _draft = State(initialValue: SiteDraft())
-        case .edit(let site):
+        case let .edit(site):
             _draft = State(initialValue: SiteDraft(site: site))
             _providers = State(
                 initialValue: site.tmdbProvider.map {
@@ -142,9 +142,9 @@ struct SiteEditorView: View {
         }
     }
 
-    private func field<Content: View>(
+    private func field(
         _ title: String,
-        @ViewBuilder content: () -> Content
+        @ViewBuilder content: () -> some View
     ) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(title)
@@ -158,7 +158,7 @@ struct SiteEditorView: View {
         switch mode {
         case .add:
             store.addSite(draft)
-        case .edit(let site):
+        case let .edit(site):
             store.updateSite(id: site.id, with: draft)
         }
 
@@ -180,8 +180,7 @@ struct SiteEditorView: View {
         Binding(
             get: { draft.tmdbProvider?.id },
             set: { id in
-                draft.tmdbProvider = providers.first(where: { $0.id == id }).map
-                {
+                draft.tmdbProvider = providers.first(where: { $0.id == id }).map {
                     TMDBProviderReference(id: $0.id, name: $0.name)
                 }
             }
@@ -197,7 +196,7 @@ struct SiteEditorView: View {
         do {
             providers = try await tmdbClient.providers()
             if let current = draft.tmdbProvider,
-                !providers.contains(where: { $0.id == current.id })
+               !providers.contains(where: { $0.id == current.id })
             {
                 providers.insert(
                     TMDBProvider(

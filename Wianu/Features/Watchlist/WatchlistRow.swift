@@ -107,7 +107,7 @@ struct WatchlistItemEditorView: View {
     private var yearIsValid: Bool {
         trimmedYear.isEmpty
             || (trimmedYear.count == 4
-                && parsedYear.map { (1888...2100).contains($0) } == true)
+                && parsedYear.map { (1888 ... 2100).contains($0) } == true)
     }
 
     private var trimmedAddress: String {
@@ -118,8 +118,8 @@ struct WatchlistItemEditorView: View {
         guard !trimmedAddress.isEmpty else { return nil }
         let addressWithScheme =
             trimmedAddress.contains("://")
-            ? trimmedAddress
-            : "https://\(trimmedAddress)"
+                ? trimmedAddress
+                : "https://\(trimmedAddress)"
         let candidate = URL(string: addressWithScheme)
         guard
             let candidate,
@@ -138,9 +138,9 @@ struct WatchlistItemEditorView: View {
         !trimmedTitle.isEmpty && yearIsValid && addressIsValid
     }
 
-    private func field<Content: View>(
+    private func field(
         _ label: String,
-        @ViewBuilder content: () -> Content
+        @ViewBuilder content: () -> some View
     ) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(label)

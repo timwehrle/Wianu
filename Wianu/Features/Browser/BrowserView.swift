@@ -154,7 +154,7 @@ struct BrowserView: View {
     private var canSaveCurrentPage: Bool {
         page.url != nil
             && !page.title.trimmingCharacters(in: .whitespacesAndNewlines)
-                .isEmpty
+            .isEmpty
     }
 
     private var currentPageIsSaved: Bool {
