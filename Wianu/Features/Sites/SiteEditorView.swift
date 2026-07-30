@@ -28,7 +28,6 @@ struct SiteEditorView: View {
     @State private var draft: SiteDraft
     @State private var providers: [TMDBProvider] = []
     @State private var providerLoadError: String?
-    @State private var providerWasManuallySelected = false
 
     init(store: SiteStore, tmdbClient: TMDBClient, mode: Mode) {
         self.store = store
@@ -40,6 +39,17 @@ struct SiteEditorView: View {
             _draft = State(initialValue: SiteDraft())
         case .edit(let site):
             _draft = State(initialValue: SiteDraft(site: site))
+            _providers = State(
+                initialValue: site.tmdbProvider.map {
+                    [
+                        TMDBProvider(
+                            id: $0.id,
+                            name: $0.name,
+                            logoPath: nil
+                        )
+                    ]
+                } ?? []
+            )
         }
     }
 
@@ -96,13 +106,10 @@ struct SiteEditorView: View {
                     }
 
                     field("TMDB Provider (Optional)") {
-                        Picker("TMDB Provider", selection: providerSelection) {
-                            Text("Not associated").tag(nil as Int?)
-                            ForEach(providers) { provider in
-                                Text(provider.name).tag(provider.id as Int?)
-                            }
-                        }
-                        .labelsHidden()
+                        TMDBProviderPicker(
+                            providers: providers,
+                            selection: providerSelection
+                        )
                     }
 
                     Text(
@@ -119,7 +126,6 @@ struct SiteEditorView: View {
             .frame(minWidth: 520, minHeight: 360, alignment: .topLeading)
             .onChange(of: draft.address) {
                 applySuggestedSearchTemplate()
-                applySuggestedProvider()
             }
             .task { await loadProviders() }
             .toolbar {
@@ -174,7 +180,6 @@ struct SiteEditorView: View {
         Binding(
             get: { draft.tmdbProvider?.id },
             set: { id in
-                providerWasManuallySelected = true
                 draft.tmdbProvider = providers.first(where: { $0.id == id }).map
                 {
                     TMDBProviderReference(id: $0.id, name: $0.name)
@@ -183,16 +188,10 @@ struct SiteEditorView: View {
         )
     }
 
-    private func applySuggestedProvider() {
-        guard !providerWasManuallySelected else { return }
-        draft.tmdbProvider = draft.suggestedTMDBProvider
-    }
-
     private func loadProviders() async {
         guard tmdbClient.isConfigured else {
             providerLoadError =
-                "Configure TMDB to load its catalog. Known sites are associated automatically."
-            applySuggestedProvider()
+                "Configure TMDB to load its provider catalog."
             return
         }
         do {
@@ -209,10 +208,76 @@ struct SiteEditorView: View {
                     at: 0
                 )
             }
-            applySuggestedProvider()
         } catch {
             providerLoadError = error.localizedDescription
-            applySuggestedProvider()
         }
+    }
+}
+
+private struct TMDBProviderPicker: View {
+    let providers: [TMDBProvider]
+    @Binding var selection: Int?
+    @State private var isPresented = false
+    @State private var query = ""
+
+    private var selectedProvider: TMDBProvider? {
+        providers.first { $0.id == selection }
+    }
+
+    private var filteredProviders: [TMDBProvider] {
+        let trimmedQuery = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedQuery.isEmpty else { return providers }
+        return providers.filter {
+            $0.name.localizedCaseInsensitiveContains(trimmedQuery)
+        }
+    }
+
+    var body: some View {
+        Button {
+            isPresented.toggle()
+        } label: {
+            HStack {
+                Text(selectedProvider?.name ?? "Not associated")
+                Spacer()
+                Image(systemName: "chevron.up.chevron.down")
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .buttonStyle(.bordered)
+        .popover(isPresented: $isPresented, arrowEdge: .bottom) {
+            VStack(spacing: 8) {
+                TextField("Search providers", text: $query)
+                    .textFieldStyle(.roundedBorder)
+
+                List {
+                    providerButton(name: "Not associated", id: nil)
+
+                    ForEach(filteredProviders) { provider in
+                        providerButton(name: provider.name, id: provider.id)
+                    }
+                }
+                .listStyle(.plain)
+            }
+            .padding(12)
+            .frame(width: 320, height: 360)
+        }
+    }
+
+    private func providerButton(name: String, id: Int?) -> some View {
+        Button {
+            selection = id
+            isPresented = false
+            query = ""
+        } label: {
+            HStack {
+                Text(name)
+                Spacer()
+                if selection == id {
+                    Image(systemName: "checkmark")
+                }
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
     }
 }

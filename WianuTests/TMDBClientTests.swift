@@ -129,7 +129,6 @@ struct TMDBClientTests {
             from: JSONEncoder().encode(site)
         )
         #expect(roundTrip.tmdbProvider == site.tmdbProvider)
-        #expect(SiteDraft(site: site).suggestedTMDBProvider?.id == 8)
         #expect(site.searchURL(for: "A & B")?.absoluteString.contains("A%20%26%20B") == true)
     }
 

@@ -57,21 +57,6 @@ struct SiteDraft {
         StreamingSearchPreset.template(for: validatedSiteURL)
     }
 
-    var suggestedTMDBProvider: TMDBProviderReference? {
-        guard let host = validatedSiteURL?.host()?.lowercased() else {
-            return nil
-        }
-        let suggestions: [(String, TMDBProviderReference)] = [
-            ("netflix.com", .init(id: 8, name: "Netflix")),
-            ("primevideo.com", .init(id: 9, name: "Amazon Prime Video")),
-            ("amazon.", .init(id: 9, name: "Amazon Prime Video")),
-            ("tv.apple.com", .init(id: 2, name: "Apple TV")),
-        ]
-        return suggestions.first {
-            host == $0.0 || host.hasSuffix(".\($0.0)") || host.contains($0.0)
-        }?.1
-    }
-
     var siteURLIsValid: Bool {
         validatedSiteURL != nil
     }
