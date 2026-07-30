@@ -159,7 +159,7 @@
 			isa = PBXGroup;
 			children = (
 				D145FFF8301BB60300983295 /* .swiftformat */,
-				D1C100043020000000000104 /* WianuTests */,
+				D1C100043020000000000104 /* Tests */,
 				D11E8241301798520092ECC8 /* .github */,
 				D11E823D3017921C0092ECC8 /* Scripts */,
 				D1B972693015341900B64B10 /* Wianu */,
@@ -319,12 +319,12 @@
 			path = Wianu;
 			sourceTree = "<group>";
 		};
-		D1C100043020000000000104 /* WianuTests */ = {
+		D1C100043020000000000104 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
 				D1C100023020000000000102 /* TMDBClientTests.swift */,
 			);
-			path = WianuTests;
+			path = Tests;
 			sourceTree = "<group>";
 		};
 		D1D000053020000000000005 /* Security */ = {
