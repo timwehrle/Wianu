@@ -11,7 +11,7 @@ struct SettingsView: View {
             CreditsView()
                 .tabItem { Label("Credits", systemImage: "info.circle") }
         }
-        .frame(width: 520, height: 360)
+        .frame(width: 560, height: 420)
     }
 }
 
@@ -20,45 +20,71 @@ private struct TMDBSettingsView: View {
     @State private var token = ""
     @State private var isVerifying = false
     @State private var feedback: Feedback?
+    @State private var isConfirmingRemoval = false
 
     private var trimmedToken: String {
         token.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     var body: some View {
-        Form {
-            Section("TMDB API") {
-                SecureField(fieldPrompt, text: $token)
-                    .textFieldStyle(.roundedBorder)
-                    .disabled(isVerifying)
-                    .onSubmit(saveToken)
+        VStack(spacing: 0) {
+            Form {
+                Section {
+                    LabeledContent("Status") {
+                        connectionStatus
+                    }
 
-                Text(
-                    "Create a free TMDB account, request an API key, "
-                        + "then paste the API Read Access Token here."
-                )
-                .font(.caption)
-                .foregroundStyle(.secondary)
+                    LabeledContent("Read access token") {
+                        SecureField(fieldPrompt, text: $token)
+                            .textFieldStyle(.roundedBorder)
+                            .frame(minWidth: 280)
+                            .disabled(isVerifying)
+                            .onSubmit(saveToken)
+                    }
+                } header: {
+                    Text("Authentication")
+                } footer: {
+                    Text(
+                        "Wianu verifies the token with TMDB before storing it "
+                            + "securely in your Keychain."
+                    )
+                }
 
-                Link(
-                    "Open TMDB API settings",
-                    destination: URL(
-                        string: "https://www.themoviedb.org/settings/api"
-                    )!
-                )
-
-                controls
-
-                if let feedback {
-                    Label(feedback.message, systemImage: feedback.icon)
-                        .foregroundStyle(feedback.color)
-                } else if let error = model.tmdbCredentialError {
-                    Label(error, systemImage: "exclamationmark.triangle.fill")
-                        .foregroundStyle(.red)
+                Section {
+                    LabeledContent("Get a token") {
+                        Link(
+                            "Open TMDB API settings",
+                            destination: URL(
+                                string: "https://www.themoviedb.org/settings/api"
+                            )!
+                        )
+                    }
+                } header: {
+                    Text("TMDB Account")
+                } footer: {
+                    Text(
+                        "Create a free TMDB account and copy its API Read "
+                            + "Access Token—not the shorter API key."
+                    )
                 }
             }
+            .formStyle(.grouped)
+
+            Divider()
+
+            controls
+                .padding(.horizontal, 20)
+                .padding(.vertical, 14)
         }
-        .padding(20)
+        .confirmationDialog(
+            "Remove TMDB Token?",
+            isPresented: $isConfirmingRemoval
+        ) {
+            Button("Remove Token", role: .destructive, action: removeToken)
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Movie and TV search will be unavailable until you add another token.")
+        }
     }
 
     private var fieldPrompt: String {
@@ -67,25 +93,49 @@ private struct TMDBSettingsView: View {
             : "TMDB Read Access Token"
     }
 
+    private var connectionStatus: some View {
+        Group {
+            if let feedback {
+                Label(feedback.message, systemImage: feedback.icon)
+                    .foregroundStyle(feedback.color)
+            } else if let error = model.tmdbCredentialError {
+                Label(error, systemImage: "exclamationmark.triangle.fill")
+                    .foregroundStyle(.red)
+            } else if model.hasStoredTMDBToken {
+                Label("Configured", systemImage: "checkmark.circle.fill")
+                    .foregroundStyle(.green)
+            } else {
+                Label("Not configured", systemImage: "circle.dashed")
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .multilineTextAlignment(.trailing)
+    }
+
     private var controls: some View {
-        HStack {
+        HStack(spacing: 12) {
+            if model.hasStoredTMDBToken {
+                Button("Remove Token", role: .destructive) {
+                    isConfirmingRemoval = true
+                }
+                .disabled(isVerifying)
+            }
+
+            Spacer()
+
+            if isVerifying {
+                ProgressView()
+                    .controlSize(.small)
+            }
+
             Button(
                 model.hasStoredTMDBToken
                     ? "Verify and Replace"
                     : "Verify and Save",
                 action: saveToken
             )
+            .buttonStyle(.borderedProminent)
             .disabled(trimmedToken.isEmpty || isVerifying)
-
-            if model.hasStoredTMDBToken {
-                Button("Remove Token", role: .destructive, action: removeToken)
-                    .disabled(isVerifying)
-            }
-
-            if isVerifying {
-                ProgressView()
-                    .controlSize(.small)
-            }
         }
     }
 
