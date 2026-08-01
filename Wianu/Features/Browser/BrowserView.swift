@@ -55,85 +55,87 @@ struct BrowserView: View {
             }
         }
         .toolbar {
-            ToolbarItem(placement: .navigation) {
-                Button(action: goBack) {
-                    Image(systemName: "chevron.left")
+            if model.selection != .search {
+                ToolbarItem(placement: .navigation) {
+                    Button(action: goBack) {
+                        Image(systemName: "chevron.left")
+                    }
+                    .disabled(backItem == nil)
+                    .help("Go Back")
+                    .keyboardShortcut("[", modifiers: .command)
                 }
-                .disabled(backItem == nil)
-                .help("Go Back")
-                .keyboardShortcut("[", modifiers: .command)
-            }
 
-            ToolbarItem(placement: .navigation) {
-                Button(action: goForward) {
-                    Image(systemName: "chevron.right")
+                ToolbarItem(placement: .navigation) {
+                    Button(action: goForward) {
+                        Image(systemName: "chevron.right")
+                    }
+                    .disabled(forwardItem == nil)
+                    .help("Go Forward")
+                    .keyboardShortcut("]", modifiers: .command)
                 }
-                .disabled(forwardItem == nil)
-                .help("Go Forward")
-                .keyboardShortcut("]", modifiers: .command)
-            }
 
-            ToolbarItem(placement: .navigation) {
-                Button(action: goHome) {
-                    Image(systemName: "house")
+                ToolbarItem(placement: .navigation) {
+                    Button(action: goHome) {
+                        Image(systemName: "house")
+                    }
+                    .disabled(homeURL == nil)
+                    .help("Go to Site Home")
                 }
-                .disabled(homeURL == nil)
-                .help("Go to Site Home")
-            }
 
-            ToolbarItem(placement: .principal) {
-                if model.destinationURL != nil {
-                    PageTitleToolbarView(title: displayedTitle)
+                ToolbarItem(placement: .principal) {
+                    if model.destinationURL != nil {
+                        PageTitleToolbarView(title: displayedTitle)
+                    }
                 }
-            }
 
-            ToolbarItem(placement: .primaryAction) {
-                Button(action: toggleWatchlist) {
-                    Image(
-                        systemName: currentPageIsOnWatchlist
-                            ? "bookmark.fill"
-                            : "bookmark"
+                ToolbarItem(placement: .primaryAction) {
+                    Button(action: toggleWatchlist) {
+                        Image(
+                            systemName: currentPageIsOnWatchlist
+                                ? "bookmark.fill"
+                                : "bookmark"
+                        )
+                    }
+                    .disabled(!canSaveCurrentPage)
+                    .help(
+                        currentPageIsOnWatchlist
+                            ? "Remove from Watchlist"
+                            : "Add to Watchlist"
                     )
                 }
-                .disabled(!canSaveCurrentPage)
-                .help(
-                    currentPageIsOnWatchlist
-                        ? "Remove from Watchlist"
-                        : "Add to Watchlist"
-                )
-            }
 
-            ToolbarItem(placement: .primaryAction) {
-                Button(action: toggleContinueWatching) {
-                    Image(
-                        systemName: currentPageIsSaved
-                            ? "play.rectangle.fill"
-                            : "play.rectangle"
+                ToolbarItem(placement: .primaryAction) {
+                    Button(action: toggleContinueWatching) {
+                        Image(
+                            systemName: currentPageIsSaved
+                                ? "play.rectangle.fill"
+                                : "play.rectangle"
+                        )
+                    }
+                    .disabled(!canSaveCurrentPage)
+                    .help(
+                        currentPageIsSaved
+                            ? "Remove from Continue Watching"
+                            : "Save to Continue Watching"
                     )
                 }
-                .disabled(!canSaveCurrentPage)
-                .help(
-                    currentPageIsSaved
-                        ? "Remove from Continue Watching"
-                        : "Save to Continue Watching"
-                )
-            }
 
-            ToolbarItem(placement: .primaryAction) {
-                if showsLoadingIndicator {
-                    Button(action: page.stopLoading) {
-                        ProgressView()
-                            .controlSize(.small)
+                ToolbarItem(placement: .primaryAction) {
+                    if showsLoadingIndicator {
+                        Button(action: page.stopLoading) {
+                            ProgressView()
+                                .controlSize(.small)
+                        }
+                        .help("Stop Loading")
+                        .accessibilityLabel("Stop Loading")
+                    } else {
+                        Button(action: reload) {
+                            Image(systemName: "arrow.clockwise")
+                        }
+                        .help("Reload")
+                        .disabled(page.url == nil)
+                        .keyboardShortcut("r", modifiers: .command)
                     }
-                    .help("Stop Loading")
-                    .accessibilityLabel("Stop Loading")
-                } else {
-                    Button(action: reload) {
-                        Image(systemName: "arrow.clockwise")
-                    }
-                    .help("Reload")
-                    .disabled(page.url == nil)
-                    .keyboardShortcut("r", modifiers: .command)
                 }
             }
         }

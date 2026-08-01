@@ -7,22 +7,38 @@ struct ContentView: View {
         NavigationSplitView {
             SidebarView(model: model)
         } detail: {
-            if model.selection == .search {
-                StreamingSearchView(model: model)
-            } else {
+            ZStack {
                 BrowserView(model: model)
+                    .opacity(model.selection == .search ? 0 : 1)
+                    .allowsHitTesting(model.selection != .search)
+                    .accessibilityHidden(model.selection == .search)
+
+                if model.selection == .search {
+                    StreamingSearchView(model: model)
+                        .background(.background)
+                }
             }
         }
         .navigationTitle("Wianu")
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
-                Button {
-                    model.showSearch()
-                } label: {
-                    Label("Search", systemImage: "magnifyingglass")
+                if model.selection == .search {
+                    Button {
+                        model.dismissSearch()
+                    } label: {
+                        Label("Close Search", systemImage: "xmark")
+                    }
+                    .keyboardShortcut(.cancelAction)
+                    .help("Return to Stream")
+                } else {
+                    Button {
+                        model.showSearch()
+                    } label: {
+                        Label("Search", systemImage: "magnifyingglass")
+                    }
+                    .keyboardShortcut("k", modifiers: .command)
+                    .help("Search Movies and TV Shows")
                 }
-                .keyboardShortcut("k", modifiers: .command)
-                .help("Search Movies and TV Shows")
             }
         }
     }

@@ -15,6 +15,8 @@ final class AppModel {
     private(set) var selection: SidebarSelection?
     private(set) var destinationURL: URL?
     @ObservationIgnored
+    private var selectionBeforeSearch: SidebarSelection?
+    @ObservationIgnored
     private let userDefaults: UserDefaults
     @ObservationIgnored
     private let tmdbCredentialStore: any TMDBCredentialStoring
@@ -148,12 +150,24 @@ final class AppModel {
     }
 
     func showSearch(query: String? = nil) {
+        if selection != .search {
+            selectionBeforeSearch = selection
+        }
         if let query {
             tmdbSearch.query = query
             tmdbSearch.queryChanged()
         }
         select(.search)
         tmdbSearch.requestFocus()
+    }
+
+    func dismissSearch() {
+        guard selection == .search else { return }
+
+        // Restore only the sidebar selection. Changing destinationURL here
+        // would navigate the browser away from the page that kept playing.
+        selection = selectionBeforeSearch
+        selectionBeforeSearch = nil
     }
 
     func openProvider(_ provider: TMDBProvider, for media: TMDBMediaResult) {
@@ -174,7 +188,10 @@ final class AppModel {
 
     func select(_ newSelection: SidebarSelection?) {
         selection = newSelection
-        destinationURL = destination(for: newSelection)
+        if newSelection != .search {
+            selectionBeforeSearch = nil
+            destinationURL = destination(for: newSelection)
+        }
 
         if case let .continueWatching(itemID) = newSelection {
             continueWatchingStore.markOpened(id: itemID)
@@ -219,11 +236,12 @@ final class AppModel {
     func replaceImportedWatchlistItems(
         with items: [WatchlistItem]
     ) {
-        let selectedItemID: WatchlistItem.ID? = if case let .watchlistItem(itemID) = selection {
-            itemID
-        } else {
-            nil
-        }
+        let selectedItemID: WatchlistItem.ID? =
+            if case let .watchlistItem(itemID) = selection {
+                itemID
+            } else {
+                nil
+            }
 
         watchlistStore.replace(with: items)
 
@@ -244,6 +262,7 @@ final class AppModel {
 
     func activateSite(matching url: URL?) {
         guard
+            selection != .search,
             let url,
             let host = normalizedHost(for: url),
             let site = siteStore.sites.first(where: {
@@ -266,16 +285,17 @@ final class AppModel {
             let trimmedTitle = title.trimmingCharacters(
                 in: .whitespacesAndNewlines
             )
-            let savedTitle: String = if let site = selectedSite {
-                PageTitleCleaner.clean(
-                    trimmedTitle,
-                    siteName: site.name
-                )
-            } else {
-                trimmedTitle.isEmpty
-                    ? url.host() ?? "Untitled Page"
-                    : trimmedTitle
-            }
+            let savedTitle: String =
+                if let site = selectedSite {
+                    PageTitleCleaner.clean(
+                        trimmedTitle,
+                        siteName: site.name
+                    )
+                } else {
+                    trimmedTitle.isEmpty
+                        ? url.host() ?? "Untitled Page"
+                        : trimmedTitle
+                }
 
             continueWatchingStore.save(
                 siteID: selectedSite?.id,
@@ -294,16 +314,17 @@ final class AppModel {
         let trimmedTitle = title.trimmingCharacters(
             in: .whitespacesAndNewlines
         )
-        let savedTitle: String = if let site = selectedSite {
-            PageTitleCleaner.clean(
-                trimmedTitle,
-                siteName: site.name
-            )
-        } else {
-            trimmedTitle.isEmpty
-                ? url.host() ?? "Untitled Movie"
-                : trimmedTitle
-        }
+        let savedTitle: String =
+            if let site = selectedSite {
+                PageTitleCleaner.clean(
+                    trimmedTitle,
+                    siteName: site.name
+                )
+            } else {
+                trimmedTitle.isEmpty
+                    ? url.host() ?? "Untitled Movie"
+                    : trimmedTitle
+            }
 
         watchlistStore.add(
             title: savedTitle,
