@@ -9,13 +9,41 @@ struct ContentView: View {
         } detail: {
             ZStack {
                 BrowserView(model: model)
-                    .opacity(model.selection == .search ? 0 : 1)
                     .allowsHitTesting(model.selection != .search)
                     .accessibilityHidden(model.selection == .search)
 
                 if model.selection == .search {
+                    Color.black.opacity(0.22)
+                        .ignoresSafeArea()
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            model.dismissSearch()
+                        }
+
                     StreamingSearchView(model: model)
-                        .background(.background)
+                        .frame(maxWidth: 760, maxHeight: 640)
+                        .background(
+                            .regularMaterial,
+                            in: RoundedRectangle(
+                                cornerRadius: 18,
+                                style: .continuous
+                            )
+                        )
+                        .clipShape(
+                            RoundedRectangle(
+                                cornerRadius: 18,
+                                style: .continuous
+                            )
+                        )
+                        .overlay {
+                            RoundedRectangle(
+                                cornerRadius: 18,
+                                style: .continuous
+                            )
+                            .stroke(.separator.opacity(0.7), lineWidth: 1)
+                        }
+                        .shadow(color: .black.opacity(0.28), radius: 30, y: 12)
+                        .padding(32)
                 }
             }
         }
