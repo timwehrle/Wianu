@@ -460,7 +460,8 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if command -v swiftformat >/dev/null; then\n    swiftformat \"${SRCROOT}\"\nelse\n    echo \"warning: SwiftFormat not installed. Install it with 'brew install swiftformat'.\"\nfi\n";
+			shellScript = "
+";
 		};
 /* End PBXShellScriptBuildPhase section */
 
