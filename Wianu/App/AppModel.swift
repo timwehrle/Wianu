@@ -4,6 +4,11 @@ import Observation
 @MainActor
 @Observable
 final class AppModel {
+    struct NavigationRequest: Identifiable, Sendable {
+        let id = UUID()
+        let url: URL
+    }
+
     let siteStore: SiteStore
     let continueWatchingStore: ContinueWatchingStore
     let watchlistStore: WatchlistStore
@@ -13,7 +18,7 @@ final class AppModel {
     private(set) var tmdbCredentialError: String?
 
     private(set) var selection: SidebarSelection?
-    private(set) var destinationURL: URL?
+    private(set) var navigationRequest: NavigationRequest?
     @ObservationIgnored
     private var selectionBeforeSearch: SidebarSelection?
     @ObservationIgnored
@@ -22,6 +27,10 @@ final class AppModel {
     private let tmdbCredentialStore: any TMDBCredentialStoring
 
     private static let lastSelectedSiteKey = "lastSelectedSiteID"
+
+    var destinationURL: URL? {
+        navigationRequest?.url
+    }
 
     init(
         tmdbCredentialStore: any TMDBCredentialStoring =
@@ -146,7 +155,7 @@ final class AppModel {
         guard let searchURL = site.searchURL(for: query) else { return }
 
         select(.site(site.id))
-        destinationURL = searchURL
+        navigate(to: searchURL)
     }
 
     func showSearch(query: String? = nil) {
@@ -190,7 +199,7 @@ final class AppModel {
         selection = newSelection
         if newSelection != .search {
             selectionBeforeSearch = nil
-            destinationURL = destination(for: newSelection)
+            navigate(to: destination(for: newSelection))
         }
 
         if case let .continueWatching(itemID) = newSelection {
@@ -208,7 +217,7 @@ final class AppModel {
     func deleteSite(_ site: SavedSite) {
         if selectedSiteID == site.id {
             selection = nil
-            destinationURL = nil
+            navigate(to: nil)
         }
 
         continueWatchingStore.removeItems(forSiteID: site.id)
@@ -249,7 +258,7 @@ final class AppModel {
            watchlistStore.item(id: selectedItemID) == nil
         {
             selection = nil
-            destinationURL = nil
+            navigate(to: nil)
         }
     }
 
@@ -360,7 +369,11 @@ final class AppModel {
             selection = .site(firstSite.id)
         }
 
-        destinationURL = destination(for: selection)
+        navigate(to: destination(for: selection))
+    }
+
+    private func navigate(to url: URL?) {
+        navigationRequest = url.map(NavigationRequest.init(url:))
     }
 
     private func normalizedHost(for url: URL?) -> String? {

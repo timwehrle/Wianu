@@ -22,9 +22,9 @@ struct BrowserView: View {
 
     var body: some View {
         Group {
-            if let destinationURL = model.destinationURL {
+            if let navigationRequest = model.navigationRequest {
                 BrowserPaneView(
-                    destinationURL: destinationURL,
+                    navigationRequest: navigationRequest,
                     page: page,
                     onNavigationFinished: establishHistoryRoot
                 )

@@ -2,16 +2,16 @@ import SwiftUI
 import WebKit
 
 struct BrowserPaneView: View {
-    let destinationURL: URL
+    let navigationRequest: AppModel.NavigationRequest
     let page: WebPage
     let onNavigationFinished: () -> Void
 
     var body: some View {
         WebView(page)
             .webViewElementFullscreenBehavior(.enabled)
-            .task(id: destinationURL) {
+            .task(id: navigationRequest.id) {
                 configurePage()
-                if await load(destinationURL) {
+                if await load(navigationRequest.url) {
                     await Task.yield()
                     onNavigationFinished()
                 }
