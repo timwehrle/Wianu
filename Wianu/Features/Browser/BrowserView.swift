@@ -22,11 +22,9 @@ struct BrowserView: View {
 
     var body: some View {
         Group {
-            if let navigationRequest = model.navigationRequest {
+            if model.navigationRequest != nil {
                 BrowserPaneView(
-                    navigationRequest: navigationRequest,
-                    page: page,
-                    onNavigationFinished: establishHistoryRoot
+                    page: page
                 )
             } else {
                 ContentUnavailableView(
@@ -38,9 +36,16 @@ struct BrowserView: View {
                 )
             }
         }
+        .task(id: model.navigationRequest?.id) {
+            guard let url = model.navigationRequest?.url else { return }
+            if await load(url) {
+                await Task.yield()
+                establishHistoryRoot()
+            }
+        }
         .task(id: router.request?.id) {
             guard let url = router.request?.url else { return }
-            await load(url)
+            _ = await load(url)
         }
         .onChange(of: page.url) { _, url in
             model.activateSite(matching: url)
@@ -249,15 +254,17 @@ struct BrowserView: View {
         }
     }
 
-    private func load(_ url: URL) async {
+    private func load(_ url: URL) async -> Bool {
         do {
             for try await _ in page.load(URLRequest(url: url)) {
                 try Task.checkCancellation()
             }
+            return true
         } catch is CancellationError {
-            return
+            return false
         } catch {
             assertionFailure("Navigation failed: \(error)")
+            return false
         }
     }
 

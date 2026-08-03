@@ -2,19 +2,13 @@ import SwiftUI
 import WebKit
 
 struct BrowserPaneView: View {
-    let navigationRequest: AppModel.NavigationRequest
     let page: WebPage
-    let onNavigationFinished: () -> Void
 
     var body: some View {
         WebView(page)
             .webViewElementFullscreenBehavior(.enabled)
-            .task(id: navigationRequest.id) {
+            .task {
                 configurePage()
-                if await load(navigationRequest.url) {
-                    await Task.yield()
-                    onNavigationFinished()
-                }
             }
     }
 
@@ -24,18 +18,5 @@ struct BrowserPaneView: View {
         AppleWebKit/605.1.15 (KHTML, like Gecko) \
         Version/18.0 Safari/605.1.15
         """
-    }
-
-    private func load(_ url: URL) async -> Bool {
-        do {
-            for try await _ in page.load(URLRequest(url: url)) {
-                try Task.checkCancellation()
-            }
-            return true
-        } catch is CancellationError {
-            return false
-        } catch {
-            return false
-        }
     }
 }
