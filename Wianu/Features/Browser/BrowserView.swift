@@ -12,12 +12,13 @@ struct BrowserView: View {
         self.model = model
 
         let router = BrowserNavigationRouter()
-        _router = State(initialValue: router)
-        _page = State(
-            initialValue: WebPage(
-                navigationDecider: BrowserNavigationDecider(router: router)
-            )
+        let page = WebPage(
+            navigationDecider: BrowserNavigationDecider(router: router)
         )
+        page.customUserAgent = Self.customUserAgent
+
+        _router = State(initialValue: router)
+        _page = State(initialValue: page)
     }
 
     var body: some View {
@@ -145,6 +146,12 @@ struct BrowserView: View {
             }
         }
     }
+
+    private static let customUserAgent = """
+    Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) \
+    AppleWebKit/605.1.15 (KHTML, like Gecko) \
+    Version/18.0 Safari/605.1.15
+    """
 
     private var displayedTitle: String {
         let title = page.title.trimmingCharacters(in: .whitespacesAndNewlines)
