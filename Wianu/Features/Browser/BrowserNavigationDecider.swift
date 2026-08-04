@@ -7,13 +7,51 @@ import WebKit
 final class BrowserNavigationRouter {
     struct Request: Identifiable {
         let id = UUID()
-        let url: URL
+        let action: Action
+    }
+
+    enum Action {
+        case load(URLRequest, establishesHistoryRoot: Bool)
+        case history(WebPage.BackForwardList.Item)
+        case reload
     }
 
     private(set) var request: Request?
+    private var protectedDestinationRequestID: Request.ID?
 
-    func openInCurrentPage(_ url: URL) {
-        request = Request(url: url)
+    func openDestination(_ url: URL) {
+        let request = Request(
+            action: .load(
+                URLRequest(url: url),
+                establishesHistoryRoot: true
+            )
+        )
+        protectedDestinationRequestID = request.id
+        self.request = request
+    }
+
+    func openInCurrentPage(_ request: URLRequest) {
+        guard protectedDestinationRequestID == nil else { return }
+        self.request = Request(
+            action: .load(request, establishesHistoryRoot: false)
+        )
+    }
+
+    func openHistoryItem(_ item: WebPage.BackForwardList.Item) {
+        request = Request(action: .history(item))
+    }
+
+    func reload() {
+        request = Request(action: .reload)
+    }
+
+    func destinationDidCommit(_ requestID: Request.ID) {
+        guard protectedDestinationRequestID == requestID else { return }
+        protectedDestinationRequestID = nil
+    }
+
+    func destinationDidEnd(_ requestID: Request.ID) {
+        destinationDidCommit(requestID)
     }
 }
 
@@ -36,7 +74,7 @@ struct BrowserNavigationDecider: WebPage.NavigationDeciding {
             return .cancel
         }
 
-        router.openInCurrentPage(url)
+        router.openInCurrentPage(action.request)
         return .cancel
     }
 }
