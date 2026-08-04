@@ -6,6 +6,7 @@ struct BrowserView: View {
     @Bindable var model: AppModel
     @State private var router: BrowserNavigationRouter
     @State private var page: WebPage
+    @State private var pageIsReady = false
     @State private var showsLoadingIndicator = false
     @State private var historyRootID: WebPage.BackForwardList.Item.ID?
 
@@ -16,7 +17,6 @@ struct BrowserView: View {
         let page = WebPage(
             navigationDecider: BrowserNavigationDecider(router: router)
         )
-        page.customUserAgent = Self.customUserAgent
 
         _router = State(initialValue: router)
         _page = State(initialValue: page)
@@ -26,7 +26,10 @@ struct BrowserView: View {
         Group {
             if model.navigationRequest != nil {
                 BrowserPaneView(
-                    page: page
+                    page: page,
+                    onReady: {
+                        pageIsReady = true
+                    }
                 )
             } else {
                 ContentUnavailableView(
@@ -38,7 +41,11 @@ struct BrowserView: View {
                 )
             }
         }
-        .task(id: model.navigationRequest?.id) {
+        .task(id: NavigationTrigger(
+            requestID: model.navigationRequest?.id,
+            pageIsReady: pageIsReady
+        )) {
+            guard pageIsReady else { return }
             guard let url = model.navigationRequest?.url else { return }
             router.openDestination(url)
         }
@@ -145,11 +152,10 @@ struct BrowserView: View {
         }
     }
 
-    private static let customUserAgent = """
-    Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) \
-    AppleWebKit/605.1.15 (KHTML, like Gecko) \
-    Version/18.0 Safari/605.1.15
-    """
+    private struct NavigationTrigger: Equatable {
+        let requestID: AppModel.NavigationRequest.ID?
+        let pageIsReady: Bool
+    }
 
     private var displayedTitle: String {
         let title = page.title.trimmingCharacters(in: .whitespacesAndNewlines)
