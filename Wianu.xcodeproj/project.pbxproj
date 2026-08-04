@@ -9,12 +9,7 @@
 /* Begin PBXBuildFile section */
 		D10EF48E3015F2800070703E /* WianuIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = D10EF48D3015F2800070703E /* WianuIcon.icon */; };
 		D11E823430177C800092ECC8 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = D11E823330177C800092ECC8 /* Sparkle */; };
-		D11E823E3017921C0092ECC8 /* ExportOptions.plist in Resources */ = {isa = PBXBuildFile; fileRef = D11E823C3017921C0092ECC8 /* ExportOptions.plist */; };
-		D11E8242301798520092ECC8 /* release.yml in Resources */ = {isa = PBXBuildFile; fileRef = D11E823F301798520092ECC8 /* release.yml */; };
 		D13E65ED3018F6B400E58017 /* UpdateService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D13E65EB3018F6B400E58017 /* UpdateService.swift */; };
-		D13E65F13018FDFC00E58017 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = D13E65F03018FDFC00E58017 /* .gitignore */; };
-		D145FFF9301BB60300983295 /* .swiftformat in Resources */ = {isa = PBXBuildFile; fileRef = D145FFF8301BB60300983295 /* .swiftformat */; };
-		D1B972403015325D00B64B10 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = D1B9723F3015325D00B64B10 /* README.md */; };
 		D1B9726A3015341900B64B10 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D1B972673015341900B64B10 /* Assets.xcassets */; };
 		D1B9726C3015341900B64B10 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B972413015341900B64B10 /* AppModel.swift */; };
 		D1B9726D3015341900B64B10 /* WatchlistItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B972503015341900B64B10 /* WatchlistItem.swift */; };
@@ -46,10 +41,9 @@
 		D1B973033015341900B64B10 /* StreamingSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B973013015341900B64B10 /* StreamingSearchView.swift */; };
 		D1C000023020000000000002 /* TMDB.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C000013020000000000001 /* TMDB.swift */; };
 		D1C100013020000000000101 /* TMDBClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C100023020000000000102 /* TMDBClientTests.swift */; };
+		D1C1000D302000000000010D /* BrowserNavigationRouterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C1000C302000000000010C /* BrowserNavigationRouterTests.swift */; };
 		D1D000013020000000000001 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1D000023020000000000002 /* SettingsView.swift */; };
 		D1D000033020000000000003 /* TMDBCredentialStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1D000043020000000000004 /* TMDBCredentialStore.swift */; };
-		D1FE001A301638DA00DA12EE /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = D1FE0019301638DA00DA12EE /* LICENSE */; };
-		D1FE001D30163BD700DA12EE /* WianuIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = D1FE001B30163BD700DA12EE /* WianuIcon.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -105,6 +99,7 @@
 		D1C000013020000000000001 /* TMDB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMDB.swift; sourceTree = "<group>"; };
 		D1C100023020000000000102 /* TMDBClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMDBClientTests.swift; sourceTree = "<group>"; };
 		D1C100033020000000000103 /* WianuTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WianuTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D1C1000C302000000000010C /* BrowserNavigationRouterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserNavigationRouterTests.swift; sourceTree = "<group>"; };
 		D1D000023020000000000002 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		D1D000043020000000000004 /* TMDBCredentialStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMDBCredentialStore.swift; sourceTree = "<group>"; };
 		D1FE0019301638DA00DA12EE /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
@@ -322,6 +317,7 @@
 		D1C100043020000000000104 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				D1C1000C302000000000010C /* BrowserNavigationRouterTests.swift */,
 				D1C100023020000000000102 /* TMDBClientTests.swift */,
 			);
 			path = Tests;
@@ -430,15 +426,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D13E65F13018FDFC00E58017 /* .gitignore in Resources */,
-				D1FE001D30163BD700DA12EE /* WianuIcon.png in Resources */,
-				D11E823E3017921C0092ECC8 /* ExportOptions.plist in Resources */,
 				D10EF48E3015F2800070703E /* WianuIcon.icon in Resources */,
-				D11E8242301798520092ECC8 /* release.yml in Resources */,
 				D1B9726A3015341900B64B10 /* Assets.xcassets in Resources */,
-				D1FE001A301638DA00DA12EE /* LICENSE in Resources */,
-				D1B972403015325D00B64B10 /* README.md in Resources */,
-				D145FFF9301BB60300983295 /* .swiftformat in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -509,6 +498,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D1C1000D302000000000010D /* BrowserNavigationRouterTests.swift in Sources */,
 				D1C100013020000000000101 /* TMDBClientTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -652,7 +642,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 13;
+				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_TEAM = 9C2C8XK2UW;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
@@ -677,7 +667,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 1.3.8;
+				MARKETING_VERSION = 1.3.9;
 				PRODUCT_BUNDLE_IDENTIFIER = timwehrle.Wianu;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -700,7 +690,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 13;
+				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_TEAM = 9C2C8XK2UW;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
@@ -725,7 +715,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 1.3.8;
+				MARKETING_VERSION = 1.3.9;
 				PRODUCT_BUNDLE_IDENTIFIER = timwehrle.Wianu;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;

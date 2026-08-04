@@ -244,12 +244,14 @@ struct BrowserView: View {
         switch request.action {
         case let .load(urlRequest, establishesHistoryRoot):
             BrowserNavigationLog.logger.notice("Executing queued load")
+            router.loadDidBegin(request.id)
 
             if establishesHistoryRoot {
                 historyRootID = nil
             }
 
             defer {
+                router.loadDidEnd(request.id)
                 if establishesHistoryRoot {
                     router.destinationDidEnd(request.id)
                 }
@@ -257,6 +259,7 @@ struct BrowserView: View {
 
             if await load(
                 urlRequest,
+                navigationRequestID: request.id,
                 destinationRequestID: establishesHistoryRoot
                     ? request.id
                     : nil
@@ -275,6 +278,7 @@ struct BrowserView: View {
 
     private func load(
         _ request: URLRequest,
+        navigationRequestID: BrowserNavigationRouter.Request.ID,
         destinationRequestID: BrowserNavigationRouter.Request.ID?
     ) async -> Bool {
         do {
@@ -282,6 +286,7 @@ struct BrowserView: View {
                 try Task.checkCancellation()
                 if event == .committed {
                     BrowserNavigationLog.logger.notice("Navigation committed")
+                    router.loadDidEnd(navigationRequestID)
                     if let destinationRequestID {
                         router.destinationDidCommit(destinationRequestID)
                         await Task.yield()

@@ -26,6 +26,7 @@ final class BrowserNavigationRouter {
 
     private(set) var request: Request?
     private var protectedDestinationRequestID: Request.ID?
+    private var activeLoadRequestID: Request.ID?
 
     func openDestination(_ url: URL) {
         BrowserNavigationLog.logger.notice("Queued app destination")
@@ -64,6 +65,21 @@ final class BrowserNavigationRouter {
         request = Request(action: .reload)
     }
 
+    func loadDidBegin(_ requestID: Request.ID) {
+        BrowserNavigationLog.logger.notice("Programmatic load started")
+        activeLoadRequestID = requestID
+    }
+
+    func loadDidEnd(_ requestID: Request.ID) {
+        guard activeLoadRequestID == requestID else { return }
+        BrowserNavigationLog.logger.notice("Programmatic load policy phase ended")
+        activeLoadRequestID = nil
+    }
+
+    var isPerformingLoad: Bool {
+        activeLoadRequestID != nil
+    }
+
     func destinationDidCommit(_ requestID: Request.ID) {
         guard protectedDestinationRequestID == requestID else { return }
         protectedDestinationRequestID = nil
@@ -88,6 +104,13 @@ struct BrowserNavigationDecider: WebPage.NavigationDeciding {
             return .cancel
         }
 
+        guard !router.isPerformingLoad else {
+            BrowserNavigationLog.logger.notice(
+                "Allowed navigation for active programmatic load"
+            )
+            return .allow
+        }
+
         guard action.target == nil else {
             return .allow
         }
@@ -100,7 +123,7 @@ struct BrowserNavigationDecider: WebPage.NavigationDeciding {
         }
 
         if router.openInCurrentPage(action.request) {
-            BrowserNavigationLog.logger.debug(
+            BrowserNavigationLog.logger.notice(
                 "Rerouted targetless navigation into current page"
             )
             return .cancel

@@ -31,6 +31,16 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Select validated Xcode
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          XCODE_PATH="/Applications/Xcode_26.2.app"
+          test -d "$XCODE_PATH"
+          sudo xcode-select --switch "$XCODE_PATH/Contents/Developer"
+          xcodebuild -version
+
       - name: Install SwiftFormat
         run: brew install swiftformat
 
@@ -237,6 +247,36 @@ jobs:
             "$APPCAST_PATH/$ZIP_NAME"
 
           unzip -t "$APPCAST_PATH/$ZIP_NAME"
+
+      - name: Verify final distributed artifact
+        shell: bash
+        env:
+          ZIP_NAME: ${{ steps.version.outputs.zip_name }}
+        run: |
+          set -euo pipefail
+
+          FINAL_DIRECTORY="$RUNNER_TEMP/final-artifact"
+          FINAL_APP="$FINAL_DIRECTORY/$APP_NAME.app"
+          ENTITLEMENTS_PATH="$RUNNER_TEMP/final-entitlements.plist"
+
+          rm -rf "$FINAL_DIRECTORY"
+          mkdir -p "$FINAL_DIRECTORY"
+          ditto -x -k "$APPCAST_PATH/$ZIP_NAME" "$FINAL_DIRECTORY"
+
+          test -d "$FINAL_APP"
+          codesign --verify --deep --strict --verbose=2 "$FINAL_APP"
+          codesign \
+            --display \
+            --entitlements "$ENTITLEMENTS_PATH" \
+            --xml \
+            "$FINAL_APP"
+          plutil -lint "$ENTITLEMENTS_PATH"
+
+          test "$(/usr/libexec/PlistBuddy -c 'Print :com.apple.security.app-sandbox' "$ENTITLEMENTS_PATH")" = true
+          test "$(/usr/libexec/PlistBuddy -c 'Print :com.apple.security.network.client' "$ENTITLEMENTS_PATH")" = true
+
+          xcrun stapler validate "$FINAL_APP"
+          spctl --assess --type execute --verbose=4 "$FINAL_APP"
 
       - name: Download Sparkle publishing tools
         shell: bash
