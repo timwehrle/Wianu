@@ -1,3 +1,4 @@
+import OSLog
 import SwiftUI
 import WebKit
 
@@ -39,14 +40,11 @@ struct BrowserView: View {
         }
         .task(id: model.navigationRequest?.id) {
             guard let url = model.navigationRequest?.url else { return }
-            if await load(url) {
-                await Task.yield()
-                establishHistoryRoot()
-            }
+            router.openDestination(url)
         }
         .task(id: router.request?.id) {
-            guard let url = router.request?.url else { return }
-            _ = await load(url)
+            guard let request = router.request else { return }
+            await perform(request)
         }
         .onChange(of: page.url) { _, url in
             model.activateSite(matching: url)
@@ -153,6 +151,11 @@ struct BrowserView: View {
     Version/18.0 Safari/605.1.15
     """
 
+    private static let logger = Logger(
+        subsystem: Bundle.main.bundleIdentifier ?? "Wianu",
+        category: "BrowserNavigation"
+    )
+
     private var displayedTitle: String {
         let title = page.title.trimmingCharacters(in: .whitespacesAndNewlines)
 
@@ -215,26 +218,17 @@ struct BrowserView: View {
 
     private func goBack() {
         guard let backItem else { return }
-
-        Task {
-            await load(backItem)
-        }
+        router.openHistoryItem(backItem)
     }
 
     private func goForward() {
         guard let forwardItem else { return }
-
-        Task {
-            await load(forwardItem)
-        }
+        router.openHistoryItem(forwardItem)
     }
 
     private func goHome() {
         guard let homeURL else { return }
-
-        Task {
-            await load(homeURL)
-        }
+        router.openInCurrentPage(URLRequest(url: homeURL))
     }
 
     private func toggleContinueWatching() {
@@ -248,29 +242,60 @@ struct BrowserView: View {
     }
 
     private func reload() {
-        Task {
-            do {
-                for try await _ in page.reload(fromOrigin: false) {
-                    try Task.checkCancellation()
-                }
-            } catch is CancellationError {
-                return
-            } catch {
-                assertionFailure("Reload failed: \(error)")
+        router.reload()
+    }
+
+    private func perform(_ request: BrowserNavigationRouter.Request) async {
+        switch request.action {
+        case let .load(urlRequest, establishesHistoryRoot):
+            if establishesHistoryRoot {
+                historyRootID = nil
             }
+
+            defer {
+                if establishesHistoryRoot {
+                    router.destinationDidEnd(request.id)
+                }
+            }
+
+            if await load(
+                urlRequest,
+                destinationRequestID: establishesHistoryRoot
+                    ? request.id
+                    : nil
+            ), establishesHistoryRoot {
+                await Task.yield()
+                establishHistoryRoot()
+            }
+
+        case let .history(item):
+            await load(item)
+
+        case .reload:
+            await reloadPage()
         }
     }
 
-    private func load(_ url: URL) async -> Bool {
+    private func load(
+        _ request: URLRequest,
+        destinationRequestID: BrowserNavigationRouter.Request.ID?
+    ) async -> Bool {
         do {
-            for try await _ in page.load(URLRequest(url: url)) {
+            for try await event in page.load(request) {
                 try Task.checkCancellation()
+                if event == .committed, let destinationRequestID {
+                    router.destinationDidCommit(destinationRequestID)
+                    await Task.yield()
+                    establishHistoryRoot()
+                }
             }
             return true
-        } catch is CancellationError {
+        } catch where isCancelledNavigation(error) {
             return false
         } catch {
-            assertionFailure("Navigation failed: \(error)")
+            Self.logger.error(
+                "Navigation failed: \(String(describing: error), privacy: .public)"
+            )
             return false
         }
     }
@@ -280,12 +305,26 @@ struct BrowserView: View {
             for try await _ in page.load(item) {
                 try Task.checkCancellation()
             }
-        } catch is CancellationError {
-            return
         } catch where isCancelledNavigation(error) {
             return
         } catch {
-            assertionFailure("History navigation failed: \(error)")
+            Self.logger.error(
+                "History navigation failed: \(String(describing: error), privacy: .public)"
+            )
+        }
+    }
+
+    private func reloadPage() async {
+        do {
+            for try await _ in page.reload(fromOrigin: false) {
+                try Task.checkCancellation()
+            }
+        } catch where isCancelledNavigation(error) {
+            return
+        } catch {
+            Self.logger.error(
+                "Reload failed: \(String(describing: error), privacy: .public)"
+            )
         }
     }
 
@@ -295,6 +334,17 @@ struct BrowserView: View {
     }
 
     private func isCancelledNavigation(_ error: Error) -> Bool {
+        if error is CancellationError {
+            return true
+        }
+
+        if let navigationError = error as? WebPage.NavigationError,
+           case let .failedProvisionalNavigation(underlyingError) =
+           navigationError
+        {
+            return isCancelledNavigation(underlyingError)
+        }
+
         let error = error as NSError
         return error.domain == NSURLErrorDomain
             && error.code == NSURLErrorCancelled
