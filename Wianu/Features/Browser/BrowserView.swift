@@ -151,11 +151,6 @@ struct BrowserView: View {
     Version/18.0 Safari/605.1.15
     """
 
-    private static let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier ?? "Wianu",
-        category: "BrowserNavigation"
-    )
-
     private var displayedTitle: String {
         let title = page.title.trimmingCharacters(in: .whitespacesAndNewlines)
 
@@ -248,11 +243,15 @@ struct BrowserView: View {
     private func perform(_ request: BrowserNavigationRouter.Request) async {
         switch request.action {
         case let .load(urlRequest, establishesHistoryRoot):
+            BrowserNavigationLog.logger.notice("Executing queued load")
+            router.loadDidBegin(request.id)
+
             if establishesHistoryRoot {
                 historyRootID = nil
             }
 
             defer {
+                router.loadDidEnd(request.id)
                 if establishesHistoryRoot {
                     router.destinationDidEnd(request.id)
                 }
@@ -260,6 +259,7 @@ struct BrowserView: View {
 
             if await load(
                 urlRequest,
+                navigationRequestID: request.id,
                 destinationRequestID: establishesHistoryRoot
                     ? request.id
                     : nil
@@ -278,22 +278,28 @@ struct BrowserView: View {
 
     private func load(
         _ request: URLRequest,
+        navigationRequestID: BrowserNavigationRouter.Request.ID,
         destinationRequestID: BrowserNavigationRouter.Request.ID?
     ) async -> Bool {
         do {
             for try await event in page.load(request) {
                 try Task.checkCancellation()
-                if event == .committed, let destinationRequestID {
-                    router.destinationDidCommit(destinationRequestID)
-                    await Task.yield()
-                    establishHistoryRoot()
+                if event == .committed {
+                    BrowserNavigationLog.logger.notice("Navigation committed")
+                    router.loadDidEnd(navigationRequestID)
+                    if let destinationRequestID {
+                        router.destinationDidCommit(destinationRequestID)
+                        await Task.yield()
+                        establishHistoryRoot()
+                    }
                 }
             }
             return true
         } catch where isCancelledNavigation(error) {
+            BrowserNavigationLog.logger.debug("Navigation cancelled")
             return false
         } catch {
-            Self.logger.error(
+            BrowserNavigationLog.logger.error(
                 "Navigation failed: \(String(describing: error), privacy: .private)"
             )
             return false
@@ -306,9 +312,10 @@ struct BrowserView: View {
                 try Task.checkCancellation()
             }
         } catch where isCancelledNavigation(error) {
+            BrowserNavigationLog.logger.debug("History navigation cancelled")
             return
         } catch {
-            Self.logger.error(
+            BrowserNavigationLog.logger.error(
                 "History navigation failed: \(String(describing: error), privacy: .private)"
             )
         }
@@ -320,9 +327,10 @@ struct BrowserView: View {
                 try Task.checkCancellation()
             }
         } catch where isCancelledNavigation(error) {
+            BrowserNavigationLog.logger.debug("Reload cancelled")
             return
         } catch {
-            Self.logger.error(
+            BrowserNavigationLog.logger.error(
                 "Reload failed: \(String(describing: error), privacy: .private)"
             )
         }
