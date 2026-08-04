@@ -294,7 +294,7 @@ struct BrowserView: View {
             return false
         } catch {
             Self.logger.error(
-                "Navigation failed: \(String(describing: error), privacy: .public)"
+                "Navigation failed: \(String(describing: error), privacy: .private)"
             )
             return false
         }
@@ -309,7 +309,7 @@ struct BrowserView: View {
             return
         } catch {
             Self.logger.error(
-                "History navigation failed: \(String(describing: error), privacy: .public)"
+                "History navigation failed: \(String(describing: error), privacy: .private)"
             )
         }
     }
@@ -323,7 +323,7 @@ struct BrowserView: View {
             return
         } catch {
             Self.logger.error(
-                "Reload failed: \(String(describing: error), privacy: .public)"
+                "Reload failed: \(String(describing: error), privacy: .private)"
             )
         }
     }
