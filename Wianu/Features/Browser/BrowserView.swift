@@ -6,7 +6,6 @@ struct BrowserView: View {
     @Bindable var model: AppModel
     @State private var router: BrowserNavigationRouter
     @State private var page: WebPage
-    @State private var pageIsReady = false
     @State private var showsLoadingIndicator = false
     @State private var historyRootID: WebPage.BackForwardList.Item.ID?
 
@@ -17,6 +16,7 @@ struct BrowserView: View {
         let page = WebPage(
             navigationDecider: BrowserNavigationDecider(router: router)
         )
+        page.customUserAgent = Self.customUserAgent
 
         _router = State(initialValue: router)
         _page = State(initialValue: page)
@@ -26,10 +26,7 @@ struct BrowserView: View {
         Group {
             if model.navigationRequest != nil {
                 BrowserPaneView(
-                    page: page,
-                    onReady: {
-                        pageIsReady = true
-                    }
+                    page: page
                 )
             } else {
                 ContentUnavailableView(
@@ -41,11 +38,7 @@ struct BrowserView: View {
                 )
             }
         }
-        .task(id: NavigationTrigger(
-            requestID: model.navigationRequest?.id,
-            pageIsReady: pageIsReady
-        )) {
-            guard pageIsReady else { return }
+        .task(id: model.navigationRequest?.id) {
             guard let url = model.navigationRequest?.url else { return }
             router.openDestination(url)
         }
@@ -152,10 +145,11 @@ struct BrowserView: View {
         }
     }
 
-    private struct NavigationTrigger: Equatable {
-        let requestID: AppModel.NavigationRequest.ID?
-        let pageIsReady: Bool
-    }
+    private static let customUserAgent = """
+    Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) \
+    AppleWebKit/605.1.15 (KHTML, like Gecko) \
+    Version/18.0 Safari/605.1.15
+    """
 
     private var displayedTitle: String {
         let title = page.title.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -250,14 +244,12 @@ struct BrowserView: View {
         switch request.action {
         case let .load(urlRequest, establishesHistoryRoot):
             BrowserNavigationLog.logger.notice("Executing queued load")
-            router.loadDidBegin(request.id)
 
             if establishesHistoryRoot {
                 historyRootID = nil
             }
 
             defer {
-                router.loadDidEnd(request.id)
                 if establishesHistoryRoot {
                     router.destinationDidEnd(request.id)
                 }
@@ -265,7 +257,6 @@ struct BrowserView: View {
 
             if await load(
                 urlRequest,
-                navigationRequestID: request.id,
                 destinationRequestID: establishesHistoryRoot
                     ? request.id
                     : nil
@@ -284,7 +275,6 @@ struct BrowserView: View {
 
     private func load(
         _ request: URLRequest,
-        navigationRequestID: BrowserNavigationRouter.Request.ID,
         destinationRequestID: BrowserNavigationRouter.Request.ID?
     ) async -> Bool {
         do {
@@ -292,7 +282,6 @@ struct BrowserView: View {
                 try Task.checkCancellation()
                 if event == .committed {
                     BrowserNavigationLog.logger.notice("Navigation committed")
-                    router.loadDidEnd(navigationRequestID)
                     if let destinationRequestID {
                         router.destinationDidCommit(destinationRequestID)
                         await Task.yield()

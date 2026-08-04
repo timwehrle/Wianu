@@ -26,7 +26,6 @@ final class BrowserNavigationRouter {
 
     private(set) var request: Request?
     private var protectedDestinationRequestID: Request.ID?
-    private var activeLoadRequestID: Request.ID?
 
     func openDestination(_ url: URL) {
         BrowserNavigationLog.logger.notice("Queued app destination")
@@ -42,17 +41,18 @@ final class BrowserNavigationRouter {
 
     @discardableResult
     func openInCurrentPage(_ request: URLRequest) -> Bool {
-        guard protectedDestinationRequestID == nil else {
-            BrowserNavigationLog.logger.debug(
-                "Blocked website navigation while app destination is protected"
-            )
-            return false
-        }
-
         BrowserNavigationLog.logger.debug("Queued website navigation")
-        self.request = Request(
-            action: .load(request, establishesHistoryRoot: false)
+        let establishesHistoryRoot = protectedDestinationRequestID != nil
+        let replacement = Request(
+            action: .load(
+                request,
+                establishesHistoryRoot: establishesHistoryRoot
+            )
         )
+        if establishesHistoryRoot {
+            protectedDestinationRequestID = replacement.id
+        }
+        self.request = replacement
         return true
     }
 
@@ -62,21 +62,6 @@ final class BrowserNavigationRouter {
 
     func reload() {
         request = Request(action: .reload)
-    }
-
-    func loadDidBegin(_ requestID: Request.ID) {
-        BrowserNavigationLog.logger.notice("Programmatic load started")
-        activeLoadRequestID = requestID
-    }
-
-    func loadDidEnd(_ requestID: Request.ID) {
-        guard activeLoadRequestID == requestID else { return }
-        BrowserNavigationLog.logger.notice("Programmatic load policy phase ended")
-        activeLoadRequestID = nil
-    }
-
-    var isPerformingLoad: Bool {
-        activeLoadRequestID != nil
     }
 
     func destinationDidCommit(_ requestID: Request.ID) {
@@ -103,13 +88,6 @@ struct BrowserNavigationDecider: WebPage.NavigationDeciding {
             return .cancel
         }
 
-        guard !router.isPerformingLoad else {
-            BrowserNavigationLog.logger.debug(
-                "Allowed policy action for active programmatic load"
-            )
-            return .allow
-        }
-
         guard action.target == nil else {
             return .allow
         }
@@ -131,6 +109,13 @@ struct BrowserNavigationDecider: WebPage.NavigationDeciding {
         BrowserNavigationLog.logger.notice(
             "Allowed targetless navigation because rerouting was unavailable"
         )
+        return .allow
+    }
+
+    func decidePolicy(
+        for response: WebPage.NavigationResponse
+    ) async -> WKNavigationResponsePolicy {
+        BrowserNavigationLog.logger.notice("Received navigation response")
         return .allow
     }
 }
