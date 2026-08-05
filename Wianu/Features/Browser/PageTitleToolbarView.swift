@@ -9,6 +9,7 @@ struct PageTitleToolbarView: View {
             .lineLimit(1)
             .truncationMode(.tail)
             .help(title)
-            .padding(.horizontal, 12)
+            .padding(.leading, 4)
+            .padding(.trailing, 12)
     }
 }
