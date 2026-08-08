@@ -1,6 +1,6 @@
 import Foundation
 
-struct WatchlistItem: Identifiable, Codable, Hashable, Sendable {
+nonisolated struct WatchlistItem: Identifiable, Codable, Hashable, Sendable {
     enum Source: String, Codable, Hashable, Sendable {
         case custom
         case letterboxd

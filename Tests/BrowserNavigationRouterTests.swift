@@ -91,4 +91,23 @@ struct BrowserNavigationRouterTests {
         )
     }
 
+    @Test func `Letterboxd imports upgrade HTTP and enforce size limits`() throws {
+        let csv = "Name,Letterboxd URI\nMovie,http://letterboxd.com/film/movie/\n"
+        let result = try LetterboxdWatchlistImporter.importItems(
+            from: Data(csv.utf8)
+        )
+        #expect(result.items.first?.url?.scheme == "https")
+
+        let fileURL = FileManager.default.temporaryDirectory
+            .appending(path: UUID().uuidString)
+        try Data(csv.utf8).write(to: fileURL)
+        defer { try? FileManager.default.removeItem(at: fileURL) }
+
+        #expect(throws: LetterboxdWatchlistImportError.self) {
+            try LetterboxdWatchlistImporter.importItems(
+                contentsOf: fileURL,
+                maximumBytes: 4
+            )
+        }
+    }
 }
