@@ -20,6 +20,7 @@ env:
   EXPORT_PATH: ${{ github.workspace }}/build/export
   APPCAST_PATH: ${{ github.workspace }}/build/appcast
   SPARKLE_VERSION: "2.9.4"
+  SPARKLE_ARCHIVE_SHA256: "ce89daf967db1e1893ed3ebd67575ed82d3902563e3191ca92aaec9164fbdef9"
 
 jobs:
   release:
@@ -27,7 +28,7 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
 
@@ -293,6 +294,9 @@ jobs:
             "https://github.com/sparkle-project/Sparkle/releases/download/${SPARKLE_VERSION}/Sparkle-${SPARKLE_VERSION}.tar.xz" \
             --output "$SPARKLE_ARCHIVE"
 
+          echo "${SPARKLE_ARCHIVE_SHA256}  ${SPARKLE_ARCHIVE}" |
+            shasum -a 256 --check
+
           mkdir -p "$SPARKLE_DIRECTORY"
           tar -xf "$SPARKLE_ARCHIVE" -C "$SPARKLE_DIRECTORY"
 
@@ -349,21 +353,15 @@ jobs:
         shell: bash
         env:
           SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
-          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_HOST_KEY: ${{ secrets.DEPLOY_HOST_KEY }}
         run: |
           set -euo pipefail
 
-          mkdir -p ~/.ssh
-          chmod 700 ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > "$RUNNER_TEMP/wianu-deploy"
+          chmod 600 "$RUNNER_TEMP/wianu-deploy"
 
-          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/wianu-deploy
-          chmod 600 ~/.ssh/wianu-deploy
-
-          ssh-keyscan \
-            -H "$DEPLOY_HOST" \
-            >> ~/.ssh/known_hosts
-
-          chmod 600 ~/.ssh/known_hosts
+          printf '%s\n' "$DEPLOY_HOST_KEY" > "$RUNNER_TEMP/wianu-known-hosts"
+          chmod 600 "$RUNNER_TEMP/wianu-known-hosts"
 
       - name: Deploy appcast
         shell: bash
@@ -378,11 +376,15 @@ jobs:
             --archive \
             --verbose \
             --compress \
-            -e "ssh -i ~/.ssh/wianu-deploy" \
+            -e "ssh -i $RUNNER_TEMP/wianu-deploy -o UserKnownHostsFile=$RUNNER_TEMP/wianu-known-hosts -o StrictHostKeyChecking=yes" \
             "$APPCAST_PATH/appcast.xml" \
             "${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}/appcast.xml"
 
-          ssh -i ~/.ssh/wianu-deploy "${DEPLOY_USER}@${DEPLOY_HOST}" \
+          ssh \
+            -i "$RUNNER_TEMP/wianu-deploy" \
+            -o "UserKnownHostsFile=$RUNNER_TEMP/wianu-known-hosts" \
+            -o StrictHostKeyChecking=yes \
+            "${DEPLOY_USER}@${DEPLOY_HOST}" \
             "chmod 644 ${DEPLOY_PATH}/appcast.xml"
 
       - name: Verify deployed feed
@@ -415,6 +417,7 @@ jobs:
             2>/dev/null || true
 
           rm -f \
-            "$RUNNER_TEMP/developer-id.p12" \
+            "$RUNNER_TEMP/developer_id.p12" \
             "$RUNNER_TEMP"/AuthKey_*.p8 \
-            ~/.ssh/wianu-deploy
+            "$RUNNER_TEMP/wianu-deploy" \
+            "$RUNNER_TEMP/wianu-known-hosts"
