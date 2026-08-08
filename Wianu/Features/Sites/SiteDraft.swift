@@ -83,7 +83,7 @@ struct SiteDraft {
             let normalizedAddress,
             let url = URL(string: normalizedAddress),
             let scheme = url.scheme,
-            ["http", "https"].contains(scheme.lowercased()),
+            scheme.lowercased() == "https",
             url.host() != nil
         else { return nil }
 

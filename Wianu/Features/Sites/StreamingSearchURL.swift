@@ -11,7 +11,7 @@ enum StreamingSearchURL {
         guard
             let url = URL(string: testURLString),
             let scheme = url.scheme?.lowercased(),
-            ["http", "https"].contains(scheme),
+            scheme == "https",
             url.host() != nil
         else { return false }
 
