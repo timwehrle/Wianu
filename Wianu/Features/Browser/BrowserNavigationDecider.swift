@@ -10,6 +10,28 @@ enum BrowserNavigationLog {
     )
 }
 
+enum BrowserURLPolicy {
+    static func allowsExternalNavigation(to url: URL?) -> Bool {
+        guard
+            let url,
+            url.scheme?.lowercased() == "https",
+            url.host() != nil,
+            url.user == nil,
+            url.password == nil
+        else { return false }
+
+        return true
+    }
+
+    static func rejectionMessage(for url: URL?) -> String {
+        guard let url else { return "Wianu blocked an invalid link." }
+        if url.scheme?.lowercased() == "http" {
+            return "Wianu only opens secure HTTPS pages. Update this address before opening it."
+        }
+        return "Wianu blocked an unsupported or unsafe link."
+    }
+}
+
 @MainActor
 @Observable
 final class BrowserNavigationRouter {
@@ -25,10 +47,16 @@ final class BrowserNavigationRouter {
     }
 
     private(set) var request: Request?
+    private(set) var blockedNavigationMessage: String?
     private var protectedDestinationRequestID: Request.ID?
     private var activeLoadRequestID: Request.ID?
 
-    func openDestination(_ url: URL) {
+    @discardableResult
+    func openDestination(_ url: URL) -> Bool {
+        guard BrowserURLPolicy.allowsExternalNavigation(to: url) else {
+            blockedNavigationMessage = BrowserURLPolicy.rejectionMessage(for: url)
+            return false
+        }
         BrowserNavigationLog.logger.notice("Queued app destination")
         let request = Request(
             action: .load(
@@ -38,10 +66,17 @@ final class BrowserNavigationRouter {
         )
         protectedDestinationRequestID = request.id
         self.request = request
+        return true
     }
 
     @discardableResult
     func openInCurrentPage(_ request: URLRequest) -> Bool {
+        guard BrowserURLPolicy.allowsExternalNavigation(to: request.url) else {
+            blockedNavigationMessage = BrowserURLPolicy.rejectionMessage(
+                for: request.url
+            )
+            return false
+        }
         BrowserNavigationLog.logger.debug("Queued website navigation")
         let establishesHistoryRoot = protectedDestinationRequestID != nil
         let replacement = Request(
@@ -55,6 +90,10 @@ final class BrowserNavigationRouter {
         }
         self.request = replacement
         return true
+    }
+
+    func clearBlockedNavigationMessage() {
+        blockedNavigationMessage = nil
     }
 
     func openHistoryItem(_ item: WebPage.BackForwardList.Item) {
@@ -104,6 +143,19 @@ struct BrowserNavigationDecider: WebPage.NavigationDeciding {
             return .cancel
         }
 
+        // Streaming providers use non-HTTPS internal URLs in sandboxed
+        // subframes for playback and authentication. They do not replace the
+        // user-visible origin, so leave their handling to WebKit.
+        if let target = action.target, !target.isMainFrame {
+            return .allow
+        }
+
+        guard BrowserURLPolicy.allowsExternalNavigation(to: url) else {
+            BrowserNavigationLog.logger.error("Cancelled unsafe navigation")
+            _ = router.openInCurrentPage(action.request)
+            return .cancel
+        }
+
         guard !router.isPerformingLoad else {
             BrowserNavigationLog.logger.notice(
                 "Allowed navigation for active programmatic load"
@@ -113,13 +165,6 @@ struct BrowserNavigationDecider: WebPage.NavigationDeciding {
 
         guard action.target == nil else {
             return .allow
-        }
-
-        guard ["http", "https"].contains(url.scheme?.lowercased()) else {
-            BrowserNavigationLog.logger.debug(
-                "Cancelled unsupported targetless navigation"
-            )
-            return .cancel
         }
 
         if router.openInCurrentPage(action.request) {
@@ -139,6 +184,9 @@ struct BrowserNavigationDecider: WebPage.NavigationDeciding {
         for response: WebPage.NavigationResponse
     ) async -> WKNavigationResponsePolicy {
         BrowserNavigationLog.logger.notice("Received navigation response")
+        // NavigationResponse does not expose its target frame. The action
+        // policy above validates every user-visible navigation, while WebKit
+        // remains responsible for provider subresource responses.
         return .allow
     }
 }

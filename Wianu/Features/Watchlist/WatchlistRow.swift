@@ -124,7 +124,7 @@ struct WatchlistItemEditorView: View {
         guard
             let candidate,
             let scheme = candidate.scheme?.lowercased(),
-            scheme == "http" || scheme == "https",
+            scheme == "https",
             candidate.host() != nil
         else { return nil }
         return candidate

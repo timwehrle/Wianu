@@ -88,7 +88,10 @@ struct BrowserView: View {
 
                 ToolbarItem(placement: .principal) {
                     if model.destinationURL != nil {
-                        PageTitleToolbarView(title: displayedTitle)
+                        PageTitleToolbarView(
+                            title: displayedTitle,
+                            url: page.url
+                        )
                     }
                 }
 
@@ -142,6 +145,23 @@ struct BrowserView: View {
                     }
                 }
             }
+        }
+        .alert(
+            "Navigation Blocked",
+            isPresented: Binding(
+                get: { router.blockedNavigationMessage != nil },
+                set: { presented in
+                    if !presented {
+                        router.clearBlockedNavigationMessage()
+                    }
+                }
+            )
+        ) {
+            Button("OK") {
+                router.clearBlockedNavigationMessage()
+            }
+        } message: {
+            Text(router.blockedNavigationMessage ?? "")
         }
     }
 

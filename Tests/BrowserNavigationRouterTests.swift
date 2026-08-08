@@ -35,4 +35,60 @@ struct BrowserNavigationRouterTests {
         router.loadDidEnd(replacementRequest.id)
         #expect(!router.isPerformingLoad)
     }
+
+    @Test func `only secure credential-free web URLs are accepted`() {
+        #expect(
+            BrowserURLPolicy.allowsExternalNavigation(
+                to: URL(string: "https://example.com/watch?id=1")
+            )
+        )
+        #expect(
+            !BrowserURLPolicy.allowsExternalNavigation(
+                to: URL(string: "http://example.com")
+            )
+        )
+        #expect(
+            !BrowserURLPolicy.allowsExternalNavigation(
+                to: URL(string: "file:///tmp/movie")
+            )
+        )
+        #expect(
+            !BrowserURLPolicy.allowsExternalNavigation(
+                to: URL(string: "https://user:secret@example.com")
+            )
+        )
+    }
+
+    @Test func `router preserves but blocks insecure legacy destinations`() throws {
+        let router = BrowserNavigationRouter()
+        let accepted = try router.openDestination(
+            #require(URL(string: "http://example.com"))
+        )
+
+        #expect(!accepted)
+        #expect(router.request == nil)
+        #expect(router.blockedNavigationMessage != nil)
+    }
+
+    @Test func `site and search inputs require HTTPS`() {
+        #expect(
+            SiteDraft(name: "Secure", address: "https://example.com")
+                .siteURLIsValid
+        )
+        #expect(
+            !SiteDraft(name: "Legacy", address: "http://example.com")
+                .siteURLIsValid
+        )
+        #expect(
+            StreamingSearchURL.isValidTemplate(
+                "https://example.com/search?q={query}"
+            )
+        )
+        #expect(
+            !StreamingSearchURL.isValidTemplate(
+                "http://example.com/search?q={query}"
+            )
+        )
+    }
+
 }

@@ -76,7 +76,7 @@ struct SiteEditorView: View {
                     }
 
                     if !draft.address.isEmpty, !draft.siteURLIsValid {
-                        Text("Enter a valid HTTP or HTTPS website address.")
+                        Text("Enter a valid HTTPS website address.")
                             .font(.caption)
                             .foregroundStyle(.red)
                     }
@@ -98,7 +98,7 @@ struct SiteEditorView: View {
 
                     if !draft.searchURLTemplateIsValid {
                         Text(
-                            "Enter a valid HTTP or HTTPS URL containing "
+                            "Enter a valid HTTPS URL containing "
                                 + "exactly one {query} placeholder."
                         )
                         .font(.caption)
