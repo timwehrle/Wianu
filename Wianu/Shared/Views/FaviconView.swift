@@ -7,20 +7,21 @@ struct FaviconView: View {
     @State private var image: NSImage?
 
     private var faviconURL: URL? {
-        guard let host = url?.host() else {
-            return nil
-        }
+        guard
+            let url,
+            BrowserURLPolicy.allowsExternalNavigation(to: url),
+            var components = URLComponents(
+                url: url,
+                resolvingAgainstBaseURL: false
+            )
+        else { return nil }
 
-        var components = URLComponents(
-            string: "https://www.google.com/s2/favicons"
-        )
-
-        components?.queryItems = [
-            URLQueryItem(name: "domain", value: host),
-            URLQueryItem(name: "sz", value: "64")
-        ]
-
-        return components?.url
+        components.user = nil
+        components.password = nil
+        components.path = "/favicon.ico"
+        components.query = nil
+        components.fragment = nil
+        return components.url
     }
 
     var body: some View {
@@ -63,7 +64,11 @@ private actor FaviconLoader {
     static let shared = FaviconLoader()
 
     private var cache: [URL: Data] = [:]
+    private var cacheOrder: [URL] = []
     private var requests: [URL: Task<Data, Error>] = [:]
+
+    private static let maximumResponseBytes = 1_048_576
+    private static let maximumCacheEntries = 128
 
     func data(for url: URL) async throws -> Data {
         if let data = cache[url] {
@@ -82,6 +87,12 @@ private actor FaviconLoader {
         do {
             let data = try await request.value
             cache[url] = data
+            cacheOrder.removeAll { $0 == url }
+            cacheOrder.append(url)
+            if cacheOrder.count > Self.maximumCacheEntries {
+                let evictedURL = cacheOrder.removeFirst()
+                cache[evictedURL] = nil
+            }
             requests[url] = nil
             return data
         } catch {
@@ -95,14 +106,32 @@ private actor FaviconLoader {
 
         for attempt in 0 ..< 3 {
             do {
-                let (data, response) = try await URLSession.shared.data(
+                let (bytes, response) = try await URLSession.shared.bytes(
                     from: url
                 )
                 guard
                     let response = response as? HTTPURLResponse,
                     (200 ..< 300).contains(response.statusCode),
-                    NSImage(data: data) != nil
+                    response.mimeType?.lowercased().hasPrefix("image/") == true,
+                    response.expectedContentLength <= maximumResponseBytes
                 else {
+                    throw FaviconError.invalidResponse
+                }
+
+                var data = Data()
+                data.reserveCapacity(
+                    min(
+                        max(Int(response.expectedContentLength), 0),
+                        maximumResponseBytes
+                    )
+                )
+                for try await byte in bytes {
+                    guard data.count < maximumResponseBytes else {
+                        throw FaviconError.responseTooLarge
+                    }
+                    data.append(byte)
+                }
+                guard NSImage(data: data) != nil else {
                     throw FaviconError.invalidResponse
                 }
                 return data
@@ -123,5 +152,6 @@ private actor FaviconLoader {
 
     private enum FaviconError: Error {
         case invalidResponse
+        case responseTooLarge
     }
 }
