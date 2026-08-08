@@ -1,11 +1,12 @@
 import Foundation
 
-struct LetterboxdWatchlistImportResult {
+struct LetterboxdWatchlistImportResult: Sendable {
     let items: [WatchlistItem]
     let skippedRowCount: Int
 }
 
-enum LetterboxdWatchlistImportError: LocalizedError {
+enum LetterboxdWatchlistImportError: LocalizedError, Sendable {
+    case fileTooLarge(maximumBytes: Int)
     case invalidEncoding
     case malformedCSV
     case missingRequiredColumns
@@ -13,6 +14,8 @@ enum LetterboxdWatchlistImportError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
+        case let .fileTooLarge(maximumBytes):
+            "The CSV exceeds the \(maximumBytes / 1_048_576) MB import limit."
         case .invalidEncoding:
             "The file is not valid UTF-8 text."
         case .malformedCSV:
@@ -25,7 +28,34 @@ enum LetterboxdWatchlistImportError: LocalizedError {
     }
 }
 
-enum LetterboxdWatchlistImporter {
+nonisolated enum LetterboxdWatchlistImporter {
+    static func importItems(
+        contentsOf url: URL,
+        maximumBytes: Int
+    ) throws -> LetterboxdWatchlistImportResult {
+        let resourceValues = try url.resourceValues(
+            forKeys: [.fileSizeKey, .isRegularFileKey]
+        )
+        guard resourceValues.isRegularFile == true else {
+            throw CocoaError(.fileReadUnsupportedScheme)
+        }
+        if let fileSize = resourceValues.fileSize,
+           fileSize > maximumBytes
+        {
+            throw LetterboxdWatchlistImportError.fileTooLarge(
+                maximumBytes: maximumBytes
+            )
+        }
+
+        let data = try Data(contentsOf: url, options: .mappedIfSafe)
+        guard data.count <= maximumBytes else {
+            throw LetterboxdWatchlistImportError.fileTooLarge(
+                maximumBytes: maximumBytes
+            )
+        }
+        return try importItems(from: data)
+    }
+
     static func importItems(from data: Data) throws -> LetterboxdWatchlistImportResult {
         guard var text = String(data: data, encoding: .utf8) else {
             throw LetterboxdWatchlistImportError.invalidEncoding
@@ -70,13 +100,13 @@ enum LetterboxdWatchlistImporter {
             guard
                 !title.isEmpty,
                 let url = URL(string: urlString),
-                isLetterboxdURL(url)
+                let secureURL = secureLetterboxdURL(url)
             else {
                 skippedRowCount += 1
                 continue
             }
 
-            let comparisonKey = normalizedURLKey(url)
+            let comparisonKey = normalizedURLKey(secureURL)
             guard seenURLs.insert(comparisonKey).inserted else {
                 skippedRowCount += 1
                 continue
@@ -99,7 +129,7 @@ enum LetterboxdWatchlistImporter {
                 WatchlistItem(
                     title: title,
                     year: year,
-                    letterboxdURL: url,
+                    letterboxdURL: secureURL,
                     addedAt: addedAt,
                     sourceOrder: items.count
                 )
@@ -191,16 +221,26 @@ enum LetterboxdWatchlistImporter {
             .filter { !$0.isWhitespace }
     }
 
-    private static func isLetterboxdURL(_ url: URL) -> Bool {
+    private static func secureLetterboxdURL(_ url: URL) -> URL? {
         guard
             let scheme = url.scheme?.lowercased(),
             ["http", "https"].contains(scheme),
             let host = url.host()?.lowercased()
-        else { return false }
+        else { return nil }
 
-        return host == "letterboxd.com"
+        guard host == "letterboxd.com"
             || host.hasSuffix(".letterboxd.com")
             || host == "boxd.it"
+        else { return nil }
+
+        guard var components = URLComponents(
+            url: url,
+            resolvingAgainstBaseURL: false
+        ) else { return nil }
+        components.scheme = "https"
+        components.user = nil
+        components.password = nil
+        return components.url
     }
 
     private static func normalizedURLKey(_ url: URL) -> String {

@@ -244,7 +244,9 @@ struct SidebarView: View {
         switch result {
         case let .success(urls):
             guard let url = urls.first else { return }
-            importWatchlist(from: url)
+            Task {
+                await importWatchlist(from: url)
+            }
 
         case let .failure(error):
             if (error as? CocoaError)?.code != .userCancelled {
@@ -253,7 +255,9 @@ struct SidebarView: View {
         }
     }
 
-    private func importWatchlist(from url: URL) {
+    private static let maximumImportBytes = 10 * 1_048_576
+
+    private func importWatchlist(from url: URL) async {
         let hasSecurityAccess = url.startAccessingSecurityScopedResource()
         defer {
             if hasSecurityAccess {
@@ -262,9 +266,13 @@ struct SidebarView: View {
         }
 
         do {
-            let result = try LetterboxdWatchlistImporter.importItems(
-                from: Data(contentsOf: url)
-            )
+            let maximumBytes = Self.maximumImportBytes
+            let result = try await Task.detached {
+                try LetterboxdWatchlistImporter.importItems(
+                    contentsOf: url,
+                    maximumBytes: maximumBytes
+                )
+            }.value
             model.replaceImportedWatchlistItems(with: result.items)
 
             if let error = model.watchlistStore.persistenceError {
