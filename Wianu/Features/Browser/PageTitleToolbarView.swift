@@ -3,11 +3,15 @@ import SwiftUI
 struct PageTitleToolbarView: View {
     let title: String
     let url: URL?
+    @Environment(\.controlActiveState) private var controlActiveState
 
     var body: some View {
         VStack(spacing: 0) {
             Text(title)
                 .font(.headline)
+                .foregroundStyle(
+                    controlActiveState == .key ? .primary : .secondary
+                )
                 .lineLimit(1)
                 .truncationMode(.tail)
 
