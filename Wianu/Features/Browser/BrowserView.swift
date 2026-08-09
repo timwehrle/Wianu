@@ -59,7 +59,7 @@ struct BrowserView: View {
             }
         }
         .toolbar {
-            if model.selection != .search {
+            if !model.isCommandPalettePresented {
                 ToolbarItem(placement: .navigation) {
                     Button(action: goBack) {
                         Image(systemName: "chevron.left")
