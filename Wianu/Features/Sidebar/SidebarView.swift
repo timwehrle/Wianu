@@ -3,8 +3,8 @@ import UniformTypeIdentifiers
 
 struct SidebarView: View {
     @Bindable var model: AppModel
+    @Binding var showingAddSite: Bool
 
-    @State private var showingAddSite = false
     @State private var editingSite: SavedSite?
     @State private var renamingItem: ContinueWatchingItem?
     @State private var deletingSite: SavedSite?
@@ -20,8 +20,12 @@ struct SidebarView: View {
 
     var body: some View {
         List(selection: selectionBinding) {
-            Label("Search", systemImage: "magnifyingglass")
-                .tag(SidebarSelection.search)
+            Button {
+                model.showCommandPalette()
+            } label: {
+                Label("Search", systemImage: "magnifyingglass")
+            }
+            .buttonStyle(.plain)
 
             Section("Sites", isExpanded: $sitesExpanded) {
                 ForEach(model.siteStore.sites) { site in
@@ -80,7 +84,7 @@ struct SidebarView: View {
                         )
                         .contextMenu {
                             Button("Find Providers") {
-                                model.showSearch(query: item.title)
+                                model.showCommandPalette(query: item.title)
                             }
 
                             Divider()
@@ -121,13 +125,6 @@ struct SidebarView: View {
         }
         .listStyle(.sidebar)
         .frame(minWidth: 240)
-        .sheet(isPresented: $showingAddSite) {
-            SiteEditorView(
-                store: model.siteStore,
-                tmdbClient: model.tmdbClient,
-                mode: .add
-            )
-        }
         .sheet(item: $editingSite) { site in
             SiteEditorView(
                 store: model.siteStore,
@@ -226,13 +223,7 @@ struct SidebarView: View {
     private var selectionBinding: Binding<SidebarSelection?> {
         Binding(
             get: { model.selection },
-            set: { selection in
-                if selection == .search {
-                    model.showSearch()
-                } else {
-                    model.select(selection)
-                }
-            }
+            set: model.select
         )
     }
 

@@ -474,6 +474,9 @@ final class TMDBSearchModel {
             isSearching = false
             return
         }
+        results = []
+        currentPage = 0
+        totalPages = 0
         searchTask = Task {
             try? await Task.sleep(for: .milliseconds(350))
             guard !Task.isCancelled else { return }

@@ -16,11 +16,10 @@ final class AppModel {
     private(set) var tmdbSearch: TMDBSearchModel
     private(set) var hasStoredTMDBToken: Bool
     private(set) var tmdbCredentialError: String?
+    private(set) var isCommandPalettePresented = false
 
     private(set) var selection: SidebarSelection?
     private(set) var navigationRequest: NavigationRequest?
-    @ObservationIgnored
-    private var selectionBeforeSearch: SidebarSelection?
     @ObservationIgnored
     private let userDefaults: UserDefaults
     @ObservationIgnored
@@ -138,8 +137,6 @@ final class AppModel {
 
     func destination(for selection: SidebarSelection?) -> URL? {
         switch selection {
-        case .search:
-            nil
         case let .site(siteID):
             siteStore.sites.first { $0.id == siteID }?.url
         case let .continueWatching(itemID):
@@ -154,29 +151,25 @@ final class AppModel {
     func search(_ query: String, in site: SavedSite) {
         guard let searchURL = site.searchURL(for: query) else { return }
 
+        dismissCommandPalette()
         select(.site(site.id))
         navigate(to: searchURL)
     }
 
-    func showSearch(query: String? = nil) {
-        if selection != .search {
-            selectionBeforeSearch = selection
-        }
+    func showCommandPalette(query: String? = nil) {
+        tmdbSearch.clearSelection()
         if let query {
             tmdbSearch.query = query
-            tmdbSearch.queryChanged()
+        } else {
+            tmdbSearch.query = ""
         }
-        select(.search)
+        tmdbSearch.queryChanged()
+        isCommandPalettePresented = true
         tmdbSearch.requestFocus()
     }
 
-    func dismissSearch() {
-        guard selection == .search else { return }
-
-        // Restore only the sidebar selection. Changing destinationURL here
-        // would navigate the browser away from the page that kept playing.
-        selection = selectionBeforeSearch
-        selectionBeforeSearch = nil
+    func dismissCommandPalette() {
+        isCommandPalettePresented = false
     }
 
     func openProvider(_ provider: TMDBProvider, for media: TMDBMediaResult) {
@@ -196,11 +189,9 @@ final class AppModel {
     }
 
     func select(_ newSelection: SidebarSelection?) {
+        isCommandPalettePresented = false
         selection = newSelection
-        if newSelection != .search {
-            selectionBeforeSearch = nil
-            navigate(to: destination(for: newSelection))
-        }
+        navigate(to: destination(for: newSelection))
 
         if case let .continueWatching(itemID) = newSelection {
             continueWatchingStore.markOpened(id: itemID)
@@ -271,7 +262,6 @@ final class AppModel {
 
     func activateSite(matching url: URL?) {
         guard
-            selection != .search,
             let url,
             let host = normalizedHost(for: url),
             let site = siteStore.sites.first(where: {
@@ -344,8 +334,6 @@ final class AppModel {
 
     private var selectedSiteID: SavedSite.ID? {
         switch selection {
-        case .search:
-            nil
         case let .site(siteID):
             siteID
         case let .continueWatching(itemID):

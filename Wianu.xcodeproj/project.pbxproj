@@ -38,12 +38,16 @@
 		D1B972843015341900B64B10 /* SidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B972553015341900B64B10 /* SidebarView.swift */; };
 		D1B972853015341900B64B10 /* SavedSite.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B972573015341900B64B10 /* SavedSite.swift */; };
 		D1B973023015341900B64B10 /* StreamingSearchURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B973003015341900B64B10 /* StreamingSearchURL.swift */; };
-		D1B973033015341900B64B10 /* StreamingSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B973013015341900B64B10 /* StreamingSearchView.swift */; };
+		D1B973033015341900B64B10 /* CommandPaletteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B973013015341900B64B10 /* CommandPaletteView.swift */; };
 		D1C000023020000000000002 /* TMDB.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C000013020000000000001 /* TMDB.swift */; };
 		D1C100013020000000000101 /* TMDBClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C100023020000000000102 /* TMDBClientTests.swift */; };
 		D1C1000D302000000000010D /* BrowserNavigationRouterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C1000C302000000000010C /* BrowserNavigationRouterTests.swift */; };
 		D1D000013020000000000001 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1D000023020000000000002 /* SettingsView.swift */; };
 		D1D000033020000000000003 /* TMDBCredentialStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1D000043020000000000004 /* TMDBCredentialStore.swift */; };
+		D1E100013030000000000001 /* CommandPaletteCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E100023030000000000002 /* CommandPaletteCommand.swift */; };
+		D1E300013030000000000001 /* CommandCatalogTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E300033030000000000003 /* CommandCatalogTests.swift */; };
+		D1E400013030000000000001 /* TMDBAvailabilityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E400033030000000000003 /* TMDBAvailabilityView.swift */; };
+		D1E400023030000000000002 /* TMDBMediaViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E400043030000000000004 /* TMDBMediaViews.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -95,13 +99,17 @@
 		D1B972643015341900B64B10 /* FaviconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaviconView.swift; sourceTree = "<group>"; };
 		D1B972673015341900B64B10 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D1B973003015341900B64B10 /* StreamingSearchURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingSearchURL.swift; sourceTree = "<group>"; };
-		D1B973013015341900B64B10 /* StreamingSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingSearchView.swift; sourceTree = "<group>"; };
+		D1B973013015341900B64B10 /* CommandPaletteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandPaletteView.swift; sourceTree = "<group>"; };
 		D1C000013020000000000001 /* TMDB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMDB.swift; sourceTree = "<group>"; };
 		D1C100023020000000000102 /* TMDBClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMDBClientTests.swift; sourceTree = "<group>"; };
 		D1C100033020000000000103 /* WianuTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WianuTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1C1000C302000000000010C /* BrowserNavigationRouterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserNavigationRouterTests.swift; sourceTree = "<group>"; };
 		D1D000023020000000000002 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		D1D000043020000000000004 /* TMDBCredentialStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMDBCredentialStore.swift; sourceTree = "<group>"; };
+		D1E100023030000000000002 /* CommandPaletteCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandPaletteCommand.swift; sourceTree = "<group>"; };
+		D1E300033030000000000003 /* CommandCatalogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandCatalogTests.swift; sourceTree = "<group>"; };
+		D1E400033030000000000003 /* TMDBAvailabilityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMDBAvailabilityView.swift; sourceTree = "<group>"; };
+		D1E400043030000000000004 /* TMDBMediaViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMDBMediaViews.swift; sourceTree = "<group>"; };
 		D1FE0019301638DA00DA12EE /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		D1FE001B30163BD700DA12EE /* WianuIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = WianuIcon.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -237,7 +245,6 @@
 				D1B9725A3015341900B64B10 /* SiteRow.swift */,
 				D1B9725B3015341900B64B10 /* SiteStore.swift */,
 				D1B973003015341900B64B10 /* StreamingSearchURL.swift */,
-				D1B973013015341900B64B10 /* StreamingSearchView.swift */,
 				D1C000013020000000000001 /* TMDB.swift */,
 			);
 			path = Sites;
@@ -246,6 +253,7 @@
 		D1B9725D3015341900B64B10 /* Features */ = {
 			isa = PBXGroup;
 			children = (
+				D1E100033030000000000003 /* CommandPalette */,
 				D1B972493015341900B64B10 /* Browser */,
 				D1B9724E3015341900B64B10 /* ContinueWatching */,
 				D1B972533015341900B64B10 /* Watchlist */,
@@ -317,6 +325,7 @@
 		D1C100043020000000000104 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				D1E300033030000000000003 /* CommandCatalogTests.swift */,
 				D1C1000C302000000000010C /* BrowserNavigationRouterTests.swift */,
 				D1C100023020000000000102 /* TMDBClientTests.swift */,
 			);
@@ -329,6 +338,17 @@
 				D1D000043020000000000004 /* TMDBCredentialStore.swift */,
 			);
 			path = Security;
+			sourceTree = "<group>";
+		};
+		D1E100033030000000000003 /* CommandPalette */ = {
+			isa = PBXGroup;
+			children = (
+				D1E100023030000000000002 /* CommandPaletteCommand.swift */,
+				D1B973013015341900B64B10 /* CommandPaletteView.swift */,
+				D1E400033030000000000003 /* TMDBAvailabilityView.swift */,
+				D1E400043030000000000004 /* TMDBMediaViews.swift */,
+			);
+			path = CommandPalette;
 			sourceTree = "<group>";
 		};
 		D1FE001C30163BD700DA12EE /* Assets */ = {
@@ -466,9 +486,12 @@
 				D1B972843015341900B64B10 /* SidebarView.swift in Sources */,
 				D1B972853015341900B64B10 /* SavedSite.swift in Sources */,
 				D1B973023015341900B64B10 /* StreamingSearchURL.swift in Sources */,
-				D1B973033015341900B64B10 /* StreamingSearchView.swift in Sources */,
+				D1B973033015341900B64B10 /* CommandPaletteView.swift in Sources */,
 				D1C000023020000000000002 /* TMDB.swift in Sources */,
 				D1D000033020000000000003 /* TMDBCredentialStore.swift in Sources */,
+				D1E100013030000000000001 /* CommandPaletteCommand.swift in Sources */,
+				D1E400013030000000000001 /* TMDBAvailabilityView.swift in Sources */,
+				D1E400023030000000000002 /* TMDBMediaViews.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -476,6 +499,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D1E300013030000000000001 /* CommandCatalogTests.swift in Sources */,
 				D1C1000D302000000000010D /* BrowserNavigationRouterTests.swift in Sources */,
 				D1C100013020000000000101 /* TMDBClientTests.swift in Sources */,
 			);
