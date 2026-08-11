@@ -95,6 +95,7 @@ struct CommandPaletteView: View {
         HStack(spacing: 10) {
             Image(systemName: "magnifyingglass")
                 .foregroundStyle(.secondary)
+                .accessibilityHidden(true)
             TextField(
                 "Search actions, sites, movies, and TV shows",
                 text: Bindable(search).query
@@ -111,6 +112,8 @@ struct CommandPaletteView: View {
                 }
                 .buttonStyle(.plain)
                 .foregroundStyle(.secondary)
+                .accessibilityLabel("Clear Search")
+                .help("Clear Search")
             }
         }
         .padding(16)
