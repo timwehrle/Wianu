@@ -6,7 +6,9 @@ struct CommandPaletteView: View {
     let onDismiss: () -> Void
 
     @FocusState private var searchFieldIsFocused: Bool
+
     @State private var selectedResult: ResultID?
+    @State private var scrollTarget: ResultID?
 
     private enum ResultID: Hashable {
         case command(CommandPaletteAction)
@@ -119,8 +121,11 @@ struct CommandPaletteView: View {
             LazyVStack(alignment: .leading, spacing: 0) {
                 if !commands.isEmpty {
                     sectionHeader("Actions")
+
                     ForEach(commands) { command in
-                        commandRow(command)
+                        commandRow(command).id(
+                            ResultID.command(command.action)
+                        )
                     }
                 }
 
@@ -168,7 +173,7 @@ struct CommandPaletteView: View {
                                         ? Color.accentColor.opacity(0.16)
                                         : Color.clear,
                                     in: RoundedRectangle(cornerRadius: 8)
-                                )
+                                ).id(ResultID.media(item.id))
                             }
                             .buttonStyle(.plain)
                             .onHover { hovering in
@@ -176,7 +181,9 @@ struct CommandPaletteView: View {
                                     selectedResult = .media(item.id)
                                 }
                             }
-                            .onAppear { search.loadMoreIfNeeded(after: item) }
+                            .onAppear {
+                                search.loadMoreIfNeeded(after: item)
+                            }
                         }
                         if search.isLoadingMore {
                             ProgressView().padding()
@@ -190,9 +197,14 @@ struct CommandPaletteView: View {
                     )
                 }
             }
+            .scrollTargetLayout()
             .frame(maxWidth: 760)
             .padding(12)
             .frame(maxWidth: .infinity)
+        }
+        .scrollPosition(id: $scrollTarget, anchor: .center)
+        .onChange(of: selectedResult) { _, selection in
+            scrollTarget = selection
         }
     }
 
