@@ -1,7 +1,7 @@
 ---
 name: Feature Request
 about: Suggest an idea for Wianu
-title: "[FEATURE]: "
+title: ''
 labels: enhancement
 assignees: ''
 
