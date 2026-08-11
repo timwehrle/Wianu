@@ -10,7 +10,7 @@ struct CommandPaletteView: View {
 
     private enum ResultID: Hashable {
         case command(CommandPaletteAction)
-        case media(TMDBMediaResult)
+        case media(TMDBMediaResult.ID)
     }
 
     private var search: TMDBSearchModel {
@@ -28,7 +28,7 @@ struct CommandPaletteView: View {
     private var visibleResultIDs: [ResultID] {
         commands.map { .command($0.action) }
             + (canSelectMediaResults
-                ? search.results.map(ResultID.media)
+                ? search.results.map { .media($0.id) }
                 : [])
     }
 
@@ -61,8 +61,9 @@ struct CommandPaletteView: View {
             searchFieldIsFocused = true
         }
         .onChange(of: visibleResultIDs) { _, ids in
-            if selectedResult == nil || !ids.contains(selectedResult!) {
-                selectedResult = ids.first
+            guard let selectedResult, ids.contains(selectedResult) else {
+                self.selectedResult = ids.first
+                return
             }
         }
         .onKeyPress(.downArrow) {
@@ -103,7 +104,6 @@ struct CommandPaletteView: View {
             if !search.query.isEmpty {
                 Button {
                     search.query = ""
-                    search.queryChanged()
                 } label: {
                     Image(systemName: "xmark.circle.fill")
                 }
@@ -132,7 +132,7 @@ struct CommandPaletteView: View {
                             "TMDB is not configured",
                             systemImage: "key.slash",
                             description:
-                            "Open Settings to add a TMDB Read Access Token."
+                                "Open Settings to add a TMDB Read Access Token."
                         )
                     } else if search.isSearching {
                         HStack {
@@ -147,7 +147,8 @@ struct CommandPaletteView: View {
                         compactMessage(
                             "No TMDB results",
                             systemImage: "magnifyingglass",
-                            description: "Try another title or check the spelling."
+                            description:
+                                "Try another title or check the spelling."
                         )
                     } else {
                         ForEach(search.results) { item in
@@ -156,13 +157,14 @@ struct CommandPaletteView: View {
                             } label: {
                                 MediaResultRow(
                                     item: item,
-                                    posterURL: search.imageConfiguration?.posterURL(
-                                        path: item.posterPath
-                                    )
+                                    posterURL: search.imageConfiguration?
+                                        .posterURL(
+                                            path: item.posterPath
+                                        )
                                 )
                                 .padding(.horizontal, 12)
                                 .background(
-                                    selectedResult == .media(item)
+                                    selectedResult == .media(item.id)
                                         ? Color.accentColor.opacity(0.16)
                                         : Color.clear,
                                     in: RoundedRectangle(cornerRadius: 8)
@@ -171,7 +173,7 @@ struct CommandPaletteView: View {
                             .buttonStyle(.plain)
                             .onHover { hovering in
                                 if hovering {
-                                    selectedResult = .media(item)
+                                    selectedResult = .media(item.id)
                                 }
                             }
                             .onAppear { search.loadMoreIfNeeded(after: item) }
@@ -199,7 +201,7 @@ struct CommandPaletteView: View {
     }
 
     private func sectionHeader(_ title: String) -> some View {
-        Text(title.uppercased())
+        Text(title)
             .font(.caption.weight(.semibold))
             .foregroundStyle(.secondary)
             .padding(.horizontal, 12)
@@ -263,7 +265,7 @@ struct CommandPaletteView: View {
             return
         }
         guard let selectedResult,
-              let index = ids.firstIndex(of: selectedResult)
+            let index = ids.firstIndex(of: selectedResult)
         else {
             selectedResult = ids.first
             return
@@ -273,9 +275,13 @@ struct CommandPaletteView: View {
 
     private func activateSelection() {
         switch selectedResult {
-        case let .command(action):
+        case .command(let action):
             onAction(action)
-        case let .media(media):
+        case .media(let id):
+            guard let media = search.results.first(where: { $0.id == id })
+            else {
+                return
+            }
             search.select(media)
         case nil:
             break
