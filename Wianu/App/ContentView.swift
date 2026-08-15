@@ -65,22 +65,14 @@ struct ContentView: View {
             )
         }
         .toolbar {
+            if model.isCommandPalettePresented {
             ToolbarItem(placement: .primaryAction) {
-                if model.isCommandPalettePresented {
                     Button {
                         model.dismissCommandPalette()
                     } label: {
                         Label("Close Command Palette", systemImage: "xmark")
                     }
                     .help("Return to Stream")
-                } else {
-                    Button {
-                        model.showCommandPalette()
-                    } label: {
-                        Label("Command Palette", systemImage: "magnifyingglass")
-                    }
-                    .keyboardShortcut("k", modifiers: .command)
-                    .help("Search Actions, Movies, and TV Shows")
                 }
             }
         }

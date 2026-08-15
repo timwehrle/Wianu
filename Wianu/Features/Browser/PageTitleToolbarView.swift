@@ -26,7 +26,6 @@ struct PageTitleToolbarView: View {
             .foregroundStyle(.secondary)
         }
         .help(url?.absoluteString ?? title)
-        .padding(.leading, 4)
-        .padding(.trailing, 4)
+        .padding(.horizontal, 16)
     }
 }

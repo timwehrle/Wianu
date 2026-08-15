@@ -110,6 +110,23 @@ struct BrowserView: View {
                                 .keyboardShortcut("r", modifiers: .command)
                             }
                         }
+
+                ToolbarItem(placement: .navigation) {
+                    Button(action: goHome) {
+                        Image(systemName: "house")
+                    }
+                    .disabled(homeURL == nil)
+                    .help("Go to Site Home")
+                }
+
+                ToolbarItem(placement: .principal) {
+                    if model.destinationURL != nil {
+                        PageTitleToolbarView(
+                            title: displayedTitle,
+                            url: page.url
+                        )
+                    }
+                }
                     }
                 }
 
@@ -143,6 +160,16 @@ struct BrowserView: View {
                             ? "Remove from Continue Watching"
                             : "Save to Continue Watching"
                     )
+                }
+
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        model.showCommandPalette()
+                    } label: {
+                        Label("Command Palette", systemImage: "magnifyingglass")
+                    }
+                    .keyboardShortcut("k", modifiers: .command)
+                    .help("Search Actions, Movies, and TV Shows")
                 }
             }
         }
