@@ -444,6 +444,8 @@ final class TMDBSearchModel {
     @ObservationIgnored private var providerTask: Task<Void, Never>?
     private var currentPage = 0
     private var totalPages = 0
+    private var searchGeneration = 0
+    private var providerGeneration = 0
 
     private static let regionKey = "tmdbRegion"
 
@@ -470,6 +472,8 @@ final class TMDBSearchModel {
 
     func queryChanged() {
         searchTask?.cancel()
+        searchGeneration += 1
+        let generation = searchGeneration
         selectedMedia = nil
         availability = nil
         let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -485,7 +489,7 @@ final class TMDBSearchModel {
         searchTask = Task {
             try? await Task.sleep(for: .milliseconds(350))
             guard !Task.isCancelled else { return }
-            await search(query: trimmed, page: 1)
+            await search(query: trimmed, page: 1, generation: generation)
         }
     }
 
@@ -500,7 +504,14 @@ final class TMDBSearchModel {
     func loadMoreIfNeeded(after item: TMDBMediaResult) {
         guard item.id == results.last?.id, canLoadMore else { return }
         let query = query.trimmingCharacters(in: .whitespacesAndNewlines)
-        searchTask = Task { await search(query: query, page: currentPage + 1) }
+        let generation = searchGeneration
+        searchTask = Task {
+            await search(
+                query: query,
+                page: currentPage + 1,
+                generation: generation
+            )
+        }
     }
 
     func select(_ media: TMDBMediaResult) {
@@ -511,12 +522,15 @@ final class TMDBSearchModel {
 
     func clearSelection() {
         providerTask?.cancel()
+        providerGeneration += 1
         selectedMedia = nil
         availability = nil
+        isLoadingProviders = false
         errorMessage = nil
     }
 
-    private func search(query: String, page: Int) async {
+    private func search(query: String, page: Int, generation: Int) async {
+        guard generation == searchGeneration else { return }
         if page == 1 {
             isSearching = true
         } else {
@@ -526,6 +540,7 @@ final class TMDBSearchModel {
         do {
             let response = try await client.search(query: query, page: page)
             try Task.checkCancellation()
+            guard generation == searchGeneration else { return }
             if page == 1 {
                 results = response.results
             } else {
@@ -533,16 +548,23 @@ final class TMDBSearchModel {
             }
             currentPage = response.page
             totalPages = response.totalPages
-        } catch is CancellationError {
         } catch {
-            errorMessage = error.localizedDescription
+            if !isCancellation(error), generation == searchGeneration {
+                errorMessage = error.localizedDescription
+            }
         }
-        isSearching = false
-        isLoadingMore = false
+        guard generation == searchGeneration else { return }
+        if page == 1 {
+            isSearching = false
+        } else {
+            isLoadingMore = false
+        }
     }
 
     private func loadAvailability() {
         providerTask?.cancel()
+        providerGeneration += 1
+        let generation = providerGeneration
         guard let selectedMedia else { return }
         isLoadingProviders = true
         errorMessage = nil
@@ -552,12 +574,19 @@ final class TMDBSearchModel {
                     for: selectedMedia,
                     region: selectedRegion
                 )
-            } catch is CancellationError {
             } catch {
-                errorMessage = error.localizedDescription
+                if !isCancellation(error), generation == providerGeneration {
+                    errorMessage = error.localizedDescription
+                }
             }
+            guard generation == providerGeneration else { return }
             isLoadingProviders = false
         }
+    }
+
+    private func isCancellation(_ error: Error) -> Bool {
+        error is CancellationError
+            || (error as? URLError)?.code == .cancelled
     }
 
     private func loadMetadata() async {

@@ -30,8 +30,31 @@ private actor FixtureSession: TMDBSession {
     }
 }
 
+private actor CancelledSession: TMDBSession {
+    func data(for request: URLRequest) async throws -> (Data, URLResponse) {
+        throw URLError(.cancelled)
+    }
+}
+
 @Suite("TMDB client")
 struct TMDBClientTests {
+    @Test func `cancelled URL requests are not shown as search errors`() async {
+        let defaults = UserDefaults(
+            suiteName: "TMDBClientTests.cancelled.\(UUID().uuidString)"
+        )!
+        let model = TMDBSearchModel(
+            client: TMDBClient(token: "token", session: CancelledSession()),
+            userDefaults: defaults
+        )
+
+        model.query = "Dune"
+        model.queryChanged()
+        try? await Task.sleep(for: .milliseconds(500))
+
+        #expect(model.errorMessage == nil)
+        #expect(!model.isSearching)
+    }
+
     @Test func `Letterboxd links are available only for movies`() throws {
         let movie = TMDBMediaResult(
             id: 550,
