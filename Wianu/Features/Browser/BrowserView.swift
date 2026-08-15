@@ -60,39 +60,20 @@ struct BrowserView: View {
         }
         .toolbar {
             if !model.isCommandPalettePresented {
-                ToolbarItem(placement: .navigation) {
+                ToolbarItemGroup(placement: .navigation) {
                     Button(action: goBack) {
                         Image(systemName: "chevron.left")
                     }
                     .disabled(backItem == nil)
                     .help("Go Back")
                     .keyboardShortcut("[", modifiers: .command)
-                }
 
-                ToolbarItem(placement: .navigation) {
                     Button(action: goForward) {
                         Image(systemName: "chevron.right")
                     }
                     .disabled(forwardItem == nil)
                     .help("Go Forward")
                     .keyboardShortcut("]", modifiers: .command)
-                }
-
-                ToolbarItem(placement: .navigation) {
-                    Button(action: goHome) {
-                        Image(systemName: "house")
-                    }
-                    .disabled(homeURL == nil)
-                    .help("Go to Site Home")
-                }
-
-                ToolbarItem(placement: .principal) {
-                    if model.destinationURL != nil {
-                        HStack(spacing: 0) {
-                            PageTitleToolbarView(
-                                title: displayedTitle,
-                                url: page.url
-                            )
 
                             if showsLoadingIndicator {
                                 Button(action: page.stopLoading) {
@@ -108,10 +89,8 @@ struct BrowserView: View {
                                 .help("Reload")
                                 .disabled(page.url == nil)
                                 .keyboardShortcut("r", modifiers: .command)
-                            }
                         }
 
-                ToolbarItem(placement: .navigation) {
                     Button(action: goHome) {
                         Image(systemName: "house")
                     }
