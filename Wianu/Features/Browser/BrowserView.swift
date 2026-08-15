@@ -22,6 +22,7 @@ struct BrowserView: View {
         _page = State(initialValue: page)
     }
 
+    // TODO: Extract toolbar items for more clarity
     var body: some View {
         Group {
             if model.navigationRequest != nil {
@@ -60,25 +61,35 @@ struct BrowserView: View {
         }
         .toolbar {
             if !model.isCommandPalettePresented {
-                ToolbarItem(placement: .navigation) {
+                ToolbarItemGroup(placement: .navigation) {
                     Button(action: goBack) {
                         Image(systemName: "chevron.left")
                     }
                     .disabled(backItem == nil)
                     .help("Go Back")
                     .keyboardShortcut("[", modifiers: .command)
-                }
 
-                ToolbarItem(placement: .navigation) {
                     Button(action: goForward) {
                         Image(systemName: "chevron.right")
                     }
                     .disabled(forwardItem == nil)
                     .help("Go Forward")
                     .keyboardShortcut("]", modifiers: .command)
-                }
 
-                ToolbarItem(placement: .navigation) {
+                    Button(action: reloadOrStop) {
+                        Image(
+                            systemName: showsLoadingIndicator
+                                ? "xmark"
+                                : "arrow.clockwise"
+                        )
+                    }
+                    .help(showsLoadingIndicator ? "Stop Loading" : "Reload")
+                    .accessibilityLabel(
+                        showsLoadingIndicator ? "Stop Loading" : "Reload"
+                    )
+                    .disabled(page.url == nil && !showsLoadingIndicator)
+                    .keyboardShortcut("r", modifiers: .command)
+
                     Button(action: goHome) {
                         Image(systemName: "house")
                     }
@@ -88,28 +99,10 @@ struct BrowserView: View {
 
                 ToolbarItem(placement: .principal) {
                     if model.destinationURL != nil {
-                        HStack(spacing: 0) {
-                            PageTitleToolbarView(
-                                title: displayedTitle,
-                                url: page.url
-                            )
-
-                            if showsLoadingIndicator {
-                                Button(action: page.stopLoading) {
-                                    ProgressView()
-                                        .controlSize(.small)
-                                }
-                                .help("Stop Loading")
-                                .accessibilityLabel("Stop Loading")
-                            } else {
-                                Button(action: reload) {
-                                    Image(systemName: "arrow.clockwise")
-                                }
-                                .help("Reload")
-                                .disabled(page.url == nil)
-                                .keyboardShortcut("r", modifiers: .command)
-                            }
-                        }
+                        PageTitleToolbarView(
+                            title: displayedTitle,
+                            url: page.url
+                        )
                     }
                 }
 
@@ -143,6 +136,16 @@ struct BrowserView: View {
                             ? "Remove from Continue Watching"
                             : "Save to Continue Watching"
                     )
+                }
+
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        model.showCommandPalette()
+                    } label: {
+                        Label("Command Palette", systemImage: "magnifyingglass")
+                    }
+                    .keyboardShortcut("k", modifiers: .command)
+                    .help("Search Actions, Movies, and TV Shows")
                 }
             }
         }
@@ -258,6 +261,14 @@ struct BrowserView: View {
 
     private func reload() {
         router.reload()
+    }
+
+    private func reloadOrStop() {
+        if showsLoadingIndicator {
+            page.stopLoading()
+        } else {
+            reload()
+        }
     }
 
     private func perform(_ request: BrowserNavigationRouter.Request) async {

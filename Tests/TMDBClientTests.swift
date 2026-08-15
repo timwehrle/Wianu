@@ -30,8 +30,56 @@ private actor FixtureSession: TMDBSession {
     }
 }
 
+private actor CancelledSession: TMDBSession {
+    func data(for request: URLRequest) async throws -> (Data, URLResponse) {
+        throw URLError(.cancelled)
+    }
+}
+
 @Suite("TMDB client")
 struct TMDBClientTests {
+    @Test func `cancelled URL requests are not shown as search errors`() async throws {
+        let defaults = try #require(UserDefaults(
+            suiteName: "TMDBClientTests.cancelled.\(UUID().uuidString)"
+        ))
+        let model = TMDBSearchModel(
+            client: TMDBClient(token: "token", session: CancelledSession()),
+            userDefaults: defaults
+        )
+
+        model.query = "Dune"
+        model.queryChanged()
+        try? await Task.sleep(for: .milliseconds(500))
+
+        #expect(model.errorMessage == nil)
+        #expect(!model.isSearching)
+    }
+
+    @Test func `Letterboxd links are available only for movies`() {
+        let movie = TMDBMediaResult(
+            id: 550,
+            mediaType: .movie,
+            title: "Fight Club",
+            overview: "",
+            posterPath: nil,
+            releaseDate: "1999-10-15"
+        )
+        let show = TMDBMediaResult(
+            id: 1396,
+            mediaType: .tv,
+            title: "Breaking Bad",
+            overview: "",
+            posterPath: nil,
+            releaseDate: "2008-01-20"
+        )
+
+        #expect(
+            movie.letterboxdURL
+                == URL(string: "https://letterboxd.com/tmdb/550")
+        )
+        #expect(show.letterboxdURL == nil)
+    }
+
     @Test func `search authenticates encodes and filters people`() async throws {
         let session = FixtureSession("""
         {"page":1,"total_pages":2,"results":[

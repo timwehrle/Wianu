@@ -6,27 +6,27 @@ struct PageTitleToolbarView: View {
     @Environment(\.controlActiveState) private var controlActiveState
 
     var body: some View {
-        VStack(spacing: 0) {
+        HStack(spacing: 5) {
             Text(title)
-                .font(.headline)
-                .foregroundStyle(
-                    controlActiveState == .key ? .primary : .secondary
-                )
+                .fontWeight(.semibold)
                 .lineLimit(1)
                 .truncationMode(.tail)
+                .layoutPriority(0)
 
-            HStack(spacing: 3) {
-                Image(systemName: "lock.fill")
-                    .font(.caption2)
-                Text(url?.host() ?? "Unknown origin")
-                    .lineLimit(1)
-                    .truncationMode(.middle)
-            }
-            .font(.caption)
-            .foregroundStyle(.secondary)
+            Text("·")
+                .foregroundStyle(.tertiary)
+
+            Text(url?.host() ?? "Unknown origin")
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+                .fixedSize(horizontal: true, vertical: false)
+                .layoutPriority(1)
         }
+        .font(.subheadline)
+        .foregroundStyle(
+            controlActiveState == .key ? .primary : .secondary
+        )
         .help(url?.absoluteString ?? title)
-        .padding(.leading, 4)
-        .padding(.trailing, 4)
+        .padding(.horizontal, 16)
     }
 }

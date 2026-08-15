@@ -25,6 +25,17 @@ struct TMDBAvailabilityView: View {
 
             Spacer()
 
+            if let letterboxdURL = media.letterboxdURL {
+                Link(destination: letterboxdURL) {
+                    Image("LetterboxdMark")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 22, height: 22)
+                }
+                .accessibilityLabel("Open on Letterboxd")
+                .help("Open \(media.title) on Letterboxd")
+            }
+
             Picker("Country", selection: Bindable(search).selectedRegion) {
                 if search.regions.isEmpty {
                     Text(search.selectedRegion).tag(search.selectedRegion)
