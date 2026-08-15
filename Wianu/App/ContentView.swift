@@ -66,7 +66,7 @@ struct ContentView: View {
         }
         .toolbar {
             if model.isCommandPalettePresented {
-            ToolbarItem(placement: .primaryAction) {
+                ToolbarItem(placement: .primaryAction) {
                     Button {
                         model.dismissCommandPalette()
                     } label: {

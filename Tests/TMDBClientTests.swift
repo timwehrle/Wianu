@@ -38,10 +38,10 @@ private actor CancelledSession: TMDBSession {
 
 @Suite("TMDB client")
 struct TMDBClientTests {
-    @Test func `cancelled URL requests are not shown as search errors`() async {
-        let defaults = UserDefaults(
+    @Test func `cancelled URL requests are not shown as search errors`() async throws {
+        let defaults = try #require(UserDefaults(
             suiteName: "TMDBClientTests.cancelled.\(UUID().uuidString)"
-        )!
+        ))
         let model = TMDBSearchModel(
             client: TMDBClient(token: "token", session: CancelledSession()),
             userDefaults: defaults
@@ -55,7 +55,7 @@ struct TMDBClientTests {
         #expect(!model.isSearching)
     }
 
-    @Test func `Letterboxd links are available only for movies`() throws {
+    @Test func `Letterboxd links are available only for movies`() {
         let movie = TMDBMediaResult(
             id: 550,
             mediaType: .movie,

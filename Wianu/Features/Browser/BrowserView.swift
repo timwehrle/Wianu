@@ -21,7 +21,7 @@ struct BrowserView: View {
         _router = State(initialValue: router)
         _page = State(initialValue: page)
     }
-    
+
     // TODO: Extract toolbar items for more clarity
     var body: some View {
         Group {
