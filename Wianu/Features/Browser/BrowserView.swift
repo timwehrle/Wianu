@@ -144,7 +144,6 @@ struct BrowserView: View {
                             : "Save to Continue Watching"
                     )
                 }
-
             }
         }
         .alert(

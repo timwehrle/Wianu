@@ -64,7 +64,7 @@ struct CommandPaletteView: View {
         }
         .onChange(of: visibleResultIDs) { _, ids in
             guard let selectedResult, ids.contains(selectedResult) else {
-                self.selectedResult = ids.first
+                selectedResult = ids.first
                 return
             }
         }
@@ -140,7 +140,7 @@ struct CommandPaletteView: View {
                             "TMDB is not configured",
                             systemImage: "key.slash",
                             description:
-                                "Open Settings to add a TMDB Read Access Token."
+                            "Open Settings to add a TMDB Read Access Token."
                         )
                     } else if search.isSearching {
                         HStack {
@@ -156,7 +156,7 @@ struct CommandPaletteView: View {
                             "No TMDB results",
                             systemImage: "magnifyingglass",
                             description:
-                                "Try another title or check the spelling."
+                            "Try another title or check the spelling."
                         )
                     } else {
                         ForEach(search.results) { item in
@@ -280,7 +280,7 @@ struct CommandPaletteView: View {
             return
         }
         guard let selectedResult,
-            let index = ids.firstIndex(of: selectedResult)
+              let index = ids.firstIndex(of: selectedResult)
         else {
             selectedResult = ids.first
             return
@@ -290,9 +290,9 @@ struct CommandPaletteView: View {
 
     private func activateSelection() {
         switch selectedResult {
-        case .command(let action):
+        case let .command(action):
             onAction(action)
-        case .media(let id):
+        case let .media(id):
             guard let media = search.results.first(where: { $0.id == id })
             else {
                 return
