@@ -27,6 +27,6 @@ struct PageTitleToolbarView: View {
         }
         .help(url?.absoluteString ?? title)
         .padding(.leading, 4)
-        .padding(.trailing, 12)
+        .padding(.trailing, 4)
     }
 }
