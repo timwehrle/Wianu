@@ -75,21 +75,21 @@ struct BrowserView: View {
                     .help("Go Forward")
                     .keyboardShortcut("]", modifiers: .command)
 
-                            if showsLoadingIndicator {
-                                Button(action: page.stopLoading) {
-                                    ProgressView()
-                                        .controlSize(.small)
-                                }
-                                .help("Stop Loading")
-                                .accessibilityLabel("Stop Loading")
-                            } else {
-                                Button(action: reload) {
-                                    Image(systemName: "arrow.clockwise")
-                                }
-                                .help("Reload")
-                                .disabled(page.url == nil)
-                                .keyboardShortcut("r", modifiers: .command)
+                    if showsLoadingIndicator {
+                        Button(action: page.stopLoading) {
+                            ProgressView()
+                                .controlSize(.small)
                         }
+                        .help("Stop Loading")
+                        .accessibilityLabel("Stop Loading")
+                    } else {
+                        Button(action: reload) {
+                            Image(systemName: "arrow.clockwise")
+                        }
+                        .help("Reload")
+                        .disabled(page.url == nil)
+                        .keyboardShortcut("r", modifiers: .command)
+                    }
 
                     Button(action: goHome) {
                         Image(systemName: "house")
@@ -104,8 +104,6 @@ struct BrowserView: View {
                             title: displayedTitle,
                             url: page.url
                         )
-                    }
-                }
                     }
                 }
 
