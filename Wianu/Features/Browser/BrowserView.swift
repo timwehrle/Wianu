@@ -88,10 +88,28 @@ struct BrowserView: View {
 
                 ToolbarItem(placement: .principal) {
                     if model.destinationURL != nil {
-                        PageTitleToolbarView(
-                            title: displayedTitle,
-                            url: page.url
-                        )
+                        HStack(spacing: 0) {
+                            PageTitleToolbarView(
+                                title: displayedTitle,
+                                url: page.url
+                            )
+
+                            if showsLoadingIndicator {
+                                Button(action: page.stopLoading) {
+                                    ProgressView()
+                                        .controlSize(.small)
+                                }
+                                .help("Stop Loading")
+                                .accessibilityLabel("Stop Loading")
+                            } else {
+                                Button(action: reload) {
+                                    Image(systemName: "arrow.clockwise")
+                                }
+                                .help("Reload")
+                                .disabled(page.url == nil)
+                                .keyboardShortcut("r", modifiers: .command)
+                            }
+                        }
                     }
                 }
 
@@ -127,23 +145,6 @@ struct BrowserView: View {
                     )
                 }
 
-                ToolbarItem(placement: .primaryAction) {
-                    if showsLoadingIndicator {
-                        Button(action: page.stopLoading) {
-                            ProgressView()
-                                .controlSize(.small)
-                        }
-                        .help("Stop Loading")
-                        .accessibilityLabel("Stop Loading")
-                    } else {
-                        Button(action: reload) {
-                            Image(systemName: "arrow.clockwise")
-                        }
-                        .help("Reload")
-                        .disabled(page.url == nil)
-                        .keyboardShortcut("r", modifiers: .command)
-                    }
-                }
             }
         }
         .alert(
