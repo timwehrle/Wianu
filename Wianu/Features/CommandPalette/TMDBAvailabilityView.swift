@@ -27,11 +27,19 @@ struct TMDBAvailabilityView: View {
 
             if let letterboxdURL = media.letterboxdURL {
                 Link(destination: letterboxdURL) {
-                    Image("LetterboxdMark")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 22, height: 22)
+                    HStack(spacing: 6) {
+                        Image("LetterboxdMark")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 16, height: 16)
+                        Text("Letterboxd")
+                        Image(systemName: "arrow.up.right")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
                 }
+                .buttonStyle(.bordered)
+                .controlSize(.regular)
                 .accessibilityLabel("Open on Letterboxd")
                 .help("Open \(media.title) on Letterboxd")
             }
