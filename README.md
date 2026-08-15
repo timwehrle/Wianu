@@ -26,6 +26,7 @@ browser tabs.
 - Import a watchlist exported from Letterboxd as CSV.
 - Navigate backward and forward through the current browsing session.
 - Open streaming sites directly inside the app.
+- Open movie search results on Letterboxd for rating.
 
 ## Continue Watching
 

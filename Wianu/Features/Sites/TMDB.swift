@@ -18,6 +18,11 @@ struct TMDBMediaResult: Identifiable, Codable, Hashable, Sendable {
         releaseDate?.split(separator: "-").first.map(String.init)
     }
 
+    var letterboxdURL: URL? {
+        guard mediaType == .movie else { return nil }
+        return URL(string: "https://letterboxd.com/tmdb/\(id)")
+    }
+
     init(
         id: Int,
         mediaType: TMDBMediaType,

@@ -32,6 +32,31 @@ private actor FixtureSession: TMDBSession {
 
 @Suite("TMDB client")
 struct TMDBClientTests {
+    @Test func `Letterboxd links are available only for movies`() throws {
+        let movie = TMDBMediaResult(
+            id: 550,
+            mediaType: .movie,
+            title: "Fight Club",
+            overview: "",
+            posterPath: nil,
+            releaseDate: "1999-10-15"
+        )
+        let show = TMDBMediaResult(
+            id: 1396,
+            mediaType: .tv,
+            title: "Breaking Bad",
+            overview: "",
+            posterPath: nil,
+            releaseDate: "2008-01-20"
+        )
+
+        #expect(
+            movie.letterboxdURL
+                == URL(string: "https://letterboxd.com/tmdb/550")
+        )
+        #expect(show.letterboxdURL == nil)
+    }
+
     @Test func `search authenticates encodes and filters people`() async throws {
         let session = FixtureSession("""
         {"page":1,"total_pages":2,"results":[
