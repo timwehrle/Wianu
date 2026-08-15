@@ -21,7 +21,8 @@ struct BrowserView: View {
         _router = State(initialValue: router)
         _page = State(initialValue: page)
     }
-
+    
+    // TODO: Extract toolbar items for more clarity
     var body: some View {
         Group {
             if model.navigationRequest != nil {
@@ -75,21 +76,19 @@ struct BrowserView: View {
                     .help("Go Forward")
                     .keyboardShortcut("]", modifiers: .command)
 
-                    if showsLoadingIndicator {
-                        Button(action: page.stopLoading) {
-                            ProgressView()
-                                .controlSize(.small)
-                        }
-                        .help("Stop Loading")
-                        .accessibilityLabel("Stop Loading")
-                    } else {
-                        Button(action: reload) {
-                            Image(systemName: "arrow.clockwise")
-                        }
-                        .help("Reload")
-                        .disabled(page.url == nil)
-                        .keyboardShortcut("r", modifiers: .command)
+                    Button(action: reloadOrStop) {
+                        Image(
+                            systemName: showsLoadingIndicator
+                                ? "xmark"
+                                : "arrow.clockwise"
+                        )
                     }
+                    .help(showsLoadingIndicator ? "Stop Loading" : "Reload")
+                    .accessibilityLabel(
+                        showsLoadingIndicator ? "Stop Loading" : "Reload"
+                    )
+                    .disabled(page.url == nil && !showsLoadingIndicator)
+                    .keyboardShortcut("r", modifiers: .command)
 
                     Button(action: goHome) {
                         Image(systemName: "house")
@@ -262,6 +261,14 @@ struct BrowserView: View {
 
     private func reload() {
         router.reload()
+    }
+
+    private func reloadOrStop() {
+        if showsLoadingIndicator {
+            page.stopLoading()
+        } else {
+            reload()
+        }
     }
 
     private func perform(_ request: BrowserNavigationRouter.Request) async {
