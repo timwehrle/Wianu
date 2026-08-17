@@ -6,6 +6,8 @@ struct BrowserView: View {
     @Bindable var model: AppModel
     @State private var router: BrowserNavigationRouter
     @State private var page: WebPage
+    @State private var videoDiagnostics: VideoDiagnosticsController
+    @State private var isVideoInformationPresented = false
     @State private var showsLoadingIndicator = false
     @State private var historyRootID: WebPage.BackForwardList.Item.ID?
 
@@ -13,13 +15,18 @@ struct BrowserView: View {
         self.model = model
 
         let router = BrowserNavigationRouter()
+        let videoDiagnostics = VideoDiagnosticsController()
+        let configuration = WebPage.Configuration()
+        videoDiagnostics.install(in: configuration.userContentController)
         let page = WebPage(
+            configuration: configuration,
             navigationDecider: BrowserNavigationDecider(router: router)
         )
         page.customUserAgent = Self.customUserAgent
 
         _router = State(initialValue: router)
         _page = State(initialValue: page)
+        _videoDiagnostics = State(initialValue: videoDiagnostics)
     }
 
     // TODO: Extract toolbar items for more clarity
@@ -48,7 +55,14 @@ struct BrowserView: View {
             await perform(request)
         }
         .onChange(of: page.url) { _, url in
+            videoDiagnostics.clear()
             model.activateSite(matching: url)
+        }
+        .focusedSceneValue(\.showVideoInformation) {
+            isVideoInformationPresented = true
+        }
+        .sheet(isPresented: $isVideoInformationPresented) {
+            VideoInformationView(diagnostics: videoDiagnostics)
         }
         .task(id: page.isLoading) {
             if page.isLoading {
@@ -171,7 +185,7 @@ struct BrowserView: View {
     private static let customUserAgent = """
     Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) \
     AppleWebKit/605.1.15 (KHTML, like Gecko) \
-    Version/18.0 Safari/605.1.15
+    Version/26.5.2 Safari/605.1.15
     """
 
     private var displayedTitle: String {
