@@ -48,6 +48,9 @@
 		D1E300013030000000000001 /* CommandCatalogTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E300033030000000000003 /* CommandCatalogTests.swift */; };
 		D1E400013030000000000001 /* TMDBAvailabilityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E400033030000000000003 /* TMDBAvailabilityView.swift */; };
 		D1E400023030000000000002 /* TMDBMediaViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E400043030000000000004 /* TMDBMediaViews.swift */; };
+		D1F000013040000000000001 /* VideoDiagnostics.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F000033040000000000003 /* VideoDiagnostics.swift */; };
+		D1F000023040000000000002 /* VideoInformationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F000043040000000000004 /* VideoInformationView.swift */; };
+		D1F000053040000000000005 /* VideoDiagnosticsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F000063040000000000006 /* VideoDiagnosticsTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -110,6 +113,9 @@
 		D1E300033030000000000003 /* CommandCatalogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandCatalogTests.swift; sourceTree = "<group>"; };
 		D1E400033030000000000003 /* TMDBAvailabilityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMDBAvailabilityView.swift; sourceTree = "<group>"; };
 		D1E400043030000000000004 /* TMDBMediaViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMDBMediaViews.swift; sourceTree = "<group>"; };
+		D1F000033040000000000003 /* VideoDiagnostics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoDiagnostics.swift; sourceTree = "<group>"; };
+		D1F000043040000000000004 /* VideoInformationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoInformationView.swift; sourceTree = "<group>"; };
+		D1F000063040000000000006 /* VideoDiagnosticsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoDiagnosticsTests.swift; sourceTree = "<group>"; };
 		D1FE0019301638DA00DA12EE /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		D1FE001B30163BD700DA12EE /* WianuIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = WianuIcon.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -201,6 +207,8 @@
 				D1B972463015341900B64B10 /* BrowserPaneView.swift */,
 				D1B972473015341900B64B10 /* BrowserView.swift */,
 				D1B972483015341900B64B10 /* PageTitleToolbarView.swift */,
+				D1F000033040000000000003 /* VideoDiagnostics.swift */,
+				D1F000043040000000000004 /* VideoInformationView.swift */,
 			);
 			path = Browser;
 			sourceTree = "<group>";
@@ -325,6 +333,7 @@
 		D1C100043020000000000104 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				D1F000063040000000000006 /* VideoDiagnosticsTests.swift */,
 				D1E300033030000000000003 /* CommandCatalogTests.swift */,
 				D1C1000C302000000000010C /* BrowserNavigationRouterTests.swift */,
 				D1C100023020000000000102 /* TMDBClientTests.swift */,
@@ -492,6 +501,8 @@
 				D1E100013030000000000001 /* CommandPaletteCommand.swift in Sources */,
 				D1E400013030000000000001 /* TMDBAvailabilityView.swift in Sources */,
 				D1E400023030000000000002 /* TMDBMediaViews.swift in Sources */,
+				D1F000013040000000000001 /* VideoDiagnostics.swift in Sources */,
+				D1F000023040000000000002 /* VideoInformationView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -499,6 +510,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D1F000053040000000000005 /* VideoDiagnosticsTests.swift in Sources */,
 				D1E300013030000000000001 /* CommandCatalogTests.swift in Sources */,
 				D1C1000D302000000000010D /* BrowserNavigationRouterTests.swift in Sources */,
 				D1C100013020000000000101 /* TMDBClientTests.swift in Sources */,

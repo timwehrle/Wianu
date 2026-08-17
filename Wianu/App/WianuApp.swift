@@ -12,6 +12,8 @@ struct WianuApp: App {
         .windowToolbarStyle(.unified(showsTitle: true))
         .defaultSize(width: 1200, height: 800)
         .commands {
+            VideoInformationCommands()
+
             CommandGroup(after: .appInfo) {
                 Button {
                     updateService.checkForUpdates()
@@ -26,6 +28,30 @@ struct WianuApp: App {
         }
         Settings {
             SettingsView(model: model)
+        }
+    }
+}
+
+struct ShowVideoInformationKey: FocusedValueKey {
+    typealias Value = @MainActor () -> Void
+}
+
+extension FocusedValues {
+    var showVideoInformation: ShowVideoInformationKey.Value? {
+        get { self[ShowVideoInformationKey.self] }
+        set { self[ShowVideoInformationKey.self] = newValue }
+    }
+}
+
+private struct VideoInformationCommands: Commands {
+    @FocusedValue(\.showVideoInformation) private var showVideoInformation
+
+    var body: some Commands {
+        CommandMenu("Debug") {
+            Button("Video Information…") {
+                showVideoInformation?()
+            }
+            .disabled(showVideoInformation == nil)
         }
     }
 }
