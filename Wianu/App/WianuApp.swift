@@ -25,6 +25,15 @@ struct WianuApp: App {
                 }
                 .disabled(!updateService.canCheckForUpdates)
             }
+
+            CommandGroup(after: .help) {
+                Link(
+                    "Send Feedback…",
+                    destination: URL(
+                        string: "https://github.com/timwehrle/Wianu/issues/new/choose"
+                    )!
+                )
+            }
         }
         Settings {
             SettingsView(model: model)
