@@ -21,8 +21,12 @@ struct VideoDiagnostic: Decodable, Identifiable {
     let sourceType: String?
 
     var playbackState: String {
-        if ended { return "Ended" }
-        if seeking || (!paused && readyState < 3) { return "Buffering" }
+        if ended {
+            return "Ended"
+        }
+        if seeking || (!paused && readyState < 3) {
+            return "Buffering"
+        }
         return paused ? "Paused" : "Playing"
     }
 
@@ -121,7 +125,7 @@ final class VideoDiagnosticsController: NSObject, WKScriptMessageHandler {
 
     func receive(json: String, now: Date = Date()) {
         guard
-            json.utf8.count <= 64_000,
+            json.utf8.count <= 64000,
             let data = json.data(using: .utf8),
             let report = try? JSONDecoder().decode(
                 VideoFrameReport.self,
@@ -244,5 +248,4 @@ final class VideoDiagnosticsController: NSObject, WKScriptMessageHandler {
         send();
     })();
     """#
-
 }

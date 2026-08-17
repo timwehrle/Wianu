@@ -38,7 +38,6 @@ struct VideoInformationView: View {
                 )
                 .frame(maxWidth: .infinity, minHeight: 220)
             }
-
         }
         .padding(24)
         .frame(width: 460)
@@ -50,7 +49,6 @@ struct VideoInformationView: View {
         }
     }
 
-    @ViewBuilder
     private func row(_ label: String, _ value: String) -> some View {
         GridRow {
             Text(label)
