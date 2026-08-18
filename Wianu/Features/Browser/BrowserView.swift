@@ -54,6 +54,11 @@ struct BrowserView: View {
             guard let request = router.request else { return }
             await perform(request)
         }
+        .task(id: pageInteractionID) {
+            await setPageInteractionBlocked(
+                model.isCommandPalettePresented
+            )
+        }
         .onChange(of: page.url) { _, url in
             videoDiagnostics.clear()
             model.activateSite(matching: url)
@@ -216,6 +221,10 @@ struct BrowserView: View {
         return model.watchlistStore.contains(url: url)
     }
 
+    private var pageInteractionID: String {
+        "\(model.isCommandPalettePresented):\(page.url?.absoluteString ?? "")"
+    }
+
     private var backItem: WebPage.BackForwardList.Item? {
         guard
             let historyRootID,
@@ -282,6 +291,46 @@ struct BrowserView: View {
             page.stopLoading()
         } else {
             reload()
+        }
+    }
+
+    private func setPageInteractionBlocked(_ blocked: Bool) async {
+        let script = """
+        const root = document.documentElement;
+        const marker = "data-wianu-interaction-blocked";
+        if (blocked) {
+            if (!root.hasAttribute(marker)) {
+                globalThis.wianuPointerEvents = {
+                    value: root.style.getPropertyValue("pointer-events"),
+                    priority: root.style.getPropertyPriority("pointer-events")
+                };
+                root.setAttribute(marker, "");
+            }
+            root.style.setProperty("pointer-events", "none", "important");
+        } else if (root.hasAttribute(marker)) {
+            const previous = globalThis.wianuPointerEvents ?? {
+                value: "",
+                priority: ""
+            };
+            root.style.setProperty(
+                "pointer-events",
+                previous.value,
+                previous.priority
+            );
+            root.removeAttribute(marker);
+            delete globalThis.wianuPointerEvents;
+        }
+        """
+        do {
+            _ = try await page.callJavaScript(
+                script,
+                arguments: ["blocked": blocked],
+                contentWorld: .defaultClient
+            )
+        } catch {
+            BrowserNavigationLog.logger.debug(
+                "Could not update page interaction: \(String(describing: error), privacy: .private)"
+            )
         }
     }
 
