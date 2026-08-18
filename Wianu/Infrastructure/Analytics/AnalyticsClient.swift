@@ -103,7 +103,7 @@ final class AnalyticsClient: AnalyticsTracking {
         guard isEnabled, let endpoint, !websiteID.isEmpty else { return }
         let payload = RequestBody(
             payload: Payload(
-                hostname: endpoint.host() ?? "app.wianu.com",
+                hostname: "wianu.com",
                 url: "/app",
                 website: websiteID,
                 name: event.rawValue,
