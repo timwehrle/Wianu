@@ -14,5 +14,9 @@
 	<string>https://timwehrle.de/labs/wianu/appcast.xml</string>
 	<key>SUPublicEDKey</key>
 	<string>qII492mAKlK3l3NQRT93ckYSi7VfB/YuEweOAznp6rA=</string>
+	<key>UmamiBaseURL</key>
+	<string>$(UMAMI_BASE_URL)</string>
+	<key>UmamiWebsiteID</key>
+	<string>$(UMAMI_WEBSITE_ID)</string>
 </dict>
 </plist>

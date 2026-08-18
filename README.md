@@ -66,6 +66,11 @@ Progress made on another device cannot change the saved link.
 Some known sites receive a suggested search URL automatically. For other
 sites, you can add a compatible search URL yourself.
 
+## Anonymous usage analytics
+
+Wianu can send privacy-minimal feature events to a self-hosted Umami instance.
+Users can turn analytics off from the General settings tab.
+
 ## Watchlist
 
 Add a movie from its current page with the bookmark button, or select
