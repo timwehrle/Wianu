@@ -695,10 +695,8 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				UMAMI_BASE_URL = "";
-				"UMAMI_BASE_URL[arch=*]" = "https://analytics.timwehrle.de/";
-				UMAMI_WEBSITE_ID = "";
-				"UMAMI_WEBSITE_ID[arch=*]" = "d46c3af2-4739-4c9f-aa28-4cd428edab6c";
+				UMAMI_BASE_URL = "https://analytics.timwehrle.de/";
+				UMAMI_WEBSITE_ID = "d46c3af2-4739-4c9f-aa28-4cd428edab6c";
 			};
 			name = Debug;
 		};
@@ -747,10 +745,8 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				UMAMI_BASE_URL = "";
-				"UMAMI_BASE_URL[arch=*]" = "https://analytics.timwehrle.de/";
-				UMAMI_WEBSITE_ID = "";
-				"UMAMI_WEBSITE_ID[arch=*]" = "d46c3af2-4739-4c9f-aa28-4cd428edab6c";
+				UMAMI_BASE_URL = "https://analytics.timwehrle.de/";
+				UMAMI_WEBSITE_ID = "d46c3af2-4739-4c9f-aa28-4cd428edab6c";
 			};
 			name = Release;
 		};
