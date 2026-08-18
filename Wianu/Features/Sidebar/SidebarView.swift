@@ -127,8 +127,7 @@ struct SidebarView: View {
         .frame(minWidth: 240)
         .sheet(item: $editingSite) { site in
             SiteEditorView(
-                store: model.siteStore,
-                tmdbClient: model.tmdbClient,
+                model: model,
                 mode: .edit(site)
             )
         }
@@ -139,7 +138,7 @@ struct SidebarView: View {
         }
         .sheet(isPresented: $showingAddWatchlistItem) {
             WatchlistItemEditorView { title, year, url in
-                model.watchlistStore.add(
+                model.addWatchlistItem(
                     title: title,
                     year: year,
                     url: url
@@ -148,8 +147,8 @@ struct SidebarView: View {
         }
         .sheet(item: $editingWatchlistItem) { item in
             WatchlistItemEditorView(item: item) { title, year, url in
-                model.watchlistStore.update(
-                    id: item.id,
+                model.updateWatchlistItem(
+                    item,
                     title: title,
                     year: year,
                     url: url
@@ -272,11 +271,13 @@ struct SidebarView: View {
                 but they could not be saved: \(error)
                 """
             } else if result.skippedRowCount > 0 {
+                model.letterboxdImportSucceeded()
                 importMessage = """
                 Imported \(result.items.count) items. \
                 Skipped \(result.skippedRowCount) invalid or duplicate rows.
                 """
             } else {
+                model.letterboxdImportSucceeded()
                 importMessage = "Imported \(result.items.count) watchlist items."
             }
         } catch {

@@ -71,11 +71,11 @@
 		D11E823C3017921C0092ECC8 /* ExportOptions.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = ExportOptions.plist; sourceTree = "<group>"; };
 		D11E823F301798520092ECC8 /* release.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = release.yml; sourceTree = "<group>"; };
 		D13E65EB3018F6B400E58017 /* UpdateService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateService.swift; sourceTree = "<group>"; };
-		D1A100023060000000000002 /* AnalyticsClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsClient.swift; sourceTree = "<group>"; };
-		D1A100043060000000000004 /* AnalyticsClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsClientTests.swift; sourceTree = "<group>"; };
 		D13E65F03018FDFC00E58017 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		D14338A33013E5B800BA847C /* Wianu.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Wianu.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D145FFF8301BB60300983295 /* .swiftformat */ = {isa = PBXFileReference; lastKnownFileType = text; path = .swiftformat; sourceTree = "<group>"; };
+		D1A100023060000000000002 /* AnalyticsClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsClient.swift; sourceTree = "<group>"; };
+		D1A100043060000000000004 /* AnalyticsClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsClientTests.swift; sourceTree = "<group>"; };
 		D1B9723F3015325D00B64B10 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		D1B972413015341900B64B10 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
 		D1B972423015341900B64B10 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -191,6 +191,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		D1A100053060000000000005 /* Analytics */ = {
+			isa = PBXGroup;
+			children = (
+				D1A100023060000000000002 /* AnalyticsClient.swift */,
+			);
+			path = Analytics;
+			sourceTree = "<group>";
+		};
 		D1B972443015341900B64B10 /* App */ = {
 			isa = PBXGroup;
 			children = (
@@ -289,14 +297,6 @@
 				D1B9725F3015341900B64B10 /* Persistence */,
 			);
 			path = Infrastructure;
-			sourceTree = "<group>";
-		};
-		D1A100053060000000000005 /* Analytics */ = {
-			isa = PBXGroup;
-			children = (
-				D1A100023060000000000002 /* AnalyticsClient.swift */,
-			);
-			path = Analytics;
 			sourceTree = "<group>";
 		};
 		D1B972633015341900B64B10 /* Utilities */ = {
@@ -696,7 +696,9 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				UMAMI_BASE_URL = "";
+				"UMAMI_BASE_URL[arch=*]" = "https://analytics.timwehrle.de/";
 				UMAMI_WEBSITE_ID = "";
+				"UMAMI_WEBSITE_ID[arch=*]" = "d46c3af2-4739-4c9f-aa28-4cd428edab6c";
 			};
 			name = Debug;
 		};
@@ -746,7 +748,9 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				UMAMI_BASE_URL = "";
+				"UMAMI_BASE_URL[arch=*]" = "https://analytics.timwehrle.de/";
 				UMAMI_WEBSITE_ID = "";
+				"UMAMI_WEBSITE_ID[arch=*]" = "d46c3af2-4739-4c9f-aa28-4cd428edab6c";
 			};
 			name = Release;
 		};

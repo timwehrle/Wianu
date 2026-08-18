@@ -15,11 +15,14 @@ final class AppModel {
     private(set) var tmdbClient: TMDBClient
     private(set) var tmdbSearch: TMDBSearchModel
     private(set) var isCommandPalettePresented = false
+    private(set) var analyticsEnabled: Bool
 
     private(set) var selection: SidebarSelection?
     private(set) var navigationRequest: NavigationRequest?
     @ObservationIgnored
     private let userDefaults: UserDefaults
+    @ObservationIgnored
+    private let analytics: any AnalyticsTracking
 
     private static let lastSelectedSiteKey = "lastSelectedSiteID"
 
@@ -32,6 +35,9 @@ final class AppModel {
         continueWatchingStore = ContinueWatchingStore()
         watchlistStore = WatchlistStore()
         userDefaults = .standard
+        let analytics = AnalyticsClient(userDefaults: userDefaults)
+        self.analytics = analytics
+        analyticsEnabled = analytics.isEnabled
         let client = TMDBClient()
         tmdbClient = client
         tmdbSearch = TMDBSearchModel(
@@ -39,6 +45,7 @@ final class AppModel {
             userDefaults: userDefaults
         )
         restoreSelection()
+        analytics.track(.appLaunched)
     }
 
     init(
@@ -46,18 +53,23 @@ final class AppModel {
         continueWatchingStore: ContinueWatchingStore,
         watchlistStore: WatchlistStore,
         userDefaults: UserDefaults,
-        tmdbClient: TMDBClient
+        tmdbClient: TMDBClient,
+        analytics: (any AnalyticsTracking)? = nil
     ) {
         self.siteStore = siteStore
         self.continueWatchingStore = continueWatchingStore
         self.watchlistStore = watchlistStore
         self.userDefaults = userDefaults
+        let analytics = analytics ?? DisabledAnalyticsTracker()
+        self.analytics = analytics
+        analyticsEnabled = analytics.isEnabled
         self.tmdbClient = tmdbClient
         tmdbSearch = TMDBSearchModel(
             client: tmdbClient,
             userDefaults: userDefaults
         )
         restoreSelection()
+        analytics.track(.appLaunched)
     }
 
     var selectedSite: SavedSite? {
@@ -101,6 +113,32 @@ final class AppModel {
         tmdbSearch.queryChanged()
         isCommandPalettePresented = true
         tmdbSearch.requestFocus()
+        analytics.track(.searchOpened)
+    }
+
+    func setAnalyticsEnabled(_ enabled: Bool) {
+        analytics.setEnabled(enabled)
+        analyticsEnabled = enabled
+    }
+
+    func settingsOpened() {
+        analytics.track(.settingsOpened)
+    }
+
+    func updateCheckStarted() {
+        analytics.track(.updateCheckStarted)
+    }
+
+    func addSite(_ draft: SiteDraft) {
+        guard draft.validatedValues != nil else { return }
+        siteStore.addSite(draft)
+        analytics.track(.siteAdded)
+    }
+
+    func updateSite(_ site: SavedSite, with draft: SiteDraft) {
+        guard draft.validatedValues != nil else { return }
+        siteStore.updateSite(id: site.id, with: draft)
+        analytics.track(.siteEdited)
     }
 
     func dismissCommandPalette() {
@@ -148,6 +186,7 @@ final class AppModel {
 
         continueWatchingStore.removeItems(forSiteID: site.id)
         siteStore.deleteSite(id: site.id)
+        analytics.track(.siteDeleted)
 
         if userDefaults.string(forKey: Self.lastSelectedSiteKey)
             == site.id.uuidString
@@ -166,6 +205,7 @@ final class AppModel {
         }
 
         continueWatchingStore.remove(id: item.id)
+        analytics.track(.continueWatchingItemRemoved)
     }
 
     func replaceImportedWatchlistItems(
@@ -188,11 +228,35 @@ final class AppModel {
         }
     }
 
+    func letterboxdImportSucceeded() {
+        analytics.track(.letterboxdImportSucceeded)
+    }
+
+    func addWatchlistItem(title: String, year: Int?, url: URL?) {
+        watchlistStore.add(title: title, year: year, url: url)
+        analytics.track(.watchlistItemAdded)
+    }
+
+    func updateWatchlistItem(
+        _ item: WatchlistItem,
+        title: String,
+        year: Int?,
+        url: URL?
+    ) {
+        watchlistStore.update(
+            id: item.id,
+            title: title,
+            year: year,
+            url: url
+        )
+    }
+
     func removeWatchlistItem(_ item: WatchlistItem) {
         if selection == .watchlistItem(item.id) {
             select(nil)
         }
         watchlistStore.remove(id: item.id)
+        analytics.track(.watchlistItemRemoved)
     }
 
     func activateSite(matching url: URL?) {
@@ -236,6 +300,7 @@ final class AppModel {
                 title: savedTitle,
                 url: url
             )
+            analytics.track(.continueWatchingItemAdded)
         }
     }
 
@@ -265,6 +330,7 @@ final class AppModel {
             year: nil,
             url: url
         )
+        analytics.track(.watchlistItemAdded)
     }
 
     private var selectedSiteID: SavedSite.ID? {
