@@ -44,7 +44,13 @@ struct TMDBAvailabilityView: View {
                 .help("Open \(media.title) on Letterboxd")
             }
 
-            Picker("Country", selection: Bindable(search).selectedRegion) {
+            Picker(
+                "Country",
+                selection: Binding(
+                    get: { search.selectedRegion },
+                    set: { search.selectRegion($0) }
+                )
+            ) {
                 if search.regions.isEmpty {
                     Text(search.selectedRegion).tag(search.selectedRegion)
                 }

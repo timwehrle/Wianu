@@ -14,16 +14,12 @@ final class AppModel {
     let watchlistStore: WatchlistStore
     private(set) var tmdbClient: TMDBClient
     private(set) var tmdbSearch: TMDBSearchModel
-    private(set) var hasStoredTMDBToken: Bool
-    private(set) var tmdbCredentialError: String?
     private(set) var isCommandPalettePresented = false
 
     private(set) var selection: SidebarSelection?
     private(set) var navigationRequest: NavigationRequest?
     @ObservationIgnored
     private let userDefaults: UserDefaults
-    @ObservationIgnored
-    private let tmdbCredentialStore: any TMDBCredentialStoring
 
     private static let lastSelectedSiteKey = "lastSelectedSiteID"
 
@@ -31,26 +27,12 @@ final class AppModel {
         navigationRequest?.url
     }
 
-    init(
-        tmdbCredentialStore: any TMDBCredentialStoring =
-            KeychainTMDBCredentialStore()
-    ) {
+    init() {
         siteStore = SiteStore()
         continueWatchingStore = ContinueWatchingStore()
         watchlistStore = WatchlistStore()
         userDefaults = .standard
-        self.tmdbCredentialStore = tmdbCredentialStore
-
-        let storedToken: String?
-        do {
-            storedToken = try tmdbCredentialStore.loadToken()
-            tmdbCredentialError = nil
-        } catch {
-            storedToken = nil
-            tmdbCredentialError = error.localizedDescription
-        }
-        hasStoredTMDBToken = storedToken != nil
-        let client = storedToken.map { TMDBClient(token: $0) } ?? TMDBClient()
+        let client = TMDBClient()
         tmdbClient = client
         tmdbSearch = TMDBSearchModel(
             client: client,
@@ -64,65 +46,18 @@ final class AppModel {
         continueWatchingStore: ContinueWatchingStore,
         watchlistStore: WatchlistStore,
         userDefaults: UserDefaults,
-        tmdbClient: TMDBClient,
-        tmdbCredentialStore: any TMDBCredentialStoring =
-            KeychainTMDBCredentialStore()
+        tmdbClient: TMDBClient
     ) {
         self.siteStore = siteStore
         self.continueWatchingStore = continueWatchingStore
         self.watchlistStore = watchlistStore
         self.userDefaults = userDefaults
-        self.tmdbCredentialStore = tmdbCredentialStore
-        hasStoredTMDBToken = false
-        tmdbCredentialError = nil
         self.tmdbClient = tmdbClient
         tmdbSearch = TMDBSearchModel(
             client: tmdbClient,
             userDefaults: userDefaults
         )
         restoreSelection()
-    }
-
-    func saveTMDBToken(_ token: String) async throws {
-        let trimmed = token.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty else { throw TMDBCredentialError.emptyToken }
-
-        do {
-            let client = TMDBClient(token: trimmed)
-            _ = try await client.imageConfiguration()
-            try tmdbCredentialStore.saveToken(trimmed)
-            hasStoredTMDBToken = true
-            tmdbCredentialError = nil
-            configureTMDB(client)
-        } catch {
-            tmdbCredentialError = error.localizedDescription
-            throw error
-        }
-    }
-
-    func removeStoredTMDBToken() throws {
-        do {
-            try tmdbCredentialStore.removeToken()
-            hasStoredTMDBToken = false
-            tmdbCredentialError = nil
-            configureTMDB(TMDBClient())
-        } catch {
-            tmdbCredentialError = error.localizedDescription
-            throw error
-        }
-    }
-
-    private func configureTMDB(_ client: TMDBClient) {
-        let query = tmdbSearch.query
-        tmdbClient = client
-        tmdbSearch = TMDBSearchModel(
-            client: client,
-            userDefaults: userDefaults
-        )
-        if !query.isEmpty, client.isConfigured {
-            tmdbSearch.query = query
-            tmdbSearch.queryChanged()
-        }
     }
 
     var selectedSite: SavedSite? {

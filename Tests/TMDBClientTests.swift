@@ -43,7 +43,7 @@ struct TMDBClientTests {
             suiteName: "TMDBClientTests.cancelled.\(UUID().uuidString)"
         ))
         let model = TMDBSearchModel(
-            client: TMDBClient(token: "token", session: CancelledSession()),
+            client: TMDBClient(session: CancelledSession()),
             userDefaults: defaults
         )
 
@@ -80,7 +80,7 @@ struct TMDBClientTests {
         #expect(show.letterboxdURL == nil)
     }
 
-    @Test func `search authenticates encodes and filters people`() async throws {
+    @Test func `search uses backend encodes and filters people`() async throws {
         let session = FixtureSession("""
         {"page":1,"total_pages":2,"results":[
           {"id":1,"media_type":"movie","title":"Dune","overview":"x",
@@ -91,9 +91,8 @@ struct TMDBClientTests {
         ]}
         """)
         let client = try TMDBClient(
-            token: "secret",
             session: session,
-            baseURL: #require(URL(string: "https://example.test/3")),
+            baseURL: #require(URL(string: "https://example.test/v1")),
             language: "de-DE"
         )
 
@@ -102,7 +101,7 @@ struct TMDBClientTests {
         #expect(page.results.map(\.title) == ["Dune", "Dark"])
         #expect(page.totalPages == 2)
         let request = await session.capturedRequest()
-        #expect(request?.value(forHTTPHeaderField: "Authorization") == "Bearer secret")
+        #expect(request?.value(forHTTPHeaderField: "Authorization") == nil)
         let components = try URLComponents(url: #require(request?.url), resolvingAgainstBaseURL: false)
         #expect(components?.queryItems?.contains(URLQueryItem(name: "query", value: "A & B")) == true)
         #expect(components?.queryItems?.contains(URLQueryItem(name: "include_adult", value: "false")) == true)
@@ -115,9 +114,8 @@ struct TMDBClientTests {
           "rent":[{"provider_id":2,"provider_name":"Store","logo_path":null}]}}}
         """)
         let client = try TMDBClient(
-            token: "secret",
             session: session,
-            baseURL: #require(URL(string: "https://example.test/3"))
+            baseURL: #require(URL(string: "https://example.test/v1"))
         )
         let media = TMDBMediaResult(
             id: 10, mediaType: .movie, title: "Title",
@@ -131,29 +129,18 @@ struct TMDBClientTests {
         #expect(us == nil)
     }
 
-    @Test func `maps credentials rate limits and malformed responses`() async throws {
-        let unauthorized = try TMDBClient(
-            token: "x",
-            session: FixtureSession("{}", status: 401),
-            baseURL: #require(URL(string: "https://example.test/3"))
-        )
-        await #expect(throws: TMDBError.unauthorized) {
-            try await unauthorized.search(query: "x")
-        }
-
+    @Test func `maps backend rate limits errors and malformed responses`() async throws {
         let limited = try TMDBClient(
-            token: "x",
             session: FixtureSession("{}", status: 429, headers: ["Retry-After": "12"]),
-            baseURL: #require(URL(string: "https://example.test/3"))
+            baseURL: #require(URL(string: "https://example.test/v1"))
         )
         await #expect(throws: TMDBError.rateLimited(retryAfter: 12)) {
             try await limited.search(query: "x")
         }
 
         let malformed = try TMDBClient(
-            token: "x",
             session: FixtureSession("{"),
-            baseURL: #require(URL(string: "https://example.test/3"))
+            baseURL: #require(URL(string: "https://example.test/v1"))
         )
         await #expect(throws: TMDBError.invalidResponse) {
             try await malformed.search(query: "x")

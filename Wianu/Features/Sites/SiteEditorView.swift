@@ -188,11 +188,6 @@ struct SiteEditorView: View {
     }
 
     private func loadProviders() async {
-        guard tmdbClient.isConfigured else {
-            providerLoadError =
-                "Configure TMDB to load its provider catalog."
-            return
-        }
         do {
             providers = try await tmdbClient.providers()
             if let current = draft.tmdbProvider,

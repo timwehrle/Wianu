@@ -14,7 +14,6 @@ struct ContentView: View {
         } detail: {
             ZStack {
                 BrowserView(model: model)
-                    .allowsHitTesting(!model.isCommandPalettePresented)
                     .accessibilityHidden(model.isCommandPalettePresented)
 
                 if model.isCommandPalettePresented {
