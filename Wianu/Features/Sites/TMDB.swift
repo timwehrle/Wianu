@@ -414,14 +414,7 @@ final class TMDBSearchModel {
     private(set) var isLoadingProviders = false
     private(set) var errorMessage: String?
     private(set) var focusRequest = 0
-    var selectedRegion: String {
-        didSet {
-            userDefaults.set(selectedRegion, forKey: Self.regionKey)
-            if selectedMedia != nil {
-                loadAvailability()
-            }
-        }
-    }
+    private(set) var selectedRegion: String
 
     @ObservationIgnored private let client: TMDBClient
     @ObservationIgnored private let userDefaults: UserDefaults
@@ -434,13 +427,20 @@ final class TMDBSearchModel {
     private var providerGeneration = 0
 
     private static let regionKey = "tmdbRegion"
+    private static let hasSelectedRegionKey = "hasSelectedTMDBRegion"
 
     init(client: TMDBClient, userDefaults: UserDefaults) {
         self.client = client
         self.userDefaults = userDefaults
         let systemRegion = Locale.current.region?.identifier ?? "US"
-        selectedRegion =
-            userDefaults.string(forKey: Self.regionKey) ?? systemRegion
+        if userDefaults.bool(forKey: Self.hasSelectedRegionKey),
+           let savedRegion = userDefaults.string(forKey: Self.regionKey)
+        {
+            selectedRegion = savedRegion
+        } else {
+            selectedRegion = systemRegion
+            userDefaults.removeObject(forKey: Self.regionKey)
+        }
         loadMetadataIfNeeded()
     }
 
@@ -450,6 +450,16 @@ final class TMDBSearchModel {
 
     func requestFocus() {
         focusRequest += 1
+    }
+
+    func selectRegion(_ region: String) {
+        guard region != selectedRegion else { return }
+        selectedRegion = region
+        userDefaults.set(region, forKey: Self.regionKey)
+        userDefaults.set(true, forKey: Self.hasSelectedRegionKey)
+        if selectedMedia != nil {
+            loadAvailability()
+        }
     }
 
     func queryChanged() {
@@ -577,8 +587,14 @@ final class TMDBSearchModel {
         async let loadedImages = client.imageConfiguration()
         regions = await (try? loadedRegions) ?? []
         imageConfiguration = try? await loadedImages
-        if !regions.contains(where: { $0.isoCode == selectedRegion }) {
-            selectedRegion = "US"
+        if !regions.isEmpty,
+           !regions.contains(where: { $0.isoCode == selectedRegion })
+        {
+            selectedRegion = regions.contains(where: { $0.isoCode == "US" })
+                ? "US"
+                : regions[0].isoCode
+            userDefaults.removeObject(forKey: Self.regionKey)
+            userDefaults.removeObject(forKey: Self.hasSelectedRegionKey)
         }
     }
 
