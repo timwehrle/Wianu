@@ -35,8 +35,7 @@ struct CommandPaletteView: View {
     }
 
     private var canSelectMediaResults: Bool {
-        search.isConfigured
-            && !trimmedQuery.isEmpty
+        !trimmedQuery.isEmpty
             && !search.isSearching
             && search.errorMessage == nil
     }
@@ -135,14 +134,7 @@ struct CommandPaletteView: View {
                 if !trimmedQuery.isEmpty {
                     sectionHeader("Movies & TV")
 
-                    if !search.isConfigured {
-                        compactMessage(
-                            "TMDB is not configured",
-                            systemImage: "key.slash",
-                            description:
-                            "Open Settings to add a TMDB Read Access Token."
-                        )
-                    } else if search.isSearching {
+                    if search.isSearching {
                         HStack {
                             Spacer()
                             ProgressView("Searching TMDB…").padding(24)

@@ -43,7 +43,6 @@
 		D1C100013020000000000101 /* TMDBClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C100023020000000000102 /* TMDBClientTests.swift */; };
 		D1C1000D302000000000010D /* BrowserNavigationRouterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C1000C302000000000010C /* BrowserNavigationRouterTests.swift */; };
 		D1D000013020000000000001 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1D000023020000000000002 /* SettingsView.swift */; };
-		D1D000033020000000000003 /* TMDBCredentialStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1D000043020000000000004 /* TMDBCredentialStore.swift */; };
 		D1E100013030000000000001 /* CommandPaletteCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E100023030000000000002 /* CommandPaletteCommand.swift */; };
 		D1E300013030000000000001 /* CommandCatalogTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E300033030000000000003 /* CommandCatalogTests.swift */; };
 		D1E400013030000000000001 /* TMDBAvailabilityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E400033030000000000003 /* TMDBAvailabilityView.swift */; };
@@ -108,7 +107,6 @@
 		D1C100033020000000000103 /* WianuTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WianuTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1C1000C302000000000010C /* BrowserNavigationRouterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserNavigationRouterTests.swift; sourceTree = "<group>"; };
 		D1D000023020000000000002 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
-		D1D000043020000000000004 /* TMDBCredentialStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMDBCredentialStore.swift; sourceTree = "<group>"; };
 		D1E100023030000000000002 /* CommandPaletteCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandPaletteCommand.swift; sourceTree = "<group>"; };
 		D1E300033030000000000003 /* CommandCatalogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandCatalogTests.swift; sourceTree = "<group>"; };
 		D1E400033030000000000003 /* TMDBAvailabilityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMDBAvailabilityView.swift; sourceTree = "<group>"; };
@@ -284,7 +282,6 @@
 			children = (
 				D13E65EC3018F6B400E58017 /* Updates */,
 				D1B9725F3015341900B64B10 /* Persistence */,
-				D1D000053020000000000005 /* Security */,
 			);
 			path = Infrastructure;
 			sourceTree = "<group>";
@@ -339,14 +336,6 @@
 				D1C100023020000000000102 /* TMDBClientTests.swift */,
 			);
 			path = Tests;
-			sourceTree = "<group>";
-		};
-		D1D000053020000000000005 /* Security */ = {
-			isa = PBXGroup;
-			children = (
-				D1D000043020000000000004 /* TMDBCredentialStore.swift */,
-			);
-			path = Security;
 			sourceTree = "<group>";
 		};
 		D1E100033030000000000003 /* CommandPalette */ = {
@@ -497,7 +486,6 @@
 				D1B973023015341900B64B10 /* StreamingSearchURL.swift in Sources */,
 				D1B973033015341900B64B10 /* CommandPaletteView.swift in Sources */,
 				D1C000023020000000000002 /* TMDB.swift in Sources */,
-				D1D000033020000000000003 /* TMDBCredentialStore.swift in Sources */,
 				D1E100013030000000000001 /* CommandPaletteCommand.swift in Sources */,
 				D1E400013030000000000001 /* TMDBAvailabilityView.swift in Sources */,
 				D1E400023030000000000002 /* TMDBMediaViews.swift in Sources */,

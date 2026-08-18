@@ -161,20 +161,14 @@ struct TMDBImageConfiguration: Sendable {
 }
 
 enum TMDBError: LocalizedError, Equatable {
-    case notConfigured
     case invalidResponse
-    case unauthorized
     case rateLimited(retryAfter: TimeInterval?)
     case server(statusCode: Int, message: String?)
 
     var errorDescription: String? {
         switch self {
-        case .notConfigured:
-            "TMDB is not configured. Add a Read Access Token in Settings."
         case .invalidResponse:
-            "TMDB returned an unreadable response."
-        case .unauthorized:
-            "The TMDB read access token is invalid."
+            "The movie service returned an unreadable response."
         case let .rateLimited(retryAfter):
             if let retryAfter {
                 "TMDB is busy. Try again in \(Int(retryAfter)) seconds."
@@ -182,7 +176,7 @@ enum TMDBError: LocalizedError, Equatable {
                 "TMDB is busy. Please try again shortly."
             }
         case let .server(_, message):
-            message ?? "TMDB could not complete the request."
+            message ?? "The movie service could not complete the request."
         }
     }
 }
@@ -194,22 +188,15 @@ protocol TMDBSession: Sendable {
 extension URLSession: TMDBSession {}
 
 struct TMDBClient: Sendable {
-    private let token: String
     private let session: any TMDBSession
     private let baseURL: URL
     private let language: String
 
-    var isConfigured: Bool {
-        !token.isEmpty && !token.contains("$(")
-    }
-
     init(
-        token: String = "",
         session: any TMDBSession = URLSession.shared,
-        baseURL: URL = URL(string: "https://api.themoviedb.org/3")!,
+        baseURL: URL = URL(string: "https://api.wianu.com/v1")!,
         language: String = Locale.current.identifier
     ) {
-        self.token = token.trimmingCharacters(in: .whitespacesAndNewlines)
         self.session = session
         self.baseURL = baseURL
         self.language = language.replacingOccurrences(of: "_", with: "-")
@@ -311,7 +298,6 @@ struct TMDBClient: Sendable {
         path: String,
         query: [URLQueryItem] = []
     ) async throws -> Response {
-        guard isConfigured else { throw TMDBError.notConfigured }
         var components = URLComponents(
             url: baseURL.appending(path: path),
             resolvingAgainstBaseURL: false
@@ -319,7 +305,6 @@ struct TMDBClient: Sendable {
         components.queryItems = query.isEmpty ? nil : query
         guard let url = components.url else { throw TMDBError.invalidResponse }
         var request = URLRequest(url: url)
-        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         let (data, response) = try await session.data(for: request)
         guard let http = response as? HTTPURLResponse else {
@@ -329,9 +314,8 @@ struct TMDBClient: Sendable {
             let message = try? JSONDecoder().decode(
                 ErrorResponse.self,
                 from: data
-            ).statusMessage
+            ).error.message
             switch http.statusCode {
-            case 401: throw TMDBError.unauthorized
             case 429:
                 throw TMDBError.rateLimited(
                     retryAfter: http.value(forHTTPHeaderField: "Retry-After")
@@ -409,10 +393,11 @@ private struct ConfigurationResponse: Decodable {
 }
 
 private struct ErrorResponse: Decodable {
-    let statusMessage: String
-    enum CodingKeys: String, CodingKey {
-        case statusMessage = "status_message"
+    struct APIError: Decodable {
+        let message: String
     }
+
+    let error: APIError
 }
 
 @MainActor
@@ -442,6 +427,7 @@ final class TMDBSearchModel {
     @ObservationIgnored private let userDefaults: UserDefaults
     @ObservationIgnored private var searchTask: Task<Void, Never>?
     @ObservationIgnored private var providerTask: Task<Void, Never>?
+    @ObservationIgnored private var metadataTask: Task<Void, Never>?
     private var currentPage = 0
     private var totalPages = 0
     private var searchGeneration = 0
@@ -455,11 +441,7 @@ final class TMDBSearchModel {
         let systemRegion = Locale.current.region?.identifier ?? "US"
         selectedRegion =
             userDefaults.string(forKey: Self.regionKey) ?? systemRegion
-        Task { await loadMetadata() }
-    }
-
-    var isConfigured: Bool {
-        client.isConfigured
+        loadMetadataIfNeeded()
     }
 
     var canLoadMore: Bool {
@@ -471,6 +453,7 @@ final class TMDBSearchModel {
     }
 
     func queryChanged() {
+        loadMetadataIfNeeded()
         searchTask?.cancel()
         searchGeneration += 1
         let generation = searchGeneration
@@ -590,13 +573,20 @@ final class TMDBSearchModel {
     }
 
     private func loadMetadata() async {
-        guard client.isConfigured else { return }
         async let loadedRegions = client.regions()
         async let loadedImages = client.imageConfiguration()
         regions = await (try? loadedRegions) ?? []
         imageConfiguration = try? await loadedImages
         if !regions.contains(where: { $0.isoCode == selectedRegion }) {
             selectedRegion = "US"
+        }
+    }
+
+    private func loadMetadataIfNeeded() {
+        guard imageConfiguration == nil, metadataTask == nil else { return }
+        metadataTask = Task {
+            await loadMetadata()
+            metadataTask = nil
         }
     }
 }
