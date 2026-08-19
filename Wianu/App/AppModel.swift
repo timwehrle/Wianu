@@ -15,7 +15,6 @@ final class AppModel {
     private(set) var tmdbClient: TMDBClient
     private(set) var tmdbSearch: TMDBSearchModel
     private(set) var isCommandPalettePresented = false
-    private(set) var analyticsEnabled: Bool
 
     private(set) var selection: SidebarSelection?
     private(set) var navigationRequest: NavigationRequest?
@@ -37,7 +36,6 @@ final class AppModel {
         userDefaults = .standard
         let analytics = AnalyticsClient(userDefaults: userDefaults)
         self.analytics = analytics
-        analyticsEnabled = analytics.isEnabled
         let client = TMDBClient()
         tmdbClient = client
         tmdbSearch = TMDBSearchModel(
@@ -62,7 +60,6 @@ final class AppModel {
         self.userDefaults = userDefaults
         let analytics = analytics ?? DisabledAnalyticsTracker()
         self.analytics = analytics
-        analyticsEnabled = analytics.isEnabled
         self.tmdbClient = tmdbClient
         tmdbSearch = TMDBSearchModel(
             client: tmdbClient,
@@ -114,11 +111,6 @@ final class AppModel {
         isCommandPalettePresented = true
         tmdbSearch.requestFocus()
         analytics.track(.searchOpened)
-    }
-
-    func setAnalyticsEnabled(_ enabled: Bool) {
-        analytics.setEnabled(enabled)
-        analyticsEnabled = enabled
     }
 
     func settingsOpened() {

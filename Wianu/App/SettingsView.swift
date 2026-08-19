@@ -5,7 +5,7 @@ struct SettingsView: View {
 
     var body: some View {
         TabView {
-            GeneralSettingsView(model: model)
+            GeneralSettingsView()
                 .tabItem { Label("General", systemImage: "gearshape") }
 
             CreditsView()
@@ -19,16 +19,14 @@ struct SettingsView: View {
 }
 
 private struct GeneralSettingsView: View {
-    @Bindable var model: AppModel
+    @AppStorage(AnalyticsPreference.enabledKey)
+    private var analyticsEnabled = true
 
     var body: some View {
         Form {
             Toggle(
                 "Send Anonymous Usage Analytics",
-                isOn: Binding(
-                    get: { model.analyticsEnabled },
-                    set: { model.setAnalyticsEnabled($0) }
-                )
+                isOn: $analyticsEnabled
             )
 
             Text(

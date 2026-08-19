@@ -16,10 +16,12 @@ enum AnalyticsEvent: String, Sendable {
     case updateCheckStarted = "update-check-started"
 }
 
+enum AnalyticsPreference {
+    static let enabledKey = "anonymousUsageAnalyticsEnabled"
+}
+
 @MainActor
 protocol AnalyticsTracking {
-    var isEnabled: Bool { get }
-    func setEnabled(_ enabled: Bool)
     func track(_ event: AnalyticsEvent)
 }
 
@@ -38,17 +40,16 @@ final class AnalyticsClient: AnalyticsTracking {
     private let appVersion: String
     private let build: String
 
-    private static let enabledKey = "anonymousUsageAnalyticsEnabled"
     private static let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier ?? "Wianu",
         category: "Analytics"
     )
 
     var isEnabled: Bool {
-        if userDefaults.object(forKey: Self.enabledKey) == nil {
+        if userDefaults.object(forKey: AnalyticsPreference.enabledKey) == nil {
             return true
         }
-        return userDefaults.bool(forKey: Self.enabledKey)
+        return userDefaults.bool(forKey: AnalyticsPreference.enabledKey)
     }
 
     convenience init(
@@ -93,10 +94,6 @@ final class AnalyticsClient: AnalyticsTracking {
         self.userDefaults = userDefaults
         self.appVersion = appVersion
         self.build = build
-    }
-
-    func setEnabled(_ enabled: Bool) {
-        userDefaults.set(enabled, forKey: Self.enabledKey)
     }
 
     func track(_ event: AnalyticsEvent) {
@@ -164,7 +161,5 @@ final class AnalyticsClient: AnalyticsTracking {
 
 @MainActor
 struct DisabledAnalyticsTracker: AnalyticsTracking {
-    let isEnabled = false
-    func setEnabled(_ enabled: Bool) {}
     func track(_ event: AnalyticsEvent) {}
 }

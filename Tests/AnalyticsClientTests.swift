@@ -73,12 +73,12 @@ struct AnalyticsClientTests {
         )
 
         #expect(client.isEnabled)
-        client.setEnabled(false)
+        defaults.set(false, forKey: AnalyticsPreference.enabledKey)
         client.track(.appLaunched)
         try await Task.sleep(for: .milliseconds(50))
         #expect(await session.capturedRequests().isEmpty)
 
-        client.setEnabled(true)
+        defaults.set(true, forKey: AnalyticsPreference.enabledKey)
         let unconfigured = AnalyticsClient(
             session: session,
             endpoint: nil,
