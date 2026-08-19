@@ -5,10 +5,40 @@ struct SettingsView: View {
 
     var body: some View {
         TabView {
+            GeneralSettingsView()
+                .tabItem { Label("General", systemImage: "gearshape") }
+
             CreditsView()
                 .tabItem { Label("Credits", systemImage: "info.circle") }
         }
         .frame(width: 560, height: 420)
+        .onAppear {
+            model.settingsOpened()
+        }
+    }
+}
+
+private struct GeneralSettingsView: View {
+    @AppStorage(AnalyticsPreference.enabledKey)
+    private var analyticsEnabled = true
+
+    var body: some View {
+        Form {
+            Toggle(
+                "Send Anonymous Usage Analytics",
+                isOn: $analyticsEnabled
+            )
+
+            Text(
+                "Share basic feature usage and the Wianu version. "
+                    + "Searches, titles, URLs, providers, and personal "
+                    + "identifiers are never included."
+            )
+            .font(.callout)
+            .foregroundStyle(.secondary)
+        }
+        .formStyle(.grouped)
+        .padding()
     }
 }
 

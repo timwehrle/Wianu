@@ -10,6 +10,8 @@
 		D10EF48E3015F2800070703E /* WianuIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = D10EF48D3015F2800070703E /* WianuIcon.icon */; };
 		D11E823430177C800092ECC8 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = D11E823330177C800092ECC8 /* Sparkle */; };
 		D13E65ED3018F6B400E58017 /* UpdateService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D13E65EB3018F6B400E58017 /* UpdateService.swift */; };
+		D1A100013060000000000001 /* AnalyticsClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A100023060000000000002 /* AnalyticsClient.swift */; };
+		D1A100033060000000000003 /* AnalyticsClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A100043060000000000004 /* AnalyticsClientTests.swift */; };
 		D1B9726A3015341900B64B10 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D1B972673015341900B64B10 /* Assets.xcassets */; };
 		D1B9726C3015341900B64B10 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B972413015341900B64B10 /* AppModel.swift */; };
 		D1B9726D3015341900B64B10 /* WatchlistItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B972503015341900B64B10 /* WatchlistItem.swift */; };
@@ -72,6 +74,8 @@
 		D13E65F03018FDFC00E58017 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		D14338A33013E5B800BA847C /* Wianu.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Wianu.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D145FFF8301BB60300983295 /* .swiftformat */ = {isa = PBXFileReference; lastKnownFileType = text; path = .swiftformat; sourceTree = "<group>"; };
+		D1A100023060000000000002 /* AnalyticsClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsClient.swift; sourceTree = "<group>"; };
+		D1A100043060000000000004 /* AnalyticsClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsClientTests.swift; sourceTree = "<group>"; };
 		D1B9723F3015325D00B64B10 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		D1B972413015341900B64B10 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
 		D1B972423015341900B64B10 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -187,6 +191,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		D1A100053060000000000005 /* Analytics */ = {
+			isa = PBXGroup;
+			children = (
+				D1A100023060000000000002 /* AnalyticsClient.swift */,
+			);
+			path = Analytics;
+			sourceTree = "<group>";
+		};
 		D1B972443015341900B64B10 /* App */ = {
 			isa = PBXGroup;
 			children = (
@@ -280,6 +292,7 @@
 		D1B972603015341900B64B10 /* Infrastructure */ = {
 			isa = PBXGroup;
 			children = (
+				D1A100053060000000000005 /* Analytics */,
 				D13E65EC3018F6B400E58017 /* Updates */,
 				D1B9725F3015341900B64B10 /* Persistence */,
 			);
@@ -330,6 +343,7 @@
 		D1C100043020000000000104 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				D1A100043060000000000004 /* AnalyticsClientTests.swift */,
 				D1F000063040000000000006 /* VideoDiagnosticsTests.swift */,
 				D1E300033030000000000003 /* CommandCatalogTests.swift */,
 				D1C1000C302000000000010C /* BrowserNavigationRouterTests.swift */,
@@ -455,6 +469,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D1A100013060000000000001 /* AnalyticsClient.swift in Sources */,
 				D1B9726C3015341900B64B10 /* AppModel.swift in Sources */,
 				D1B9726D3015341900B64B10 /* WatchlistItem.swift in Sources */,
 				D1B9726E3015341900B64B10 /* BrowserPaneView.swift in Sources */,
@@ -498,6 +513,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D1A100033060000000000003 /* AnalyticsClientTests.swift in Sources */,
 				D1F000053040000000000005 /* VideoDiagnosticsTests.swift in Sources */,
 				D1E300013030000000000001 /* CommandCatalogTests.swift in Sources */,
 				D1C1000D302000000000010D /* BrowserNavigationRouterTests.swift in Sources */,
@@ -679,6 +695,8 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
+				UMAMI_BASE_URL = "https://analytics.timwehrle.de/";
+				UMAMI_WEBSITE_ID = "d46c3af2-4739-4c9f-aa28-4cd428edab6c";
 			};
 			name = Debug;
 		};
@@ -727,6 +745,8 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
+				UMAMI_BASE_URL = "https://analytics.timwehrle.de/";
+				UMAMI_WEBSITE_ID = "d46c3af2-4739-4c9f-aa28-4cd428edab6c";
 			};
 			name = Release;
 		};

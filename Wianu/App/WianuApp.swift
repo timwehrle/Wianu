@@ -16,6 +16,7 @@ struct WianuApp: App {
 
             CommandGroup(after: .appInfo) {
                 Button {
+                    model.updateCheckStarted()
                     updateService.checkForUpdates()
                 } label: {
                     Label(

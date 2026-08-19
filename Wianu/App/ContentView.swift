@@ -58,8 +58,7 @@ struct ContentView: View {
         .navigationTitle("Wianu")
         .sheet(isPresented: $showingAddSite) {
             SiteEditorView(
-                store: model.siteStore,
-                tmdbClient: model.tmdbClient,
+                model: model,
                 mode: .add
             )
         }

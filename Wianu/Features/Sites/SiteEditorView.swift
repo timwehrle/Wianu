@@ -21,17 +21,15 @@ struct SiteEditorView: View {
     }
 
     @Environment(\.dismiss) private var dismiss
-    @Bindable var store: SiteStore
-    let tmdbClient: TMDBClient
+    @Bindable var model: AppModel
 
     let mode: Mode
     @State private var draft: SiteDraft
     @State private var providers: [TMDBProvider] = []
     @State private var providerLoadError: String?
 
-    init(store: SiteStore, tmdbClient: TMDBClient, mode: Mode) {
-        self.store = store
-        self.tmdbClient = tmdbClient
+    init(model: AppModel, mode: Mode) {
+        self.model = model
         self.mode = mode
 
         switch mode {
@@ -157,9 +155,9 @@ struct SiteEditorView: View {
     private func save() {
         switch mode {
         case .add:
-            store.addSite(draft)
+            model.addSite(draft)
         case let .edit(site):
-            store.updateSite(id: site.id, with: draft)
+            model.updateSite(site, with: draft)
         }
 
         dismiss()
@@ -189,7 +187,7 @@ struct SiteEditorView: View {
 
     private func loadProviders() async {
         do {
-            providers = try await tmdbClient.providers()
+            providers = try await model.tmdbClient.providers()
             if let current = draft.tmdbProvider,
                !providers.contains(where: { $0.id == current.id })
             {
