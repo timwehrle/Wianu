@@ -22,7 +22,7 @@ struct PageTitleToolbarView: View {
                 .fixedSize(horizontal: true, vertical: false)
                 .layoutPriority(1)
         }
-        .font(.subheadline)
+        .font(.headline)
         .foregroundStyle(
             controlActiveState == .key ? .primary : .secondary
         )
