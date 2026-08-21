@@ -1,8 +1,26 @@
+--min-version 0.62.1
+--swift-version 6.2.3
+--language-mode 5
+
+--exclude .build,DerivedData
+
 --indent 4
 --linebreaks lf
 --maxwidth 120
+--trimwhitespace always
+--semicolons never
 --commas inline
+--closingparen balanced
+
 --wraparguments before-first
+--wrapparameters before-first
 --wrapcollections before-first
+--wrapconditions after-first
+
+--acronyms ID,URL,UUID
+--importgrouping access-control,alpha
+--self remove
 --stripunusedargs closure-only
---swift-version 6.2.3
+--voidtype void
+
+--enable isEmpty,redundantType,sortSwitchCases

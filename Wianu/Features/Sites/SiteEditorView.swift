@@ -53,91 +53,108 @@ struct SiteEditorView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(alignment: .leading, spacing: 20) {
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(mode.title)
-                        .font(.title2.weight(.semibold))
-
-                    Text(mode.message)
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+            editorContent
+                .padding(20)
+                .frame(minWidth: 520, minHeight: 360, alignment: .topLeading)
+                .onChange(of: draft.address) {
+                    applySuggestedSearchTemplate()
                 }
-
-                VStack(alignment: .leading, spacing: 16) {
-                    field("Name") {
-                        TextField("Example: OpenAI", text: $draft.name)
+                .task { await loadProviders() }
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Cancel", action: dismiss.callAsFunction)
                     }
 
-                    field("URL") {
-                        TextField("example.com", text: $draft.address)
-                            .autocorrectionDisabled()
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Save", action: save)
+                            .keyboardShortcut(.defaultAction)
+                            .disabled(draft.validatedValues == nil)
                     }
-
-                    if !draft.address.isEmpty, !draft.siteURLIsValid {
-                        Text("Enter a valid HTTPS website address.")
-                            .font(.caption)
-                            .foregroundStyle(.red)
-                    }
-
-                    field("Search URL (Optional)") {
-                        TextField(
-                            "https://example.com/search?q={query}",
-                            text: $draft.searchURLTemplate
-                        )
-                        .autocorrectionDisabled()
-                    }
-
-                    Text(
-                        "Use {query} where the movie or show title belongs. "
-                            + "Leave this empty to hide the site from Search."
-                    )
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-
-                    if !draft.searchURLTemplateIsValid {
-                        Text(
-                            "Enter a valid HTTPS URL containing "
-                                + "exactly one {query} placeholder."
-                        )
-                        .font(.caption)
-                        .foregroundStyle(.red)
-                    }
-
-                    field("TMDB Provider (Optional)") {
-                        TMDBProviderPicker(
-                            providers: providers,
-                            selection: providerSelection
-                        )
-                    }
-
-                    Text(
-                        providerLoadError
-                            ?? "Associate this site so TMDB availability can open its configured Search URL."
-                    )
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
                 }
-
-                Spacer()
-            }
-            .padding(20)
-            .frame(minWidth: 520, minHeight: 360, alignment: .topLeading)
-            .onChange(of: draft.address) {
-                applySuggestedSearchTemplate()
-            }
-            .task { await loadProviders() }
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel", action: dismiss.callAsFunction)
-                }
-
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Save", action: save)
-                        .keyboardShortcut(.defaultAction)
-                        .disabled(draft.validatedValues == nil)
-                }
-            }
         }
+    }
+
+    private var editorContent: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            editorHeader
+            siteFields
+            Spacer()
+        }
+    }
+
+    private var editorHeader: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(mode.title)
+                .font(.title2.weight(.semibold))
+            Text(mode.message)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    private var siteFields: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            identityFields
+            searchFields
+            providerFields
+        }
+    }
+
+    @ViewBuilder
+    private var identityFields: some View {
+        field("Name") {
+            TextField("Example: OpenAI", text: $draft.name)
+        }
+        field("URL") {
+            TextField("example.com", text: $draft.address)
+                .autocorrectionDisabled()
+        }
+        if !draft.address.isEmpty, !draft.siteURLIsValid {
+            Text("Enter a valid HTTPS website address.")
+                .font(.caption)
+                .foregroundStyle(.red)
+        }
+    }
+
+    @ViewBuilder
+    private var searchFields: some View {
+        field("Search URL (Optional)") {
+            TextField(
+                "https://example.com/search?q={query}",
+                text: $draft.searchURLTemplate
+            )
+            .autocorrectionDisabled()
+        }
+        Text(
+            "Use {query} where the movie or show title belongs. "
+                + "Leave this empty to hide the site from Search."
+        )
+        .font(.caption)
+        .foregroundStyle(.secondary)
+        if !draft.searchURLTemplateIsValid {
+            Text(
+                "Enter a valid HTTPS URL containing "
+                    + "exactly one {query} placeholder."
+            )
+            .font(.caption)
+            .foregroundStyle(.red)
+        }
+    }
+
+    @ViewBuilder
+    private var providerFields: some View {
+        field("TMDB Provider (Optional)") {
+            TMDBProviderPicker(
+                providers: providers,
+                selection: providerSelection
+            )
+        }
+        Text(
+            providerLoadError
+                ?? "Associate this site so TMDB availability can open its configured Search URL."
+        )
+        .font(.caption)
+        .foregroundStyle(.secondary)
     }
 
     private func field(
@@ -164,10 +181,9 @@ struct SiteEditorView: View {
     }
 
     private func applySuggestedSearchTemplate() {
-        guard
-            draft.searchURLTemplate.trimmingCharacters(
-                in: .whitespacesAndNewlines
-            ).isEmpty,
+        guard draft.searchURLTemplate.trimmingCharacters(
+            in: .whitespacesAndNewlines
+        ).isEmpty,
             let suggestion = draft.suggestedSearchURLTemplate
         else { return }
 

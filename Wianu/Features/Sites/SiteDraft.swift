@@ -1,5 +1,12 @@
 import Foundation
 
+struct ValidatedSiteDraft {
+    let name: String
+    let url: URL
+    let searchURLTemplate: String
+    let tmdbProvider: TMDBProviderReference?
+}
+
 struct SiteDraft {
     var name: String
     var address: String
@@ -25,14 +32,7 @@ struct SiteDraft {
         tmdbProvider = site.tmdbProvider
     }
 
-    var validatedValues:
-        (
-            name: String,
-            url: URL,
-            searchURLTemplate: String,
-            tmdbProvider: TMDBProviderReference?
-        )?
-    {
+    var validatedValues: ValidatedSiteDraft? {
         let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
         let trimmedAddress = address.trimmingCharacters(
             in: .whitespacesAndNewlines
@@ -45,12 +45,16 @@ struct SiteDraft {
 
         guard let url = validatedSiteURL else { return nil }
 
-        guard
-            trimmedSearchTemplate.isEmpty
+        guard trimmedSearchTemplate.isEmpty
             || StreamingSearchURL.isValidTemplate(trimmedSearchTemplate)
         else { return nil }
 
-        return (trimmedName, url, trimmedSearchTemplate, tmdbProvider)
+        return ValidatedSiteDraft(
+            name: trimmedName,
+            url: url,
+            searchURLTemplate: trimmedSearchTemplate,
+            tmdbProvider: tmdbProvider
+        )
     }
 
     var suggestedSearchURLTemplate: String? {
@@ -79,12 +83,11 @@ struct SiteDraft {
     }
 
     private var validatedSiteURL: URL? {
-        guard
-            let normalizedAddress,
-            let url = URL(string: normalizedAddress),
-            let scheme = url.scheme,
-            scheme.lowercased() == "https",
-            url.host() != nil
+        guard let normalizedAddress,
+              let url = URL(string: normalizedAddress),
+              let scheme = url.scheme,
+              scheme.lowercased() == "https",
+              url.host() != nil
         else { return nil }
 
         return url

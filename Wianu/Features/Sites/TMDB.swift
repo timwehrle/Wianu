@@ -272,16 +272,15 @@ struct TMDBClient: Sendable {
         let response: ConfigurationResponse = try await request(
             path: "configuration"
         )
-        guard
-            let url = URL(string: response.images.secureBaseURL),
-            let posterSize = preferredSize(
-                response.images.posterSizes,
-                target: "w342"
-            ),
-            let logoSize = preferredSize(
-                response.images.logoSizes,
-                target: "w92"
-            )
+        guard let url = URL(string: response.images.secureBaseURL),
+              let posterSize = preferredSize(
+                  response.images.posterSizes,
+                  target: "w342"
+              ),
+              let logoSize = preferredSize(
+                  response.images.logoSizes,
+                  target: "w92"
+              )
         else { throw TMDBError.invalidResponse }
         return TMDBImageConfiguration(
             secureBaseURL: url,

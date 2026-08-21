@@ -68,7 +68,9 @@ final class AppModel {
         restoreSelection()
         analytics.track(.appLaunched)
     }
+}
 
+extension AppModel {
     var selectedSite: SavedSite? {
         guard let selectedSiteID else { return nil }
         return siteStore.sites.first { $0.id == selectedSiteID }
@@ -138,11 +140,10 @@ final class AppModel {
     }
 
     func openProvider(_ provider: TMDBProvider, for media: TMDBMediaResult) {
-        guard
-            let site = siteStore.sites.first(where: {
-                $0.tmdbProvider?.matches(provider) == true
-                    && $0.isTMDBProviderActionable
-            })
+        guard let site = siteStore.sites.first(where: {
+            $0.tmdbProvider?.matches(provider) == true
+                && $0.isTMDBProviderActionable
+        })
         else { return }
         search(media.title, in: site)
     }
@@ -252,13 +253,12 @@ final class AppModel {
     }
 
     func activateSite(matching url: URL?) {
-        guard
-            let url,
-            let host = normalizedHost(for: url),
-            let site = siteStore.sites.first(where: {
-                normalizedHost(for: $0.url) == host
-            }),
-            selection != .site(site.id)
+        guard let url,
+              let host = normalizedHost(for: url),
+              let site = siteStore.sites.first(where: {
+                  normalizedHost(for: $0.url) == host
+              }),
+              selection != .site(site.id)
         else { return }
 
         selection = .site(site.id)

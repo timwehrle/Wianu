@@ -57,7 +57,7 @@ nonisolated enum LetterboxdWatchlistImporter {
     }
 
     static func importItems(from data: Data) throws -> LetterboxdWatchlistImportResult {
-        guard var text = String(data: data, encoding: .utf8) else {
+        guard var text = String(bytes: data, encoding: .utf8) else {
             throw LetterboxdWatchlistImportError.invalidEncoding
         }
 
@@ -66,74 +66,25 @@ nonisolated enum LetterboxdWatchlistImporter {
         }
 
         let rows = try parseCSV(text)
-        guard let header = rows.first else {
-            throw LetterboxdWatchlistImportError.missingRequiredColumns
-        }
-
-        var columns: [String: Int] = [:]
-        for (index, name) in header.enumerated() {
-            let key = normalizedHeader(name)
-            if columns[key] == nil {
-                columns[key] = index
-            }
-        }
-
-        guard
-            let nameColumn = columns["name"],
-            let urlColumn = columns["letterboxduri"]
-        else {
-            throw LetterboxdWatchlistImportError.missingRequiredColumns
-        }
-
-        let yearColumn = columns["year"]
-        let dateColumn = columns["date"]
+        let columns = try importColumns(from: rows.first)
         var seenURLs = Set<String>()
         var items: [WatchlistItem] = []
         var skippedRowCount = 0
 
         for row in rows.dropFirst() where row.contains(where: { !$0.isEmpty }) {
-            let title = value(at: nameColumn, in: row)
-                .trimmingCharacters(in: .whitespacesAndNewlines)
-            let urlString = value(at: urlColumn, in: row)
-                .trimmingCharacters(in: .whitespacesAndNewlines)
-
-            guard
-                !title.isEmpty,
-                let url = URL(string: urlString),
-                let secureURL = secureLetterboxdURL(url)
-            else {
+            guard let parsedItem = watchlistItem(
+                from: row,
+                columns: columns,
+                sourceOrder: items.count
+            ) else {
                 skippedRowCount += 1
                 continue
             }
-
-            let comparisonKey = normalizedURLKey(secureURL)
-            guard seenURLs.insert(comparisonKey).inserted else {
+            guard seenURLs.insert(parsedItem.comparisonKey).inserted else {
                 skippedRowCount += 1
                 continue
             }
-
-            let year = yearColumn
-                .map { value(at: $0, in: row) }
-                .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-                .flatMap(Int.init)
-            let addedAt: Date? = if let dateColumn {
-                parseDate(
-                    value(at: dateColumn, in: row)
-                        .trimmingCharacters(in: .whitespacesAndNewlines)
-                )
-            } else {
-                nil
-            }
-
-            items.append(
-                WatchlistItem(
-                    title: title,
-                    year: year,
-                    letterboxdURL: secureURL,
-                    addedAt: addedAt,
-                    sourceOrder: items.count
-                )
-            )
+            items.append(parsedItem.item)
         }
 
         guard !items.isEmpty else {
@@ -144,6 +95,68 @@ nonisolated enum LetterboxdWatchlistImporter {
             items: items,
             skippedRowCount: skippedRowCount
         )
+    }
+
+    private struct ImportColumns {
+        let name: Int
+        let url: Int
+        let year: Int?
+        let date: Int?
+    }
+
+    private static func importColumns(from header: [String]?) throws -> ImportColumns {
+        guard let header else {
+            throw LetterboxdWatchlistImportError.missingRequiredColumns
+        }
+        var indices: [String: Int] = [:]
+        for (index, name) in header.enumerated() {
+            let key = normalizedHeader(name)
+            if indices[key] == nil {
+                indices[key] = index
+            }
+        }
+        guard let name = indices["name"], let url = indices["letterboxduri"] else {
+            throw LetterboxdWatchlistImportError.missingRequiredColumns
+        }
+        return ImportColumns(
+            name: name,
+            url: url,
+            year: indices["year"],
+            date: indices["date"]
+        )
+    }
+
+    private static func watchlistItem(
+        from row: [String],
+        columns: ImportColumns,
+        sourceOrder: Int
+    ) -> (item: WatchlistItem, comparisonKey: String)? {
+        let title = trimmedValue(at: columns.name, in: row)
+        let urlString = trimmedValue(at: columns.url, in: row)
+        guard !title.isEmpty,
+              let url = URL(string: urlString),
+              let secureURL = secureLetterboxdURL(url)
+        else { return nil }
+
+        let year = columns.year.map { trimmedValue(at: $0, in: row) }.flatMap(Int.init)
+        let addedAt = columns.date.flatMap {
+            parseDate(trimmedValue(at: $0, in: row))
+        }
+        return (
+            item: WatchlistItem(
+                title: title,
+                year: year,
+                letterboxdURL: secureURL,
+                addedAt: addedAt,
+                sourceOrder: sourceOrder
+            ),
+            comparisonKey: normalizedURLKey(secureURL)
+        )
+    }
+
+    private static func trimmedValue(at index: Int, in row: [String]) -> String {
+        value(at: index, in: row)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     private static func parseCSV(_ text: String) throws -> [[String]] {
@@ -171,8 +184,7 @@ nonisolated enum LetterboxdWatchlistImporter {
             } else if character == ",", !isInsideQuotes {
                 row.append(field)
                 field = ""
-            } else if
-                character == "\n"
+            } else if character == "\n"
                 || character == "\r"
                 || character == "\r\n",
                 !isInsideQuotes
@@ -222,10 +234,9 @@ nonisolated enum LetterboxdWatchlistImporter {
     }
 
     private static func secureLetterboxdURL(_ url: URL) -> URL? {
-        guard
-            let scheme = url.scheme?.lowercased(),
-            ["http", "https"].contains(scheme),
-            let host = url.host()?.lowercased()
+        guard let scheme = url.scheme?.lowercased(),
+              ["http", "https"].contains(scheme),
+              let host = url.host()?.lowercased()
         else { return nil }
 
         guard host == "letterboxd.com"

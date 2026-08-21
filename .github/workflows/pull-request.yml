@@ -1,0 +1,73 @@
+name: Pull Request Checks
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pull-request-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  SCHEME: Wianu
+  PROJECT_PATH: Wianu.xcodeproj
+
+jobs:
+  quality:
+    name: Format and lint
+    runs-on: macos-26
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Select validated Xcode
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          XCODE_PATH="/Applications/Xcode_26.2.app"
+          test -d "$XCODE_PATH"
+          sudo xcode-select --switch "$XCODE_PATH/Contents/Developer"
+          xcodebuild -version
+
+      - name: Install code quality tools
+        run: brew install swiftformat swiftlint
+
+      - name: Verify formatting
+        run: swiftformat . --lint --reporter github-actions-log
+
+      - name: Run SwiftLint
+        run: swiftlint lint --strict --reporter github-actions-logging
+
+  tests:
+    name: Test
+    runs-on: macos-26
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Select validated Xcode
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          XCODE_PATH="/Applications/Xcode_26.2.app"
+          test -d "$XCODE_PATH"
+          sudo xcode-select --switch "$XCODE_PATH/Contents/Developer"
+          xcodebuild -version
+
+      - name: Run tests
+        run: |
+          xcodebuild \
+            test \
+            -project "$PROJECT_PATH" \
+            -scheme "$SCHEME" \
+            -configuration Debug \
+            -destination "platform=macOS" \
+            CODE_SIGNING_ALLOWED=NO

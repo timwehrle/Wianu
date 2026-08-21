@@ -20,108 +20,10 @@ struct SidebarView: View {
 
     var body: some View {
         List(selection: selectionBinding) {
-            Button {
-                model.showCommandPalette()
-            } label: {
-                Label("Search", systemImage: "magnifyingglass")
-            }
-            .buttonStyle(.plain)
-
-            Section("Sites", isExpanded: $sitesExpanded) {
-                ForEach(model.siteStore.sites) { site in
-                    SiteRow(site: site)
-                        .tag(SidebarSelection.site(site.id))
-                        .contextMenu {
-                            Button("Edit") {
-                                editingSite = site
-                            }
-
-                            Divider()
-
-                            Button("Delete", role: .destructive) {
-                                deletingSite = site
-                            }
-                        }
-                }
-
-                Button {
-                    showingAddSite = true
-                } label: {
-                    Label("Add Site", systemImage: "plus")
-                        .foregroundStyle(.secondary)
-                }
-                .buttonStyle(.plain)
-            }
-
-            if !model.continueWatchingStore.sortedItems.isEmpty {
-                Section("Continue Watching", isExpanded: $continueWatchingExpanded) {
-                    ForEach(model.continueWatchingStore.sortedItems) { item in
-                        ContinueWatchingRow(
-                            item: item,
-                            site: site(for: item)
-                        )
-                        .tag(SidebarSelection.continueWatching(item.id))
-                        .contextMenu {
-                            Button("Rename") {
-                                renamingItem = item
-                            }
-
-                            Divider()
-
-                            Button("Remove", role: .destructive) {
-                                deletingItem = item
-                            }
-                        }
-                    }
-                }
-            }
-
-            Section("Watchlist", isExpanded: $watchlistExpanded) {
-                ForEach(model.watchlistStore.items) { item in
-                    WatchlistRow(item: item)
-                        .tag(
-                            SidebarSelection.watchlistItem(item.id)
-                        )
-                        .contextMenu {
-                            Button("Find Providers") {
-                                model.showCommandPalette(query: item.title)
-                            }
-
-                            Divider()
-
-                            if item.source == .custom {
-                                Button("Edit") {
-                                    editingWatchlistItem = item
-                                }
-
-                                Divider()
-                            }
-
-                            Button("Remove", role: .destructive) {
-                                deletingWatchlistItem = item
-                            }
-                        }
-                }
-
-                Button {
-                    showingAddWatchlistItem = true
-                } label: {
-                    Label("Add Movie", systemImage: "plus")
-                        .foregroundStyle(.secondary)
-                }
-                .buttonStyle(.plain)
-
-                Button {
-                    showingWatchlistImporter = true
-                } label: {
-                    Label(
-                        "Import Letterboxd CSV…",
-                        systemImage: "square.and.arrow.down"
-                    )
-                    .foregroundStyle(.secondary)
-                }
-                .buttonStyle(.plain)
-            }
+            searchButton
+            sitesSection
+            continueWatchingSection
+            watchlistSection
         }
         .listStyle(.sidebar)
         .frame(minWidth: 240)
@@ -216,6 +118,102 @@ struct SidebarView: View {
             }
         } message: { item in
             Text("“\(item.title)” will be removed.")
+        }
+    }
+
+    private var searchButton: some View {
+        Button {
+            model.showCommandPalette()
+        } label: {
+            Label("Search", systemImage: "magnifyingglass")
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var sitesSection: some View {
+        Section("Sites", isExpanded: $sitesExpanded) {
+            ForEach(model.siteStore.sites) { site in
+                SiteRow(site: site)
+                    .tag(SidebarSelection.site(site.id))
+                    .contextMenu {
+                        Button("Edit") { editingSite = site }
+                        Divider()
+                        Button("Delete", role: .destructive) {
+                            deletingSite = site
+                        }
+                    }
+            }
+            Button {
+                showingAddSite = true
+            } label: {
+                Label("Add Site", systemImage: "plus")
+                    .foregroundStyle(.secondary)
+            }
+            .buttonStyle(.plain)
+        }
+    }
+
+    @ViewBuilder
+    private var continueWatchingSection: some View {
+        if !model.continueWatchingStore.sortedItems.isEmpty {
+            Section(
+                "Continue Watching",
+                isExpanded: $continueWatchingExpanded
+            ) {
+                ForEach(model.continueWatchingStore.sortedItems) { item in
+                    ContinueWatchingRow(item: item, site: site(for: item))
+                        .tag(SidebarSelection.continueWatching(item.id))
+                        .contextMenu {
+                            Button("Rename") { renamingItem = item }
+                            Divider()
+                            Button("Remove", role: .destructive) {
+                                deletingItem = item
+                            }
+                        }
+                }
+            }
+        }
+    }
+
+    private var watchlistSection: some View {
+        Section("Watchlist", isExpanded: $watchlistExpanded) {
+            ForEach(model.watchlistStore.items) { item in
+                WatchlistRow(item: item)
+                    .tag(SidebarSelection.watchlistItem(item.id))
+                    .contextMenu { watchlistContextMenu(for: item) }
+            }
+            Button {
+                showingAddWatchlistItem = true
+            } label: {
+                Label("Add Movie", systemImage: "plus")
+                    .foregroundStyle(.secondary)
+            }
+            .buttonStyle(.plain)
+            Button {
+                showingWatchlistImporter = true
+            } label: {
+                Label(
+                    "Import Letterboxd CSV…",
+                    systemImage: "square.and.arrow.down"
+                )
+                .foregroundStyle(.secondary)
+            }
+            .buttonStyle(.plain)
+        }
+    }
+
+    @ViewBuilder
+    private func watchlistContextMenu(for item: WatchlistItem) -> some View {
+        Button("Find Providers") {
+            model.showCommandPalette(query: item.title)
+        }
+        Divider()
+        if item.source == .custom {
+            Button("Edit") { editingWatchlistItem = item }
+            Divider()
+        }
+        Button("Remove", role: .destructive) {
+            deletingWatchlistItem = item
         }
     }
 

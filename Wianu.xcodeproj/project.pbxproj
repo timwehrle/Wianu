@@ -70,6 +70,7 @@
 		D11E823930178A6D0092ECC8 /* Wianu.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Wianu.entitlements; sourceTree = "<group>"; };
 		D11E823C3017921C0092ECC8 /* ExportOptions.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = ExportOptions.plist; sourceTree = "<group>"; };
 		D11E823F301798520092ECC8 /* release.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = release.yml; sourceTree = "<group>"; };
+		D135CED83038A772001AB3C0 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		D13E65EB3018F6B400E58017 /* UpdateService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateService.swift; sourceTree = "<group>"; };
 		D13E65F03018FDFC00E58017 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		D14338A33013E5B800BA847C /* Wianu.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Wianu.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -170,6 +171,7 @@
 			isa = PBXGroup;
 			children = (
 				D145FFF8301BB60300983295 /* .swiftformat */,
+				D135CED83038A772001AB3C0 /* .swiftlint.yml */,
 				D1C100043020000000000104 /* Tests */,
 				D11E8241301798520092ECC8 /* .github */,
 				D11E823D3017921C0092ECC8 /* Scripts */,

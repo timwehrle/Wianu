@@ -1,0 +1,139 @@
+included:
+  - Wianu
+  - Tests
+
+excluded:
+  - .build
+  - DerivedData
+
+reporter: xcode
+
+disabled_rules:
+  - closing_brace
+  - closure_parameter_position
+  - colon
+  - comma
+  - comment_spacing
+  - computed_accessors_order
+  - control_statement
+  - empty_enum_arguments
+  - implicit_getter
+  - leading_whitespace
+  - opening_brace
+  - operator_usage_whitespace
+  - return_arrow_whitespace
+  - statement_position
+  - switch_case_alignment
+  - syntactic_sugar
+  - trailing_comma
+  - trailing_newline
+  - trailing_semicolon
+  - trailing_whitespace
+  - vertical_parameter_alignment
+  - vertical_whitespace
+  - void_return
+
+opt_in_rules:
+  - balanced_xctest_lifecycle
+  - discarded_notification_center_observer
+  - empty_xctest_method
+  - fatal_error_message
+  - identical_operands
+  - lower_acl_than_parent
+  - overridden_super_call
+  - prohibited_super_call
+  - test_case_accessibility
+  - unowned_variable_capture
+  - weak_delegate
+  - array_init
+  - contains_over_filter_count
+  - contains_over_filter_is_empty
+  - contains_over_first_not_nil
+  - contains_over_range_nil_comparison
+  - empty_collection_literal
+  - empty_count
+  - empty_string
+  - first_where
+  - flatmap_over_map_reduce
+  - last_where
+  - reduce_boolean
+  - reduce_into
+  - redundant_nil_coalescing
+  - sorted_first_last
+  - toggle_bool
+  - closure_body_length
+  - convenience_type
+  - direct_return
+  - legacy_multiple
+  - nslocalizedstring_key
+  - override_in_extension
+  - prefer_self_type_over_type_of_self
+  - private_action
+  - private_outlet
+  - unavailable_function
+
+line_length:
+  warning: 120
+  error: 160
+  ignores_comments: true
+  ignores_urls: true
+  ignores_interpolated_strings: true
+
+file_length:
+  warning: 550
+  error: 800
+  ignore_comment_only_lines: true
+
+type_body_length:
+  warning: 300
+  error: 500
+
+function_body_length:
+  warning: 60
+  error: 100
+
+closure_body_length:
+  warning: 50
+  error: 120
+
+cyclomatic_complexity:
+  warning: 12
+  error: 20
+  ignores_case_statements: true
+
+nesting:
+  type_level: 2
+  function_level: 3
+
+identifier_name:
+  min_length:
+    warning: 2
+  max_length:
+    warning: 50
+    error: 60
+  excluded:
+    - "^id$"
+    - "^x$"
+    - "^y$"
+    - "^`.*`$"
+
+type_name:
+  min_length: 3
+  max_length:
+    warning: 50
+    error: 60
+
+large_tuple:
+  warning: 3
+  error: 4
+
+todo:
+  severity: warning
+
+custom_rules:
+  no_debug_print:
+    name: Debug print
+    regex: "\\b(?:Swift\\.)?print\\s*\\("
+    message: Use os.Logger instead of print() in production code.
+    severity: warning
+    excluded: Tests

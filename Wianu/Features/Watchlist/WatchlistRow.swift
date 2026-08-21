@@ -121,11 +121,10 @@ struct WatchlistItemEditorView: View {
                 ? trimmedAddress
                 : "https://\(trimmedAddress)"
         let candidate = URL(string: addressWithScheme)
-        guard
-            let candidate,
-            let scheme = candidate.scheme?.lowercased(),
-            scheme == "https",
-            candidate.host() != nil
+        guard let candidate,
+              let scheme = candidate.scheme?.lowercased(),
+              scheme == "https",
+              candidate.host() != nil
         else { return nil }
         return candidate
     }

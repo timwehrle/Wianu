@@ -42,12 +42,6 @@ jobs:
           sudo xcode-select --switch "$XCODE_PATH/Contents/Developer"
           xcodebuild -version
 
-      - name: Install SwiftFormat
-        run: brew install swiftformat
-
-      - name: Verify formatting
-        run: swiftformat . --lint
-
       - name: Determine release version
         id: version
         shell: bash

@@ -7,13 +7,12 @@ struct FaviconView: View {
     @State private var image: NSImage?
 
     private var faviconURL: URL? {
-        guard
-            let url,
-            BrowserURLPolicy.allowsExternalNavigation(to: url),
-            var components = URLComponents(
-                url: url,
-                resolvingAgainstBaseURL: false
-            )
+        guard let url,
+              BrowserURLPolicy.allowsExternalNavigation(to: url),
+              var components = URLComponents(
+                  url: url,
+                  resolvingAgainstBaseURL: false
+              )
         else { return nil }
 
         components.user = nil
@@ -109,11 +108,10 @@ private actor FaviconLoader {
                 let (bytes, response) = try await URLSession.shared.bytes(
                     from: url
                 )
-                guard
-                    let response = response as? HTTPURLResponse,
-                    (200 ..< 300).contains(response.statusCode),
-                    response.mimeType?.lowercased().hasPrefix("image/") == true,
-                    response.expectedContentLength <= maximumResponseBytes
+                guard let response = response as? HTTPURLResponse,
+                      (200 ..< 300).contains(response.statusCode),
+                      response.mimeType?.lowercased().hasPrefix("image/") == true,
+                      response.expectedContentLength <= maximumResponseBytes
                 else {
                     throw FaviconError.invalidResponse
                 }
