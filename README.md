@@ -2,14 +2,18 @@
   <img src="Assets/WianuIcon.png" width="120" alt="Wianu app icon">
 </p>
 
-<h1 align="center">Wianu</h1>
+<div align="center">
+
+![Wianu](Assets/wianu-light-mode.svg#gh-light-mode-only)
+![Wianu](Assets/wianu-dark-mode.svg#gh-dark-mode-only)
+
+</div>
 
 <p align="center">
   All your streaming. One home.
 </p>
 
 <img src="Assets/showcase.png">
-
 
 Wianu is a lightweight browser for organizing streaming websites, shows, and
 movies in one place. Add the services you use, search across them, keep links
