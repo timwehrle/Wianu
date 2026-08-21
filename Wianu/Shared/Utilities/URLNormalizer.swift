@@ -10,11 +10,10 @@ enum URLNormalizer {
     ]
 
     static func continueWatchingURL(_ url: URL) -> URL {
-        guard
-            var components = URLComponents(
-                url: url,
-                resolvingAgainstBaseURL: false
-            )
+        guard var components = URLComponents(
+            url: url,
+            resolvingAgainstBaseURL: false
+        )
         else {
             return url
         }
@@ -35,11 +34,10 @@ enum URLNormalizer {
     static func comparisonKey(for url: URL) -> String {
         let normalizedURL = continueWatchingURL(url)
 
-        guard
-            var components = URLComponents(
-                url: normalizedURL,
-                resolvingAgainstBaseURL: false
-            )
+        guard var components = URLComponents(
+            url: normalizedURL,
+            resolvingAgainstBaseURL: false
+        )
         else {
             return normalizedURL.absoluteString
         }

@@ -8,11 +8,10 @@ enum StreamingSearchURL {
         guard parts.count == 2 else { return false }
 
         let testURLString = parts[0] + "Wianu" + parts[1]
-        guard
-            let url = URL(string: testURLString),
-            let scheme = url.scheme?.lowercased(),
-            scheme == "https",
-            url.host() != nil
+        guard let url = URL(string: testURLString),
+              let scheme = url.scheme?.lowercased(),
+              scheme == "https",
+              url.host() != nil
         else { return false }
 
         return true
@@ -28,10 +27,9 @@ enum StreamingSearchURL {
             charactersIn:
             "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~"
         )
-        guard
-            let encodedQuery = trimmedQuery.addingPercentEncoding(
-                withAllowedCharacters: allowedCharacters
-            )
+        guard let encodedQuery = trimmedQuery.addingPercentEncoding(
+            withAllowedCharacters: allowedCharacters
+        )
         else { return nil }
 
         return URL(

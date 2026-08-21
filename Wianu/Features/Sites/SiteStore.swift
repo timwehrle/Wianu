@@ -34,9 +34,8 @@ final class SiteStore {
     }
 
     func updateSite(id: SavedSite.ID, with draft: SiteDraft) {
-        guard
-            let index = sites.firstIndex(where: { $0.id == id }),
-            let values = draft.validatedValues
+        guard let index = sites.firstIndex(where: { $0.id == id }),
+              let values = draft.validatedValues
         else { return }
 
         sites[index].name = values.name

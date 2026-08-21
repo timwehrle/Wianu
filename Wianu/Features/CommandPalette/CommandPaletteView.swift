@@ -130,67 +130,7 @@ struct CommandPaletteView: View {
                         )
                     }
                 }
-
-                if !trimmedQuery.isEmpty {
-                    sectionHeader("Movies & TV")
-
-                    if search.isSearching {
-                        HStack {
-                            Spacer()
-                            ProgressView("Searching TMDB…").padding(24)
-                            Spacer()
-                        }
-                    } else if let error = search.errorMessage {
-                        TMDBErrorView(search: search, error: error)
-                            .frame(minHeight: 180)
-                    } else if search.results.isEmpty {
-                        compactMessage(
-                            "No TMDB results",
-                            systemImage: "magnifyingglass",
-                            description:
-                            "Try another title or check the spelling."
-                        )
-                    } else {
-                        ForEach(search.results) { item in
-                            Button {
-                                search.select(item)
-                            } label: {
-                                MediaResultRow(
-                                    item: item,
-                                    posterURL: search.imageConfiguration?
-                                        .posterURL(
-                                            path: item.posterPath
-                                        )
-                                )
-                                .padding(.horizontal, 12)
-                                .background(
-                                    selectedResult == .media(item.id)
-                                        ? Color.accentColor.opacity(0.16)
-                                        : Color.clear,
-                                    in: RoundedRectangle(cornerRadius: 8)
-                                ).id(ResultID.media(item.id))
-                            }
-                            .buttonStyle(.plain)
-                            .onHover { hovering in
-                                if hovering {
-                                    selectedResult = .media(item.id)
-                                }
-                            }
-                            .onAppear {
-                                search.loadMoreIfNeeded(after: item)
-                            }
-                        }
-                        if search.isLoadingMore {
-                            ProgressView().padding()
-                        }
-                    }
-                } else if commands.isEmpty {
-                    compactMessage(
-                        "No actions available",
-                        systemImage: "command",
-                        description: "Add a site to get started."
-                    )
-                }
+                searchResultsSection
             }
             .scrollTargetLayout()
             .frame(maxWidth: 760)
@@ -200,6 +140,77 @@ struct CommandPaletteView: View {
         .scrollPosition(id: $scrollTarget, anchor: .center)
         .onChange(of: selectedResult) { _, selection in
             scrollTarget = selection
+        }
+    }
+
+    @ViewBuilder
+    private var searchResultsSection: some View {
+        if !trimmedQuery.isEmpty {
+            sectionHeader("Movies & TV")
+            mediaResults
+        } else if commands.isEmpty {
+            compactMessage(
+                "No actions available",
+                systemImage: "command",
+                description: "Add a site to get started."
+            )
+        }
+    }
+
+    @ViewBuilder
+    private var mediaResults: some View {
+        if search.isSearching {
+            HStack {
+                Spacer()
+                ProgressView("Searching TMDB…").padding(24)
+                Spacer()
+            }
+        } else if let error = search.errorMessage {
+            TMDBErrorView(search: search, error: error)
+                .frame(minHeight: 180)
+        } else if search.results.isEmpty {
+            compactMessage(
+                "No TMDB results",
+                systemImage: "magnifyingglass",
+                description: "Try another title or check the spelling."
+            )
+        } else {
+            mediaResultRows
+        }
+    }
+
+    @ViewBuilder
+    private var mediaResultRows: some View {
+        ForEach(search.results) { item in
+            Button {
+                search.select(item)
+            } label: {
+                MediaResultRow(
+                    item: item,
+                    posterURL: search.imageConfiguration?
+                        .posterURL(path: item.posterPath)
+                )
+                .padding(.horizontal, 12)
+                .background(
+                    selectedResult == .media(item.id)
+                        ? Color.accentColor.opacity(0.16)
+                        : Color.clear,
+                    in: RoundedRectangle(cornerRadius: 8)
+                )
+                .id(ResultID.media(item.id))
+            }
+            .buttonStyle(.plain)
+            .onHover { hovering in
+                if hovering {
+                    selectedResult = .media(item.id)
+                }
+            }
+            .onAppear {
+                search.loadMoreIfNeeded(after: item)
+            }
+        }
+        if search.isLoadingMore {
+            ProgressView().padding()
         }
     }
 

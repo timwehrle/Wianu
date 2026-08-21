@@ -5,6 +5,8 @@ import Testing
 private actor AnalyticsFixtureSession: AnalyticsSession {
     private(set) var requests: [URLRequest] = []
 
+    // Required to be async by AnalyticsSession.
+    // swiftlint:disable:next async_without_await
     func data(for request: URLRequest) async throws -> (Data, URLResponse) {
         requests.append(request)
         let response = HTTPURLResponse(
@@ -55,7 +57,8 @@ struct AnalyticsClientTests {
         #expect(payload["name"] as? String == "search-opened")
         #expect(payload["url"] as? String == "/app")
         #expect(data == ["app_version": "1.5.0", "build": "16"])
-        #expect(!String(decoding: body, as: UTF8.self).contains("query"))
+        let bodyString = try #require(String(bytes: body, encoding: .utf8))
+        #expect(!bodyString.contains("query"))
     }
 
     @Test func `opt out and missing configuration send nothing`() async throws {

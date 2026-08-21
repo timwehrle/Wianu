@@ -114,25 +114,23 @@ final class VideoDiagnosticsController: NSObject, WKScriptMessageHandler {
         _ userContentController: WKUserContentController,
         didReceive message: WKScriptMessage
     ) {
-        guard
-            message.name == Self.handlerName,
-            message.world == Self.contentWorld,
-            let json = message.body as? String
+        guard message.name == Self.handlerName,
+              message.world == Self.contentWorld,
+              let json = message.body as? String
         else { return }
 
         receive(json: json)
     }
 
     func receive(json: String, now: Date = Date()) {
-        guard
-            json.utf8.count <= 64000,
-            let data = json.data(using: .utf8),
-            let report = try? JSONDecoder().decode(
-                VideoFrameReport.self,
-                from: data
-            ),
-            report.frameID.count <= 100,
-            report.videos.count <= 50
+        guard json.utf8.count <= 64000,
+              let data = json.data(using: .utf8),
+              let report = try? JSONDecoder().decode(
+                  VideoFrameReport.self,
+                  from: data
+              ),
+              report.frameID.count <= 100,
+              report.videos.count <= 50
         else { return }
 
         frames[report.frameID] = FrameVideos(

@@ -29,7 +29,6 @@ struct BrowserView: View {
         _videoDiagnostics = State(initialValue: videoDiagnostics)
     }
 
-    // TODO: Extract toolbar items for more clarity
     var body: some View {
         Group {
             if model.navigationRequest != nil {
@@ -78,96 +77,7 @@ struct BrowserView: View {
                 showsLoadingIndicator = false
             }
         }
-        .toolbar {
-            if !model.isCommandPalettePresented {
-                ToolbarItemGroup(placement: .navigation) {
-                    Button(action: goBack) {
-                        Image(systemName: "chevron.left")
-                    }
-                    .disabled(backItem == nil)
-                    .help("Go Back")
-                    .keyboardShortcut("[", modifiers: .command)
-
-                    Button(action: goForward) {
-                        Image(systemName: "chevron.right")
-                    }
-                    .disabled(forwardItem == nil)
-                    .help("Go Forward")
-                    .keyboardShortcut("]", modifiers: .command)
-
-                    Button(action: reloadOrStop) {
-                        Image(
-                            systemName: showsLoadingIndicator
-                                ? "xmark"
-                                : "arrow.clockwise"
-                        )
-                    }
-                    .help(showsLoadingIndicator ? "Stop Loading" : "Reload")
-                    .accessibilityLabel(
-                        showsLoadingIndicator ? "Stop Loading" : "Reload"
-                    )
-                    .disabled(page.url == nil && !showsLoadingIndicator)
-                    .keyboardShortcut("r", modifiers: .command)
-
-                    Button(action: goHome) {
-                        Image(systemName: "house")
-                    }
-                    .disabled(homeURL == nil)
-                    .help("Go to Site Home")
-                }
-
-                ToolbarItem(placement: .principal) {
-                    if model.destinationURL != nil {
-                        PageTitleToolbarView(
-                            title: displayedTitle,
-                            url: page.url
-                        )
-                    }
-                }
-
-                ToolbarItem(placement: .primaryAction) {
-                    Button(action: toggleWatchlist) {
-                        Image(
-                            systemName: currentPageIsOnWatchlist
-                                ? "bookmark.fill"
-                                : "bookmark"
-                        )
-                    }
-                    .disabled(!canSaveCurrentPage)
-                    .help(
-                        currentPageIsOnWatchlist
-                            ? "Remove from Watchlist"
-                            : "Add to Watchlist"
-                    )
-                }
-
-                ToolbarItem(placement: .primaryAction) {
-                    Button(action: toggleContinueWatching) {
-                        Image(
-                            systemName: currentPageIsSaved
-                                ? "play.rectangle.fill"
-                                : "play.rectangle"
-                        )
-                    }
-                    .disabled(!canSaveCurrentPage)
-                    .help(
-                        currentPageIsSaved
-                            ? "Remove from Continue Watching"
-                            : "Save to Continue Watching"
-                    )
-                }
-
-                ToolbarItem(placement: .primaryAction) {
-                    Button {
-                        model.showCommandPalette()
-                    } label: {
-                        Label("Command Palette", systemImage: "magnifyingglass")
-                    }
-                    .keyboardShortcut("k", modifiers: .command)
-                    .help("Search Actions, Movies, and TV Shows")
-                }
-            }
-        }
+        .toolbar { browserToolbar }
         .alert(
             "Navigation Blocked",
             isPresented: Binding(
@@ -186,8 +96,116 @@ struct BrowserView: View {
             Text(router.blockedNavigationMessage ?? "")
         }
     }
+}
 
-    private static let customUserAgent = """
+private extension BrowserView {
+    @ToolbarContentBuilder
+    var browserToolbar: some ToolbarContent {
+        if !model.isCommandPalettePresented {
+            navigationToolbarItems
+            pageTitleToolbarItem
+            watchlistToolbarItem
+            continueWatchingToolbarItem
+            commandPaletteToolbarItem
+        }
+    }
+
+    @ToolbarContentBuilder
+    var navigationToolbarItems: some ToolbarContent {
+        ToolbarItemGroup(placement: .navigation) {
+            Button(action: goBack) {
+                Image(systemName: "chevron.left")
+            }
+            .disabled(backItem == nil)
+            .help("Go Back")
+            .keyboardShortcut("[", modifiers: .command)
+
+            Button(action: goForward) {
+                Image(systemName: "chevron.right")
+            }
+            .disabled(forwardItem == nil)
+            .help("Go Forward")
+            .keyboardShortcut("]", modifiers: .command)
+
+            Button(action: reloadOrStop) {
+                Image(
+                    systemName: showsLoadingIndicator
+                        ? "xmark"
+                        : "arrow.clockwise"
+                )
+            }
+            .help(showsLoadingIndicator ? "Stop Loading" : "Reload")
+            .accessibilityLabel(
+                showsLoadingIndicator ? "Stop Loading" : "Reload"
+            )
+            .disabled(page.url == nil && !showsLoadingIndicator)
+            .keyboardShortcut("r", modifiers: .command)
+
+            Button(action: goHome) {
+                Image(systemName: "house")
+            }
+            .disabled(homeURL == nil)
+            .help("Go to Site Home")
+        }
+    }
+
+    var pageTitleToolbarItem: some ToolbarContent {
+        ToolbarItem(placement: .principal) {
+            if model.destinationURL != nil {
+                PageTitleToolbarView(title: displayedTitle, url: page.url)
+            }
+        }
+    }
+
+    var watchlistToolbarItem: some ToolbarContent {
+        ToolbarItem(placement: .primaryAction) {
+            Button(action: toggleWatchlist) {
+                Image(
+                    systemName: currentPageIsOnWatchlist
+                        ? "bookmark.fill"
+                        : "bookmark"
+                )
+            }
+            .disabled(!canSaveCurrentPage)
+            .help(
+                currentPageIsOnWatchlist
+                    ? "Remove from Watchlist"
+                    : "Add to Watchlist"
+            )
+        }
+    }
+
+    var continueWatchingToolbarItem: some ToolbarContent {
+        ToolbarItem(placement: .primaryAction) {
+            Button(action: toggleContinueWatching) {
+                Image(
+                    systemName: currentPageIsSaved
+                        ? "play.rectangle.fill"
+                        : "play.rectangle"
+                )
+            }
+            .disabled(!canSaveCurrentPage)
+            .help(
+                currentPageIsSaved
+                    ? "Remove from Continue Watching"
+                    : "Save to Continue Watching"
+            )
+        }
+    }
+
+    var commandPaletteToolbarItem: some ToolbarContent {
+        ToolbarItem(placement: .primaryAction) {
+            Button {
+                model.showCommandPalette()
+            } label: {
+                Label("Command Palette", systemImage: "magnifyingglass")
+            }
+            .keyboardShortcut("k", modifiers: .command)
+            .help("Search Actions, Movies, and TV Shows")
+        }
+    }
+
+    static let customUserAgent = """
     Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) \
     AppleWebKit/605.1.15 (KHTML, like Gecko) \
     Version/26.5.2 Safari/605.1.15
@@ -226,9 +244,8 @@ struct BrowserView: View {
     }
 
     private var backItem: WebPage.BackForwardList.Item? {
-        guard
-            let historyRootID,
-            page.backForwardList.currentItem?.id != historyRootID
+        guard let historyRootID,
+              page.backForwardList.currentItem?.id != historyRootID
         else { return nil }
 
         return page.backForwardList.backList.last
@@ -243,12 +260,11 @@ struct BrowserView: View {
             return siteURL
         }
 
-        guard
-            let currentURL = page.url,
-            var components = URLComponents(
-                url: currentURL,
-                resolvingAgainstBaseURL: false
-            )
+        guard let currentURL = page.url,
+              var components = URLComponents(
+                  url: currentURL,
+                  resolvingAgainstBaseURL: false
+              )
         else { return nil }
 
         components.path = "/"

@@ -98,9 +98,8 @@ final class ContinueWatchingStore {
     func rename(id: ContinueWatchingItem.ID, to title: String) {
         let trimmedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
 
-        guard
-            !trimmedTitle.isEmpty,
-            let index = items.firstIndex(where: { $0.id == id })
+        guard !trimmedTitle.isEmpty,
+              let index = items.firstIndex(where: { $0.id == id })
         else { return }
 
         items[index].title = trimmedTitle

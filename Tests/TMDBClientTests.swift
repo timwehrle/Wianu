@@ -14,6 +14,8 @@ private actor FixtureSession: TMDBSession {
         data = Data(json.utf8)
     }
 
+    // Required to be async by TMDBSession.
+    // swiftlint:disable:next async_without_await
     func data(for request: URLRequest) async throws -> (Data, URLResponse) {
         self.request = request
         let response = HTTPURLResponse(
@@ -31,6 +33,8 @@ private actor FixtureSession: TMDBSession {
 }
 
 private actor CancelledSession: TMDBSession {
+    // Required to be async by TMDBSession.
+    // swiftlint:disable:next async_without_await
     func data(for request: URLRequest) async throws -> (Data, URLResponse) {
         throw URLError(.cancelled)
     }

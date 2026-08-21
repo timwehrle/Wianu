@@ -12,12 +12,11 @@ enum BrowserNavigationLog {
 
 enum BrowserURLPolicy {
     static func allowsExternalNavigation(to url: URL?) -> Bool {
-        guard
-            let url,
-            url.scheme?.lowercased() == "https",
-            url.host() != nil,
-            url.user == nil,
-            url.password == nil
+        guard let url,
+              url.scheme?.lowercased() == "https",
+              url.host() != nil,
+              url.user == nil,
+              url.password == nil
         else { return false }
 
         return true
@@ -132,6 +131,8 @@ final class BrowserNavigationRouter {
 struct BrowserNavigationDecider: WebPage.NavigationDeciding {
     let router: BrowserNavigationRouter
 
+    // Required to be async by WebPage.NavigationDeciding.
+    // swiftlint:disable:next async_without_await
     func decidePolicy(
         for action: WebPage.NavigationAction,
         preferences: inout WebPage.NavigationPreferences
@@ -180,6 +181,8 @@ struct BrowserNavigationDecider: WebPage.NavigationDeciding {
         return .allow
     }
 
+    // Required to be async by WebPage.NavigationDeciding.
+    // swiftlint:disable:next async_without_await
     func decidePolicy(
         for response: WebPage.NavigationResponse
     ) async -> WKNavigationResponsePolicy {
